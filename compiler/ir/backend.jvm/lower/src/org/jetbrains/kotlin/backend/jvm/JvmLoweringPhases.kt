@@ -27,7 +27,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmLateinitLowering,
     ::JvmInventNamesForLocalClasses,
 
-    ::InlineCallableReferenceToLambdaPhase,
+    ::JvmInlineCallableReferenceToLambdaPhase,
     ::DirectInvokeLowering,
     ::FunctionReferenceLowering,
 
@@ -63,7 +63,6 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmLocalDeclarationsLowering,
 
     ::RemoveDuplicatedInlinedLocalClassesLowering,
-    ::JvmInventNamesForInlinedAnonymousObjects,
 
     ::JvmLocalClassPopupLowering,
     ::StaticCallableReferenceLowering,
@@ -78,11 +77,9 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmDefaultParameterCleaner,
 
     ::FragmentLocalFunctionPatchLowering,
-    ::ReflectiveAccessLowering,
 
     ::InterfaceLowering,
     ::InheritedDefaultMethodsOnClassesLowering,
-    ::ReplaceDefaultImplsOverriddenSymbols,
     ::InterfaceSuperCallsLowering,
     ::InterfaceDefaultCallsLowering,
     ::InterfaceObjectCallsLowering,
@@ -117,19 +114,20 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::ReplaceKFunctionInvokeWithFunctionInvoke,
     ::JvmKotlinNothingValueExceptionLowering,
     ::MakePropertyDelegateMethodsStaticLowering,
-    ::AddSuperQualifierToJavaFieldAccessLowering,
     ::ReplaceNumberToCharCallSitesLowering,
 
     ::RenameFieldsLowering,
     ::FakeLocalVariablesForBytecodeInlinerLowering,
     ::FakeLocalVariablesForIrInlinerLowering,
+
+    ::SpecialAccessLowering,
 )
 
 val jvmLoweringPhases = SameTypeNamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
     nlevels = 1,
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     lower = buildModuleLoweringsPhase(
         ::ExternalPackageParentPatcherLowering,
         ::FragmentSharedVariablesLowering,
@@ -142,14 +140,21 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
         ::FileClassLowering,
         ::JvmStaticInObjectLowering,
         ::RepeatedAnnotationLowering,
+        ::JvmInlineCallableReferenceToLambdaWithDefaultsPhase,
 
         ::JvmIrInliner,
         ::ApiVersionIsAtLeastEvaluationLowering,
         ::CreateSeparateCallForInlinedLambdasLowering,
         ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
         ::InlinedClassReferencesBoxingLowering,
+        ::RestoreInlineLambda,
     ).then(
-        performByIrFile("PerformByIrFile", lower = jvmFilePhases)
+        performByIrFile(
+            name = "PerformByIrFile",
+            description = "Perform phases by IrFile",
+            lower = jvmFilePhases,
+            supportParallel = false,
+        )
     ) then buildModuleLoweringsPhase(
         ::GenerateMultifileFacades,
         ::ResolveInlineCalls,

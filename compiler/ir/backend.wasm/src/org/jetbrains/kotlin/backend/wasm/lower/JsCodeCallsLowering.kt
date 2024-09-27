@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 
 /**
  * Lower calls to `js(code)` into `@JsFun(code) external` functions.
@@ -63,13 +66,15 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         if (function.valueParameters.any { it.defaultValue != null }) {
             // Create a separate external function without default arguments
             // and delegate calls to it.
-            val externalFun = createExternalJsFunction(
-                context,
-                function.name,
-                "_js_code",
-                function.returnType,
-                jsCode = jsFunCode,
-            )
+            val externalFun = context.irFactory.stageController.restrictTo(function) {
+                createExternalJsFunction(
+                    context,
+                    function.name,
+                    "_js_code",
+                    function.returnType,
+                    jsCode = jsFunCode,
+                )
+            }
             externalFun.copyTypeParametersFrom(function)
             externalFun.valueParameters = function.valueParameters.map { it.copyTo(externalFun, defaultValue = null) }
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
@@ -97,13 +102,15 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         val field = property.backingField ?: return null
         val initializer = field.initializer ?: return null
         val jsCode = initializer.expression.getJsCode() ?: return null
-        val externalFun = createExternalJsFunction(
-            context,
-            property.name,
-            "_js_code",
-            field.type,
-            jsCode = "() => ($jsCode)",
-        )
+        val externalFun = context.irFactory.stageController.restrictTo(field) {
+            createExternalJsFunction(
+                context,
+                property.name,
+                "_js_code",
+                field.type,
+                jsCode = "() => ($jsCode)",
+            )
+        }
         val builder = context.createIrBuilder(field.symbol)
         initializer.expression = builder.irCall(externalFun)
         return listOf(property, externalFun)
@@ -112,7 +119,6 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun IrExpression.getJsCode(): String? {
         val call = this as? IrCall ?: return null
         if (call.symbol != jsRelatedSymbols.jsCode) return null
-        @Suppress("UNCHECKED_CAST")
-        return (call.getValueArgument(0) as IrConst<String>).value
+        return (call.getValueArgument(0) as IrConst).value as String
     }
 }

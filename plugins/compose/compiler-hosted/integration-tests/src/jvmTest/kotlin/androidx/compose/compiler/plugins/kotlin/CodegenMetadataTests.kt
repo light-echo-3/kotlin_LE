@@ -37,7 +37,8 @@ class CodegenMetadataTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             object Main { @JvmStatic fun main() { MyClass::class.java.kotlin.primaryConstructor!!.isAccessible = true } }
             """,
             fileName,
-            false
+            dumpClasses = false,
+            additionalPaths = additionalPaths
         )
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         main.invoke(null)
@@ -51,8 +52,8 @@ class CodegenMetadataTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             """
             import androidx.compose.runtime.Composable
             import kotlin.reflect.KProperty
-            import kotlinx.metadata.jvm.KotlinClassMetadata
-            import kotlinx.metadata.jvm.localDelegatedProperties
+            import kotlin.metadata.jvm.KotlinClassMetadata
+            import kotlin.metadata.jvm.localDelegatedProperties
 
             inline operator fun String.getValue(thisRef: Any?, property: KProperty<*>) = 0
 
@@ -85,11 +86,19 @@ class CodegenMetadataTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             }
             """,
             fileName,
-            false
+            dumpClasses = false,
+            additionalPaths = additionalPaths
         )
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         val delegates = main.invoke(null)
 
         assertEquals(delegates, listOf("foo", "fooComposable"))
+    }
+
+    companion object {
+        private val additionalPaths = listOf(
+            Classpath.jarFor<kotlin.metadata.jvm.KotlinClassMetadata>(), // kotlin-metadata
+            Classpath.jarFor("kotlin.reflect.full.KClasses") // kotlin-reflect
+        )
     }
 }

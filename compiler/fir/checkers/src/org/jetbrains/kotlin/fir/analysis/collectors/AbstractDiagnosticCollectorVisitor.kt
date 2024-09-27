@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
@@ -30,7 +31,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContextForProvider,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
-    protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
+    protected open fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
     protected open fun visitNestedElements(element: FirElement) {
@@ -79,7 +80,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
         val receiverParameter = buildReceiverParameter {
             typeRef = buildResolvedTypeRef {
-                this.type = type
+                this.coneType = type
             }
         }
 
@@ -125,8 +126,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) {
         visitConstructor(errorPrimaryConstructor, data)
+    }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
         visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
@@ -134,12 +136,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
         withAnnotationContainer(anonymousFunction) {
-            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            visitWithDeclarationAndReceiver(
-                anonymousFunction,
-                labelName,
-                anonymousFunction.receiverParameter
-            )
+            withLambdaBodyIfApplicable(anonymousFunction) {
+                val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
+                visitWithDeclarationAndReceiver(
+                    anonymousFunction,
+                    labelName,
+                    anonymousFunction.receiverParameter
+                )
+            }
         }
     }
 
@@ -229,7 +233,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those children are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
-        val resolvedTypeRefType = resolvedTypeRef.type
+        val resolvedTypeRefType = resolvedTypeRef.coneType
         if (resolvedTypeRefType is ConeErrorType) {
             visitTypeRef(resolvedTypeRef, data)
         }
@@ -319,6 +323,20 @@ abstract class AbstractDiagnosticCollectorVisitor(
         } finally {
             if (isInline) {
                 context = context.unsetInlineFunctionBodyContext()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <T> withLambdaBodyIfApplicable(function: FirAnonymousFunction, block: () -> T): T {
+        return try {
+            if (function.isLambda) {
+                context = context.setLambdaBodyContext(createLambdaBodyContext(function, context))
+            }
+            block()
+        } finally {
+            if (function.isLambda) {
+                context = context.unsetLambdaBodyContext()
             }
         }
     }

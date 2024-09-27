@@ -16,20 +16,15 @@ import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
-import org.jetbrains.jps.builders.TestProjectBuilderLogger
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
-import org.jetbrains.jps.devkit.model.JpsPluginModuleType
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.IncProjectBuilder
 import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
@@ -164,6 +159,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
         initProject()
         createKotlinJavaScriptLibraryArchive()
+        addKotlinStdlibDependency()
         addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         addKotlinJavaScriptStdlibDependency()
         buildAllModules().assertSuccessful()
@@ -288,7 +284,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertEquals(1, myProject.modules.size)
         val module = myProject.modules.first()
         val args = module.kotlinCompilerArguments
-        args.apiVersion = "1.4"
+        args.apiVersion = "1.6"
         myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
@@ -471,7 +467,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testDevKitProject() {
         initProject(JVM_MOCK_RUNTIME)
         val module = myProject.modules.single()
-        assertEquals(module.moduleType, JpsPluginModuleType.INSTANCE)
+//        assertEquals(module.moduleType, JpsPluginModuleType.INSTANCE) // TODO: KTI-1826
         buildAllModules().assertSuccessful()
         assertFilesExistInOutput(module, "TestKt.class")
     }
@@ -874,13 +870,14 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
-    fun testModuleRebuildOnBackendChange() {
+    fun testModuleRebuildOnAllowNoSourceFilesRestriction() {
+        // here we restrict the rule, so recompilation is needed
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = false
+            (facet.compilerArguments as K2JVMCompilerArguments).allowNoSourceFiles = true
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
@@ -892,7 +889,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = true
+            (facet.compilerArguments as K2JVMCompilerArguments).allowNoSourceFiles = false
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
                 JpsKotlinFacetModuleExtension(facet)
@@ -900,6 +897,36 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
 
         checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleNotRebuildOnAllowNoSourceFilesAllowance() {
+        // here we weaken the rule, so recompilation is NOT needed
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).allowNoSourceFiles = false
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).allowNoSourceFiles = true
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, NOTHING)
     }
 
     @WorkingDir("KotlinProject")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,17 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
+import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -44,7 +40,6 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_NAMES
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
@@ -54,6 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.withClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -81,7 +77,7 @@ class JavaClassUseSiteMemberScope(
     private val klass: FirJavaClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
-    declaredMemberScope: FirContainingNamesAwareScope
+    declaredMemberScope: FirContainingNamesAwareScope,
 ) : AbstractFirUseSiteMemberScope(
     klass.symbol.toLookupTag(),
     session,
@@ -205,7 +201,7 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirPropertySymbol.createOverridePropertyIfExists(
         scope: FirScope,
-        takeModalityFromGetter: Boolean
+        takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol? {
         val getterSymbol = this.findGetterOverride(scope) ?: return null
         val setterSymbol =
@@ -419,7 +415,7 @@ class JavaClassUseSiteMemberScope(
             valueParameters.clear()
             valueParameters.addAll(fir.valueParameters.dropLast(1))
             returnTypeRef = buildResolvedTypeRef {
-                type = continuationParameterType.typeArguments[0].type ?: return this@replaceWithWrapperSymbolIfNeeded
+                coneType = continuationParameterType.typeArguments[0].type ?: return this@replaceWithWrapperSymbolIfNeeded
             }
             (status as FirDeclarationStatusImpl).isSuspend = true
             symbol = FirNamedFunctionSymbol(callableId)
@@ -445,7 +441,7 @@ class JavaClassUseSiteMemberScope(
             return result
         }
 
-        processSpecialFunctions(name, explicitlyDeclaredFunctions, functionsWithScopeFromSupertypes, result)
+        processSpecialFunctions(name, functionsWithScopeFromSupertypes, result)
         return result.toSet()
     }
 
@@ -464,10 +460,9 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun processSpecialFunctions(
-        requestedName: Name,
-        explicitlyDeclaredFunctionsWithNaturalName: Collection<FirNamedFunctionSymbol>,
-        functionsFromSupertypesWithRequestedName: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
-        destination: MutableCollection<FirNamedFunctionSymbol>
+        name: Name,
+        functionsFromSupertypes: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
+        destination: MutableCollection<FirNamedFunctionSymbol>,
     ) {
         val functionsFromSupertypesToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
         // The special override checker is needed for the case when we're trying to consider e.g. explicitly defined `Long toLong()`
@@ -475,21 +470,26 @@ class JavaClassUseSiteMemberScope(
         // LazyJavaClassMemberScope.doesOverride, that ignores the return type, so we reproduce the behavior here.
         // See the test testData/diagnostics/tests/j+k/kt62197.kt and the issue KT-62197 for more details.
         // TODO: consider some more transparent approach
-        val overrideCheckerForSpecialFunctions =
-            JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypeScopes, considerReturnTypeKinds = false)
-        val intersectionResults =
-            supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypesWithRequestedName)
-        for (resultOfIntersectionWithNaturalName in intersectionResults) {
-            val someSymbolWithNaturalNameFromSuperType = resultOfIntersectionWithNaturalName.extractSomeSymbolFromSuperType()
-            val explicitlyDeclaredFunctionWithNaturalName = explicitlyDeclaredFunctionsWithNaturalName.firstOrNull {
-                overrideCheckerForSpecialFunctions.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
+        val overrideCheckerForSpecialFunctions = JavaOverrideChecker(
+            session,
+            klass.javaTypeParameterStack,
+            superTypeScopes,
+            considerReturnTypeKinds = false
+        )
+
+        val regularlyDeclaredFunctions = destination.toList()
+        val intersectionResults = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypes)
+        for (resultOfIntersection in intersectionResults) {
+            val someSymbolFromSuperType = resultOfIntersection.extractSomeSymbolFromSuperType()
+            val explicitlyDeclaredFunction = regularlyDeclaredFunctions.firstOrNull {
+                overrideCheckerForSpecialFunctions.isOverriddenFunction(it, someSymbolFromSuperType)
             }
 
             if (processOverridesForFunctionsWithDifferentJvmName(
-                    someSymbolWithNaturalNameFromSuperType,
-                    explicitlyDeclaredFunctionWithNaturalName,
-                    requestedName,
-                    resultOfIntersectionWithNaturalName,
+                    someSymbolFromSuperType,
+                    explicitlyDeclaredFunction,
+                    name,
+                    resultOfIntersection,
                     destination,
                     functionsFromSupertypesToSaveInCache
                 )
@@ -498,51 +498,51 @@ class JavaClassUseSiteMemberScope(
             }
 
             if (processOverridesForFunctionsWithErasedValueParameter(
-                    requestedName,
+                    name,
                     destination,
-                    resultOfIntersectionWithNaturalName,
-                    explicitlyDeclaredFunctionWithNaturalName
+                    resultOfIntersection,
+                    explicitlyDeclaredFunction
                 )
             ) continue
 
             // regular rules
-            when (explicitlyDeclaredFunctionWithNaturalName) {
+            when (explicitlyDeclaredFunction) {
                 null -> {
-                    val chosenSymbol = resultOfIntersectionWithNaturalName.chosenSymbol
+                    val chosenSymbol = resultOfIntersection.chosenSymbol
                     if (!chosenSymbol.isVisibleInCurrentClass()) continue
                     destination += chosenSymbol
-                    functionsFromSupertypesToSaveInCache += resultOfIntersectionWithNaturalName
+                    functionsFromSupertypesToSaveInCache += resultOfIntersection
                 }
                 else -> {
-                    destination += explicitlyDeclaredFunctionWithNaturalName
-                    directOverriddenFunctions[explicitlyDeclaredFunctionWithNaturalName] = listOf(resultOfIntersectionWithNaturalName)
-                    for (overriddenMember in resultOfIntersectionWithNaturalName.overriddenMembers) {
-                        overrideByBase[overriddenMember.member] = explicitlyDeclaredFunctionWithNaturalName
+                    destination += explicitlyDeclaredFunction
+                    directOverriddenFunctions[explicitlyDeclaredFunction] = listOf(resultOfIntersection)
+                    for (overriddenMember in resultOfIntersection.overriddenMembers) {
+                        overrideByBase[overriddenMember.member] = explicitlyDeclaredFunction
                     }
                 }
             }
         }
-        functionsFromSupertypes[requestedName] = functionsFromSupertypesToSaveInCache
+        this.functionsFromSupertypes[name] = functionsFromSupertypesToSaveInCache
     }
 
     /**
-     * This function collects in [destination] an overriding method for base method group [resultOfIntersectionWithNaturalName],
+     * This function collects in [destination] an overriding method for base method group [resultOfIntersection],
      * in case base methods should have their value parameters erased in Java,
      * e.g. Collection.contains(T) in Kotlin is paired with Collection.contains(Object) in Java.
      *
      * Given we have a Java class [klass] and some its method(s) name [name]
-     * with base method group [resultOfIntersectionWithNaturalName] and (maybe)
-     * explicitly declared [explicitlyDeclaredFunctionWithNaturalName],
-     * this function builds a synthetic override for [resultOfIntersectionWithNaturalName] in the Java class,
+     * with base method group [resultOfIntersection] and (maybe)
+     * explicitly declared [explicitlyDeclaredFunction],
+     * this function builds a synthetic override for [resultOfIntersection] in the Java class,
      * binds it with this intersection result using the override relation,
      * and collects it as a matching method with this name.
      *
      * Important: all explicitly declared functions are already collected at this point, there is no reason to collect them once more!
      *
      * @param name a given method name
-     * @param destination used to collect base functions for [explicitlyDeclaredFunctionWithNaturalName] with erased value parameters in Java
-     * @param resultOfIntersectionWithNaturalName one group of intersected base methods, each "overridden member" inside is a pair of (base method, its scope)
-     * @param explicitlyDeclaredFunctionWithNaturalName the function in the Java class [klass] with the name [name], which overrides [resultOfIntersectionWithNaturalName] (if any)
+     * @param destination used to collect base functions for [explicitlyDeclaredFunction] with erased value parameters in Java
+     * @param resultOfIntersection one group of intersected base methods, each "overridden member" inside is a pair of (base method, its scope)
+     * @param explicitlyDeclaredFunction the function in the Java class [klass] with the name [name], which overrides [resultOfIntersection] (if any)
      * @return true if we collected something, false otherwise
      * @see [SpecialGenericSignatures.GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP] and
      * [SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES]
@@ -550,32 +550,26 @@ class JavaClassUseSiteMemberScope(
     private fun processOverridesForFunctionsWithErasedValueParameter(
         name: Name,
         destination: MutableCollection<FirNamedFunctionSymbol>,
-        resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
-        explicitlyDeclaredFunctionWithNaturalName: FirNamedFunctionSymbol?
+        resultOfIntersection: ResultOfIntersection<FirNamedFunctionSymbol>,
+        explicitlyDeclaredFunction: FirNamedFunctionSymbol?,
     ): Boolean {
-        val membersFromSupertypesWithScopes = resultOfIntersectionWithNaturalName.overriddenMembers
         // E.g. contains(String) or contains(T)
-        val memberFromSupertypeWithValueParametersToBeErased = membersFromSupertypesWithScopes.firstOrNull { (member, scope) ->
+        val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { (member, scope) ->
             BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope) != null
         }?.member ?: return false
 
-        // E.g. contains(T)
-        val unwrappedMemberFromSupertypeWithValueParametersToBeErased =
-            memberFromSupertypeWithValueParametersToBeErased.fir.originalForSubstitutionOverride
-                ?: memberFromSupertypeWithValueParametersToBeErased.fir
-
-        val functionFromSupertypeWithValueParametersToBeErased = unwrappedMemberFromSupertypeWithValueParametersToBeErased
-            .initialSignatureAttr
-            ?.symbol as? FirNamedFunctionSymbol
-            ?: unwrappedMemberFromSupertypeWithValueParametersToBeErased.symbol
+        val relevantFunctionFromSupertypesUnwrapped =
+            relevantFunctionFromSupertypes.unwrapFakeOverrides().let {
+                it.fir.initialSignatureAttr ?: it
+            }
 
         // E.g. contains(Object) from Java
         val explicitlyDeclaredFunctionWithErasedValueParameters =
             declaredMemberScope.getFunctions(name).firstOrNull { declaredFunction ->
-                declaredFunction.hasSameJvmDescriptor(functionFromSupertypeWithValueParametersToBeErased) &&
+                declaredFunction.hasSameJvmDescriptor(relevantFunctionFromSupertypesUnwrapped) &&
                         declaredFunction.hasErasedParameters() &&
                         javaOverrideChecker.doesReturnTypesHaveSameKind(
-                            functionFromSupertypeWithValueParametersToBeErased.fir,
+                            relevantFunctionFromSupertypesUnwrapped.fir,
                             declaredFunction.fir
                         )
             } ?: return false // No declared functions with erased parameters => no additional processing needed
@@ -593,17 +587,17 @@ class JavaClassUseSiteMemberScope(
             symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
             this.valueParameters.clear()
             explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
-                memberFromSupertypeWithValueParametersToBeErased.fir.valueParameters
+                relevantFunctionFromSupertypes.fir.valueParameters
             ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
                 if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
                     allParametersAreAny = false
                 }
-                buildJavaValueParameterCopy(overrideParameter) {
+                buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
                     this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
                 }
             }
         }.apply {
-            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
+            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
         }.symbol
 
         if (allParametersAreAny) {
@@ -611,7 +605,7 @@ class JavaClassUseSiteMemberScope(
         }
 
         // E.g. contains(String) from Java, if any
-        val accidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionWithNaturalName?.takeIf {
+        val accidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunction?.takeIf {
             overrideChecker.isOverriddenFunction(
                 declaredFunctionCopyWithParameterTypesFromSupertype,
                 it
@@ -628,24 +622,26 @@ class JavaClassUseSiteMemberScope(
                 symbol = newSymbol
                 dispatchReceiverType = klass.defaultType()
             }.apply {
-                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
                 isHiddenToOvercomeSignatureClash = true
             }
             // Collect synthetic function which is a hidden copy of declared one with unerased parameters
             accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
         }
         destination += symbolToBeCollected
-        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersectionWithNaturalName)
-        for ((member, _) in membersFromSupertypesWithScopes) {
+        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
+        for ((member, _) in resultOfIntersection.overriddenMembers) {
             overrideByBase[member] = symbolToBeCollected
         }
         return true
     }
 
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
-        builtinWithErasedParameters: FirNamedFunctionSymbol
+        builtinWithErasedParameters: FirNamedFunctionSymbol,
     ): Boolean {
-        return fir.computeJvmDescriptor(includeReturnType = false) == builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
+        val ownDescriptor = fir.computeJvmDescriptor(includeReturnType = false)
+        val otherDescriptor = builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
+        return ownDescriptor == otherDescriptor
     }
 
     /**
@@ -677,7 +673,7 @@ class JavaClassUseSiteMemberScope(
         naturalName: Name,
         resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
         destination: MutableCollection<FirNamedFunctionSymbol>,
-        functionsFromSupertypesToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>
+        functionsFromSupertypesToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>,
     ): Boolean {
         // The JVM name of the function, e.g., byteValue or charAt
         val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
@@ -739,9 +735,11 @@ class JavaClassUseSiteMemberScope(
                     symbol = newSymbol
                     dispatchReceiverType = klass.defaultType()
 
-                    // Technically, it should only be an operator if it matches an operator naming convention,
-                    // but always setting it doesn't seem to hurt.
-                    status = original.status.copy(isOperator = true)
+                    status = if (OperatorConventions.isConventionName(naturalName)) {
+                        original.status.copy(isOperator = true)
+                    } else {
+                        original.status
+                    }
                 }
             } else {
                 buildSimpleFunctionCopy(original) {
@@ -751,7 +749,7 @@ class JavaClassUseSiteMemberScope(
                     origin?.let { this.origin = it }
                 }
             }.apply {
-                initialSignatureAttr = original
+                initialSignatureAttr = original.symbol
                 if (isHidden) {
                     isHiddenToOvercomeSignatureClash = true
                 }
@@ -907,8 +905,8 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirTypeRef.probablyJavaTypeRefToConeType(): ConeKotlinType {
         return toConeKotlinTypeProbablyFlexible(
-                session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-            )
+            session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        )
     }
 
     // It's either overrides Collection.contains(Object) or Collection.containsAll(Collection<?>) or similar methods
@@ -984,7 +982,7 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin == FirDeclarationOrigin.BuiltIns -> false
+            isInterface || origin.isBuiltIns -> false
             else -> true
         }
 
@@ -999,5 +997,15 @@ class JavaClassUseSiteMemberScope(
 
     override fun toString(): String {
         return "Java use site scope of ${ownerClassLookupTag.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JavaClassUseSiteMemberScope {
+        return JavaClassUseSiteMemberScope(
+            klass,
+            newSession,
+            superTypeScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypeScopes,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope
+        )
     }
 }

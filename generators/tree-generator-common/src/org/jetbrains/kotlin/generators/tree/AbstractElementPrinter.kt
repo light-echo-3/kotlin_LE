@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -14,58 +16,51 @@ import org.jetbrains.kotlin.utils.withIndent
  * A common class for printing FIR or IR tree elements.
  */
 abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
-    private val printer: SmartPrinter,
+    private val printer: ImportCollectingPrinter,
 ) {
 
-    protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<Field>
+    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field>
 
-    context(ImportCollector)
-    protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
+    protected abstract fun ImportCollectingPrinter.printAdditionalMethods(element: Element)
 
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
     protected open fun filterFields(element: Element): Collection<Field> = element.allFields
 
-    context(ImportCollector)
+    protected open fun ImportCollecting.elementKDoc(element: Element): String = element.extendedKDoc()
+
     fun printElement(element: Element) {
-        addAllImports(element.additionalImports)
         printer.run {
             val kind = element.kind ?: error("Expected non-null element kind")
 
-            printKDoc(element.extendedKDoc())
+            printKDoc(elementKDoc(element))
             print(kind.title, " ", element.typeName)
             print(element.params.typeParameters())
-
-            val parentRefs = element.parentRefs
-            if (parentRefs.isNotEmpty()) {
-                print(
-                    parentRefs.sortedBy { it.typeKind }.joinToString(prefix = " : ") { parent ->
-                        parent.render() + parent.inheritanceClauseParenthesis()
-                    }
-                )
-            }
+            printInheritanceClause(element.parentRefs)
             print(element.params.multipleUpperBoundsList())
 
-            val body = SmartPrinter(StringBuilder()).apply {
+            val printer = SmartPrinter(StringBuilder())
+            this@AbstractElementPrinter.printer.withNewPrinter(printer) {
                 val fieldPrinter = makeFieldPrinter(this)
                 withIndent {
                     for (field in filterFields(element)) {
                         if (field.isParameter) continue
-                        if (field.isFinal && field.fromParent) {
+                        if (field.isFinal && field.isOverride) {
                             continue
                         }
                         if (separateFieldsWithBlankLine) println()
                         fieldPrinter.printField(
                             field,
                             inImplementation = false,
-                            override = field.fromParent,
+                            override = field.isOverride,
                             modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface },
                         )
                     }
                     printAdditionalMethods(element)
                 }
-            }.toString()
+            }
+            val body = printer.toString()
 
             if (body.isNotEmpty()) {
                 println(" {")
@@ -73,6 +68,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                 print("}")
             }
             println()
+            addAllImports(element.additionalImports)
         }
     }
 }

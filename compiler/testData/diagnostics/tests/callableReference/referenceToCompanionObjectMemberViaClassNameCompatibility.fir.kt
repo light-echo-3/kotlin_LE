@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class A {
     companion object {
@@ -17,7 +17,7 @@ class B {
     }
 }
 
-fun B.foo(): Double = 0.0
+fun B.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(): Double = 0.0
 
 fun call(a: Any) {}
 

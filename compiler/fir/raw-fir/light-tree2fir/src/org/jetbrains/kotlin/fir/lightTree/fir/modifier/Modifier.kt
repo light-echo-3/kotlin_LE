@@ -108,13 +108,13 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasCrossinline(): Boolean = hasFlag(ModifierFlag.PARAMETER_CROSSINLINE)
 
-    fun hasExpect(): Boolean = hasFlag(ModifierFlag.PLATFORM_EXPECT) || hasFlag(ModifierFlag.PLATFORM_HEADER)
+    fun hasExpect(): Boolean = hasFlag(ModifierFlag.PLATFORM_EXPECT)
 
-    fun hasActual(): Boolean = hasFlag(ModifierFlag.PLATFORM_ACTUAL) || hasFlag(ModifierFlag.PLATFORM_IMPL)
+    fun hasActual(): Boolean = hasFlag(ModifierFlag.PLATFORM_ACTUAL)
 
     fun hasConst(): Boolean = hasFlag(ModifierFlag.PARAMETER_CONST)
 
-    protected fun hasFlag(flag: ModifierFlag) = (modifiers and flag.value) == flag.value
+    protected fun hasFlag(flag: ModifierFlag): Boolean = (modifiers and flag.value) == flag.value
 
     protected fun setFlag(flag: ModifierFlag?) {
         if (flag != null) {

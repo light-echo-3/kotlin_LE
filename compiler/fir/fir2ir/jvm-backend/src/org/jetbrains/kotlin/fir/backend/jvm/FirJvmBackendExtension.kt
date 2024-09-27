@@ -48,7 +48,7 @@ class FirJvmBackendExtension(
         )
     }
 
-    override fun createModuleMetadataSerializer(context: JvmBackendContext) = object : ModuleMetadataSerializer {
+    override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
         override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
 
             require(metadata is FirMetadataSource.Class) { "Metadata is expected to be ${FirMetadataSource.Class::class.simpleName}" }
@@ -71,6 +71,8 @@ class FirJvmBackendExtension(
                         stringTable.getQualifiedClassNameIndex(className, isLocal)
 
                     override fun getStringIndex(string: String): Int = stringTable.getStringIndex(string)
+
+                    override fun getPackageFqNameIndexByString(fqName: String): Int = stringTable.getPackageFqNameIndexByString(fqName)
                 }
             ) {
                 override fun serializeClass(

@@ -29,15 +29,12 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
-import org.jetbrains.kotlin.library.packageFqName
-import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -375,7 +372,7 @@ private fun processCLib(
         _, oldValue, newValue ->
             warn("The package value `$oldValue` specified in .def file is overridden with explicit $newValue")
     }
-    def.manifestAddendProperties["interop"] = "true"
+    def.manifestAddendProperties[KLIB_PROPERTY_INTEROP] = "true"
     if (stubIrOutput is StubIrDriver.Result.Metadata) {
         def.manifestAddendProperties[KLIB_PROPERTY_IR_PROVIDER] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }
@@ -450,7 +447,6 @@ private fun processCLib(
                     nativeBitcodeFiles = compiledFiles + nativeOutputPath,
                     target = tool.target,
                     moduleName = moduleName,
-                    libraryVersion = cinteropArguments.libraryVersion,
                     outputPath = outputPath,
                     manifest = def.manifestAddendProperties,
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
@@ -480,28 +476,26 @@ private fun compileSources(
 private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
 ): KotlinLibraryResolverImpl<KonanLibrary> {
-    val libraries = cinteropArguments.library
-    val repos = cinteropArguments.repo
     return defaultResolver(
-            repos,
-            libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
-            target,
-            Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
+        directLibs = cinteropArguments.library,
+        target,
+        Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
     ).libraryResolver()
 }
 
 private fun resolveDependencies(
         resolver: KotlinLibraryResolverImpl<KonanLibrary>, cinteropArguments: CInteropArguments
 ): List<KotlinLibrary> {
-    val libraries = cinteropArguments.library
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
     val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    return resolver.resolveWithDependencies(
-            libraries.toUnresolvedLibraries,
-            noStdLib = false,
-            noDefaultLibs = noDefaultLibs,
-            noEndorsedLibs = noEndorsedLibs
+    val resolvedLibraries = resolver.resolveWithDependencies(
+        unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
+        noStdLib = false,
+        noDefaultLibs = noDefaultLibs,
+        noEndorsedLibs = noEndorsedLibs
     ).getFullList(TopologicalLibraryOrder)
+    validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
+    return resolvedLibraries
 }
 
 internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon: Boolean, propertyOverrides: Map<String, String> = emptyMap(), konanDataDir: String? = null) =
@@ -585,7 +579,8 @@ internal fun buildNativeLibrary(
             excludeSystemLibs = excludeSystemLibs,
             headerExclusionPolicy = headerExclusionPolicy,
             headerFilter = headerFilter,
-            objCClassesIncludingCategories = objCClassesIncludingCategories
+            objCClassesIncludingCategories = objCClassesIncludingCategories,
+            allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
     )
 }
 

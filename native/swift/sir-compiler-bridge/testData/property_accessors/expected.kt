@@ -1,14 +1,14 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("getter_bridge")
 public fun getter_bridge(): Boolean {
-    val _result = variable()
+    val _result = variable
     return _result
 }
 
-@ExportedBridge("setter_bridge__TypesOfArguments___Bool__")
-public fun setter_bridge(newValue: Boolean): Unit {
+@ExportedBridge("setter_bridge__TypesOfArguments__Bool__")
+public fun setter_bridge__TypesOfArguments__Bool__(newValue: Boolean): Unit {
     val __newValue = newValue
-    val _result = variable(__newValue)
-    return _result
+    variable = __newValue
 }

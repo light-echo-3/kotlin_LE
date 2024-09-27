@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
+import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
@@ -27,7 +27,7 @@ abstract class AbstractK1WasmTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.ClassicFrontend, TargetBackend.WASM, pathToTestDir, testGroupOutputDirPrefix
+    FrontendKinds.ClassicFrontend, TargetBackend.WASM, WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
@@ -36,7 +36,7 @@ abstract class AbstractK1WasmTest(
         get() = ::ClassicFrontend2IrConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirWasmKlibBackendFacade
+        get() = ::FirWasmKlibSerializerFacade
 
     override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>>
         get() = ::WasmBackendFacade
@@ -80,6 +80,7 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
         commonConfigurationForWasmBlackBoxCodegenTest()
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+            +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
         }
     }
 }

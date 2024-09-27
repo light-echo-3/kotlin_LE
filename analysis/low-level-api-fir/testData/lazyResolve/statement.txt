@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -33,11 +33,11 @@ FILE: [ResolvedTo(RAW_FIR)] statement.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -66,11 +66,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -99,11 +99,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -132,11 +132,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -165,11 +165,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -198,11 +198,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -231,11 +231,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -264,11 +264,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -297,11 +297,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -330,11 +330,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -363,11 +363,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -396,11 +396,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -449,11 +449,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -503,3 +503,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/builder|.R|/Builder.version| = String()
         }
+

@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Test
@@ -36,6 +36,18 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   @TestMetadata("cloneableInNative.kt")
   public void testCloneableInNative() {
     runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
+  }
+
+  @Test
+  @TestMetadata("dynamic.kt")
+  public void testDynamic() {
+    runTest("compiler/testData/diagnostics/nativeTests/dynamic.kt");
+  }
+
+  @Test
+  @TestMetadata("externalNonFunctions.kt")
+  public void testExternalNonFunctions() {
+    runTest("compiler/testData/diagnostics/nativeTests/externalNonFunctions.kt");
   }
 
   @Test
@@ -66,6 +78,12 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
+  }
+
+  @Test
+  @TestMetadata("noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt")
+  public void testNoIncompatibleThrowsOnSubstitutionAndIntersectionOverrides() {
+    runTest("compiler/testData/diagnostics/nativeTests/noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt");
   }
 
   @Test
@@ -189,7 +207,13 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("objCAction_expectAnnotation.kt")
+    public void testObjCAction_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCAction_expectAnnotation.kt");
     }
 
     @Test
@@ -199,9 +223,21 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     }
 
     @Test
+    @TestMetadata("objCOutlet_expectAnnotation.kt")
+    public void testObjCOutlet_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCOutlet_expectAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("objCRefinement_expectAnnotation.kt")
     public void testObjCRefinement_expectAnnotation() {
       runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCRefinement_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideInit_expectAnnotation.kt")
+    public void testOverrideInit_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/overrideInit_expectAnnotation.kt");
     }
 
     @Test
@@ -224,7 +260,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   public class SpecialBackendChecks {
     @Test
     public void testAllFilesPresentInSpecialBackendChecks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Nested
@@ -234,7 +270,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class CInterop {
       @Test
       public void testAllFilesPresentInCInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -371,7 +407,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class Concurrent {
       @Test
       public void testAllFilesPresentInConcurrent() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -406,7 +442,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class ImmutableBlobOf {
       @Test
       public void testAllFilesPresentInImmutableBlobOf() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -441,7 +477,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class NativeRef {
       @Test
       public void testAllFilesPresentInNativeRef() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -464,7 +500,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class ObjCInterop {
       @Test
       public void testAllFilesPresentInObjCInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -637,7 +673,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class Posix {
       @Test
       public void testAllFilesPresentInPosix() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -660,7 +696,7 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     public class Reflect {
       @Test
       public void testAllFilesPresentInReflect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test

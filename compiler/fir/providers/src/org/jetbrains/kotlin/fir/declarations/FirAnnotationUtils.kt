@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -57,7 +56,7 @@ private val sourceName: Name = Name.identifier("SOURCE")
 fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     this.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
-        firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
+        firAnnotationClass != null && firAnnotationClass.symbol.resolvedAnnotationsWithClassIds.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
                     meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
                         ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName
@@ -111,13 +110,27 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
-        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+        it.doesMatchesClassId(classId, session)
+    }
+}
+
+private fun FirAnnotation.doesMatchesClassId(
+    classId: ClassId,
+    session: FirSession,
+): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.classLikeLookupTagIfAny?.classId == classId
+
+fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
+    return filterNot {
+        it.doesMatchesClassId(classId, session)
     }
 }
 
 fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
     return firstOrNull {
-        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
+        it.annotationTypeRef.coneTypeSafe<ConeKotlinType>()
+            ?.fullyExpandedType(session)
+            ?.classLikeLookupTagIfAny
+            ?.classId in classIds
     }
 }
 
@@ -145,14 +158,14 @@ fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = 
 
 private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
     val argument = findArgumentByName(name) ?: return null
-    val literal = argument.evaluateAs<FirLiteralExpression<*>>(session) ?: return null
+    val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return null
     return literal.value as? T
 }
 
 fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
     val argument = findArgumentByName(name) ?: return null
     val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
-    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
+    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
 fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {
@@ -217,6 +230,6 @@ private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
     ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
 
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
-    val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
+    val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }

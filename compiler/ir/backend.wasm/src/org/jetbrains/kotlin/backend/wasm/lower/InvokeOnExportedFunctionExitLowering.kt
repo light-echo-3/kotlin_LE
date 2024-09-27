@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.Name
 
 // This pass needed to call coroutines event loop run after exported functions calls
@@ -52,12 +54,14 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
     private fun processExportFunction(irFunction: IrFunction) {
         val body = irFunction.body ?: return
         if (body is IrBlockBody && body.statements.isEmpty()) return
-        if (irFunction in context.closureCallExports.values) return
+        context.applyIfDefined(irFunction.file) {
+            if (irFunction in it.closureCallExports.values) return
+        }
 
         val bodyType = when (body) {
             is IrExpressionBody -> body.expression.type
             is IrBlockBody -> context.irBuiltIns.unitType
-            else -> TODO(this::class.qualifiedName!!)
+            is IrSyntheticBody -> syntheticBodyIsNotSupported(irFunction)
         }
 
         with(context.createIrBuilder(irFunction.symbol)) {
@@ -73,17 +77,18 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                 irGet(irBooleanType, null, isNotFirstWasmExportCallGetter)
 
             val tryBody = irComposite {
-                +irSet(irBooleanType, null, isNotFirstWasmExportCallSetter, true.toIrConst(irBooleanType))
-                when (body) {
-                    is IrBlockBody -> body.statements.forEach { +it }
-                    is IrExpressionBody -> +body.expression
-                    else -> TODO(this::class.qualifiedName!!)
-                }
+                +irSet(
+                    isNotFirstWasmExportCallSetter.owner.returnType,
+                    null, isNotFirstWasmExportCallSetter,
+                    true.toIrConst(irBooleanType)
+                )
+
+                +body.statements
             }
 
             val finally = irComposite(resultType = context.irBuiltIns.unitType) {
                 +irSet(
-                    type = irBooleanType,
+                    type = isNotFirstWasmExportCallSetter.owner.returnType,
                     receiver = null,
                     setterSymbol = isNotFirstWasmExportCallSetter,
                     value = irGet(currentIsNotFirstWasmExportCall, irBooleanType)
@@ -102,6 +107,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                 finallyExpression = finally
             )
 
+            @Suppress("KotlinConstantConditions")
             when (body) {
                 is IrExpressionBody -> body.expression = irComposite {
                     +currentIsNotFirstWasmExportCall
@@ -112,7 +118,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                     add(currentIsNotFirstWasmExportCall)
                     add(tryWrap)
                 }
-                else -> TODO(this::class.qualifiedName!!)
+                is IrSyntheticBody -> syntheticBodyIsNotSupported(irFunction)
             }
         }
     }
@@ -120,7 +126,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
     override fun lower(irFile: IrFile) {
         if (context.isWasmJsTarget) return
         for (declaration in irFile.declarations) {
-            if (declaration is IrFunction && (declaration.isExported() || context.mainCallsWrapperFunction == declaration)) {
+            if (declaration is IrFunction && (declaration.isExported() || declaration == context.getFileContext(irFile).mainFunctionWrapper)) {
                 processExportFunction(declaration)
             }
         }

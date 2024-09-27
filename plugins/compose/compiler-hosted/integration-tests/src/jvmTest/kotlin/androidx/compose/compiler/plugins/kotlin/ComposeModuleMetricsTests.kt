@@ -22,7 +22,10 @@ import org.junit.Test
 class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         // Tests in this file are about testing the output, so we want non-skippable composables
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(FeatureFlag.StrongSkipping.disabledName)
+        )
     }
 
     @Test
@@ -122,29 +125,35 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
         """,
         """
             {
-             "skippableComposables": 2,
-             "restartableComposables": 2,
-             "readonlyComposables": 0,
-             "totalComposables": 2,
-             "restartGroups": 2,
-             "totalGroups": 2,
-             "staticArguments": 0,
-             "certainArguments": 1,
-             "knownStableArguments": 2,
-             "knownUnstableArguments": 0,
-             "unknownStableArguments": 0,
-             "totalArguments": 2,
-             "markedStableClasses": 0,
-             "inferredStableClasses": 0,
-             "inferredUnstableClasses": 0,
-             "inferredUncertainClasses": 0,
-             "effectivelyStableClasses": 0,
-             "totalClasses": 0,
-             "memoizedLambdas": 0,
-             "singletonLambdas": 0,
-             "singletonComposableLambdas": 0,
-             "composableLambdas": 0,
-             "totalLambdas": 0
+              "skippableComposables": 2,
+              "restartableComposables": 2,
+              "readonlyComposables": 0,
+              "totalComposables": 2,
+              "restartGroups": 2,
+              "totalGroups": 2,
+              "staticArguments": 0,
+              "certainArguments": 1,
+              "knownStableArguments": 2,
+              "knownUnstableArguments": 0,
+              "unknownStableArguments": 0,
+              "totalArguments": 2,
+              "markedStableClasses": 0,
+              "inferredStableClasses": 0,
+              "inferredUnstableClasses": 0,
+              "inferredUncertainClasses": 0,
+              "effectivelyStableClasses": 0,
+              "totalClasses": 0,
+              "memoizedLambdas": 0,
+              "singletonLambdas": 0,
+              "singletonComposableLambdas": 0,
+              "composableLambdas": 0,
+              "totalLambdas": 0,
+              "featureFlags": {
+                "StrongSkipping": false,
+                "IntrinsicRemember": true,
+                "OptimizeNonSkippingGroups": false,
+                "PausableComposition": false
+              }
             }
         """
     )

@@ -1,4 +1,4 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY)
 annotation class An
@@ -15,7 +15,7 @@ interface B {
     fun <T> a(@An arg: @An Int)
 }
 
-<!CONFLICTING_INHERITED_MEMBERS("C; '@An() fun a(@An() arg: @An() Int): Unit' defined in '/A', '@An() fun <T> a(@An() arg: @An() Int): Unit' defined in '/B'")!>interface C<!> : A, B
+<!CONFLICTING_INHERITED_MEMBERS("C; 'fun a(arg: @An() Int): Unit' defined in '/A', 'fun <T> a(arg: @An() Int): Unit' defined in '/B'")!>interface C<!> : A, B
 
 @An
 abstract class D {

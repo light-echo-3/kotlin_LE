@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
 object TestFirWasmSessionFactory {
@@ -35,9 +36,8 @@ object TestFirWasmSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
-        val target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         val resolvedLibraries = resolveLibraries(
             configuration = configuration,
             paths = getAllWasmDependenciesPaths(module, testServices, target)
@@ -50,14 +50,13 @@ object TestFirWasmSessionFactory {
             moduleDataProvider,
             extensionRegistrars,
             languageVersionSettings,
-            registerExtraComponents,
+            configuration.wasmTarget,
         )
     }
 
     fun createModuleBasedSession(
         mainModuleData: FirModuleData, sessionProvider: FirProjectSessionProvider, extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings, wasmTarget: WasmTarget, lookupTracker: LookupTracker?,
-        registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirWasmSessionFactory.createModuleBasedSession(
@@ -68,7 +67,6 @@ object TestFirWasmSessionFactory {
             wasmTarget,
             lookupTracker,
             icData = null,
-            registerExtraComponents,
             sessionConfigurator
         )
 }
@@ -81,7 +79,7 @@ fun resolveWasmLibraries(
     val paths = getAllWasmDependenciesPaths(
         module = module,
         testServices = testServices,
-        target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
     )
     return resolveLibraries(configuration, paths)
 }

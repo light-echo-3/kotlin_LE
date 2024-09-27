@@ -33,9 +33,9 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
 ) : IrTypeAlias() {
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    override lateinit var parent: IrDeclarationParent
-
     override var typeParameters: List<IrTypeParameter> = emptyList()
+
+    override var metadata: MetadataSource? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: TypeAliasDescriptor

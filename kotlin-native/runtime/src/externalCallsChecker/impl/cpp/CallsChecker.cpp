@@ -157,6 +157,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "dispatch_async_f",
         "dispatch_once",
         "pthread_equal",
+        "pthread_key_create",
+        "pthread_once",
         "pthread_main_np",
         "pthread_self",
 
@@ -166,6 +168,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "+[NSObject class]",
         "+[NSObject conformsToProtocol:]",
         "+[NSObject isKindOfClass:]",
+        "+[NSObject isSubclassOfClass:]",
         "+[NSObject new]",
         "+[NSString stringWithFormat:]",
         "+[NSString stringWithUTF8String:]",
@@ -175,6 +178,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "-[NSMethodSignature getArgumentTypeAtIndex:]",
         "-[NSMethodSignature methodReturnType]",
         "-[NSMethodSignature numberOfArguments]",
+        "-[NSObject class]",
         "-[NSObject conformsToProtocol:]",
         "-[NSObject init]",
         "-[NSObject isKindOfClass:]",
@@ -220,6 +224,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "os_signpost_id_make_with_pointer",
         "protocol_getName",
 
+        "llvm.abs.*",
         "llvm.assume",
         "llvm.ceil.*",
         "llvm.copysign.*",
@@ -230,9 +235,11 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.dbg.*",
         "llvm.eh.typeid.for",
         "llvm.exp.*",
+        "llvm.experimental.noalias.scope.decl",
         "llvm.fabs.*",
         "llvm.fabs.*",
         "llvm.floor.*",
+        "llvm.fmuladd.*",
         "llvm.instrprof.*",
         "llvm.lifetime.*",
         "llvm.log.*",
@@ -255,7 +262,12 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.pow.*",
         "llvm.rint.*",
         "llvm.sin.*",
+        "llvm.smax.*",
+        "llvm.smin.*",
         "llvm.sqrt.*",
+        "llvm.threadlocal.address*",
+        "llvm.umax.*",
+        "llvm.umin.*",
         "llvm.umul.*",
         "llvm.va_end",
         "llvm.va_start",
@@ -374,9 +386,9 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
-CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
+ALWAYS_INLINE CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
     ++ignoreGuardsCount;
 }
-CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
+ALWAYS_INLINE CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
     --ignoreGuardsCount;
 }

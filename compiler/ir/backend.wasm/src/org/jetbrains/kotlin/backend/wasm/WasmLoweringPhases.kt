@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,20 +20,25 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.toTargetPlatform
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
 private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+    ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
+private val validateIrAfterInliningPhase = makeIrModulePhase(
+    ::IrValidationAfterInliningAllFunctionsPhase,
+    name = "IrValidationAfterInliningAllFunctionsPhase",
+    description = "Validate IR after all functions have been inlined",
+)
+
 private val validateIrAfterLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+    ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -42,6 +47,12 @@ private val generateTests = makeIrModulePhase(
     ::GenerateWasmTests,
     name = "GenerateTests",
     description = "Generates code to execute kotlin.test cases"
+)
+
+private val generateTestsIC = makeIrModulePhase(
+    ::GenerateWasmTestsIC,
+    name = "GenerateTestsIC",
+    description = "Generates code to execute kotlin.test cases for IC"
 )
 
 private val expectDeclarationsRemovingPhase = makeIrModulePhase(
@@ -80,17 +91,17 @@ private val rangeContainsLoweringPhase = makeIrModulePhase(
     description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
 )
 
-private val arrayConstructorReferencePhase = makeIrModulePhase(
-    ::WasmArrayConstructorReferenceLowering,
-    name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a ::create#Array"
+private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
+    ::WasmInlineCallableReferenceToLambdaPhase,
+    name = "WasmInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 private val arrayConstructorPhase = makeIrModulePhase(
-    ::WasmArrayConstructorLowering,
+    ::ArrayConstructorLowering,
     name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into create#Array { index -> value } call",
-    prerequisite = setOf(arrayConstructorReferencePhase)
+    description = "Transform `Array(size) { index -> value }` into a loop",
+    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -137,7 +148,6 @@ private val functionInliningPhase = makeIrModulePhase(
         expectDeclarationsRemovingPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersPhase,
         localClassesInInlineLambdasPhase,
-        localClassesInInlineFunctionsPhase,
     )
 )
 
@@ -347,10 +357,10 @@ private val addContinuationToFunctionCallsLoweringPhase = makeIrModulePhase(
     )
 )
 
-private val addMainFunctionCallsLowering = makeIrModulePhase(
-    ::GenerateMainFunctionCalls,
-    name = "GenerateMainFunctionCalls",
-    description = "Generate main function calls into start function",
+private val generateMainFunctionWrappersPhase = makeIrModulePhase(
+    ::GenerateMainFunctionWrappers,
+    name = "GenerateMainFunctionWrappers",
+    description = "Find main functions and generate main function wrappers",
 )
 
 private val defaultArgumentStubGeneratorPhase = makeIrModulePhase<WasmBackendContext>(
@@ -418,18 +428,17 @@ private val excludeDeclarationsFromCodegenPhase = makeIrModulePhase(
     description = "Move excluded declarations to separate place"
 )
 
-private val jsExceptionReveal = makeIrModulePhase(
-    ::JsExceptionRevealLowering,
-    name = "JsExceptionRevealLowering",
-    description = "Wraps try statement into try with revealed JS exception",
-    prerequisite = setOf(functionInliningPhase)
+private val unhandledExceptionLowering = makeIrModulePhase(
+    ::UnhandledExceptionLowering,
+    name = "UnhandledExceptionLowering",
+    description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
 )
 
 private val tryCatchCanonicalization = makeIrModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
     description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
-    prerequisite = setOf(functionInliningPhase, jsExceptionReveal)
+    prerequisite = setOf(functionInliningPhase, unhandledExceptionLowering)
 )
 
 private val bridgesConstructionPhase = makeIrModulePhase(
@@ -562,13 +571,6 @@ private val removeInitializersForLazyProperties = makeIrModulePhase(
     description = "Remove property initializers if they was initialized lazily"
 )
 
-private val unhandledExceptionLowering = makeIrModulePhase(
-    ::UnhandledExceptionLowering,
-    name = "UnhandledExceptionLowering",
-    description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
-    prerequisite = setOf(jsExceptionReveal)
-)
-
 private val propertyAccessorInlinerLoweringPhase = makeIrModulePhase(
     ::PropertyAccessorInlineLowering,
     name = "PropertyAccessorInlineLowering",
@@ -613,18 +615,11 @@ private val whenBranchOptimiserLoweringPhase = makeIrModulePhase(
     description = "[Optimization] Remove unreachable code in when's, it needed because dead paths could have an invalid IR after the inliner",
 )
 
-private val fieldInitializersLoweringPhase = makeIrModulePhase(
-    ::FieldInitializersLowering,
-    name = "FieldInitializersLowering",
-    description = "Move field initializers to start function",
-    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
-)
-
 val constEvaluationPhase = makeIrModulePhase(
     { context ->
         val configuration = IrInterpreterConfiguration(
             printOnlyExceptionMessage = true,
-            platform = WasmPlatform.toTargetPlatform(),
+            platform = WasmPlatforms.unspecifiedWasmPlatform,
         )
         ConstEvaluationLowering(context, configuration = configuration)
     },
@@ -633,10 +628,13 @@ val constEvaluationPhase = makeIrModulePhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
-val loweringList = listOf(
+fun getWasmLowerings(
+    isIncremental: Boolean
+): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     validateIrBeforeLowering,
     jsCodeCallsLowering,
-    generateTests,
+    generateTests.takeIf { !isIncremental },
+    generateTestsIC.takeIf { isIncremental },
     excludeDeclarationsFromCodegenPhase,
     expectDeclarationsRemovingPhase,
 
@@ -644,16 +642,18 @@ val loweringList = listOf(
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     rangeContainsLoweringPhase,
-    arrayConstructorReferencePhase,
-    arrayConstructorPhase,
+
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
 
+    inlineCallableReferenceToLambdaPhase,
+    arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
     functionInliningPhase,
+    validateIrAfterInliningPhase,
     constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
@@ -702,18 +702,22 @@ val loweringList = listOf(
 
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
-    addMainFunctionCallsLowering,
+    generateMainFunctionWrappersPhase,
 
     invokeOnExportedFunctionExitLowering,
 
-    jsExceptionReveal,
     unhandledExceptionLowering,
     tryCatchCanonicalization,
 
     forLoopsLoweringPhase,
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
-    propertyAccessorInlinerLoweringPhase,
+
+    // This doesn't work with IC as of now for accessors within inline functions because
+    //  there is no special case for Wasm in the computation of inline function transitive
+    //  hashes the same way it's being done with the calculation of symbol hashes.
+    propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental },
+
     stringConcatenationLowering,
 
     defaultArgumentStubGeneratorPhase,
@@ -743,8 +747,7 @@ val loweringList = listOf(
     autoboxingTransformerPhase,
 
     objectUsageLoweringPhase,
-    purifyObjectInstanceGettersLoweringPhase,
-    fieldInitializersLoweringPhase,
+    purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental },
 
     explicitlyCastExternalTypesPhase,
     typeOperatorLoweringPhase,
@@ -755,16 +758,21 @@ val loweringList = listOf(
     virtualDispatchReceiverExtractionPhase,
     invokeStaticInitializersPhase,
     staticMembersLoweringPhase,
-    inlineObjectsWithPureInitializationLoweringPhase,
+
+    // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
+    inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental },
+
     whenBranchOptimiserLoweringPhase,
     validateIrAfterLowering,
 )
 
-val wasmPhases = SameTypeNamedCompilerPhase(
+fun getWasmPhases(
+    isIncremental: Boolean
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    lower = getWasmLowerings(isIncremental).toCompilerPhase(),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
 

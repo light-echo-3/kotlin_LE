@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -10,7 +11,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(kotlinxCollectionsImmutable())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(project(":compiler:psi"))
@@ -19,12 +19,10 @@ dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:kt-references"))
-    api(project(":analysis:project-structure"))
 
     api(intellijCore())
-    api(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    api(libs.intellij.asm)
     api(libs.guava)
 }
 
@@ -35,6 +33,16 @@ kotlin {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+apiValidation {
+    nonPublicMarkers += listOf(
+        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface" // Platform interface is not stable yet
+    )
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

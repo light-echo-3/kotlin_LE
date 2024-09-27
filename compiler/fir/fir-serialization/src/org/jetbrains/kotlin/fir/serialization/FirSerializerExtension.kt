@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -26,7 +27,9 @@ abstract class FirSerializerExtension {
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider) }
+    val annotationSerializer: FirAnnotationSerializer by lazy {
+        FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider)
+    }
 
     abstract val constValueProvider: ConstValueProvider?
     protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
@@ -106,6 +109,10 @@ abstract class FirSerializerExtension {
         for (annotation in typeAlias.nonSourceAnnotations(session)) {
             proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
         }
+    }
+
+    open fun getClassSupertypes(klass: FirClass): List<FirTypeRef> {
+        return klass.superTypeRefs
     }
 
     fun hasAdditionalAnnotations(declaration: FirDeclaration): Boolean {

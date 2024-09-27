@@ -45,7 +45,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
     private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG) }
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
-        return receiverType.type.scope(
+        return receiverType.coneType.scope(
             useSiteSession = session,
             scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
@@ -57,15 +57,14 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         return element
     }
 
-    override fun <T> transformLiteralExpression(
-        literalExpression: FirLiteralExpression<T>,
+    override fun transformLiteralExpression(
+        literalExpression: FirLiteralExpression,
         data: ConeKotlinType?,
     ): FirStatement {
         val type = literalExpression.resolvedType as? ConeIntegerLiteralType ?: return literalExpression
         val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
         literalExpression.resultType = approximatedType
-        @Suppress("UNCHECKED_CAST")
-        val kind = approximatedType.toConstKind() as ConstantValueKind<T>
+        val kind = approximatedType.toConstKind() as ConstantValueKind
         literalExpression.replaceKind(kind)
         return literalExpression
     }
@@ -110,15 +109,15 @@ class IntegerLiteralAndOperatorApproximationTransformer(
 
         if (approximatedType.isInt || approximatedType.isUInt) return call
         val typeBeforeConversion = if (operatorType.isUnsigned) {
-            session.builtinTypes.uIntType.type
+            session.builtinTypes.uIntType.coneType
         } else {
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         }
         call.replaceConeTypeOrNull(typeBeforeConversion)
 
         return buildFunctionCall {
             source = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
-            coneTypeOrNull = session.builtinTypes.longType.type
+            coneTypeOrNull = session.builtinTypes.longType.coneType
             explicitReceiver = call
             dispatchReceiver = call
             this.calleeReference = buildResolvedNamedReference {

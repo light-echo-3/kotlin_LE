@@ -76,14 +76,6 @@ class BaseWriterImpl(
         } else {
             val newValue = libraries.map { it.uniqueName }.toSpaceSeparatedString()
             manifestProperties.setProperty(KLIB_PROPERTY_DEPENDS, newValue)
-            libraries.forEach { it ->
-                if (it.versions.libraryVersion != null) {
-                    manifestProperties.setProperty(
-                        "${KLIB_PROPERTY_DEPENDENCY_VERSION}_${it.uniqueName}",
-                        it.versions.libraryVersion
-                    )
-                }
-            }
         }
     }
 
@@ -126,7 +118,6 @@ fun buildKotlinLibrary(
     nopack: Boolean,
     perFile: Boolean,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
@@ -153,7 +144,6 @@ fun buildKotlinLibrary(
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
-    dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
     library.commit()
     return library.layout

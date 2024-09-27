@@ -269,6 +269,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     }
 
     @Test
+    @TestMetadata("sealedClassConstructorVisibility.kt")
+    public void testSealedClassConstructorVisibility() {
+      runTest("compiler/testData/ir/irText/classes/sealedClassConstructorVisibility.kt");
+    }
+
+    @Test
     @TestMetadata("sealedClasses.kt")
     public void testSealedClasses() {
       runTest("compiler/testData/ir/irText/classes/sealedClasses.kt");
@@ -556,6 +562,18 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       }
 
       @Test
+      @TestMetadata("annotationRetentions.kt")
+      public void testAnnotationRetentions() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationRetentions.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationRetentionsMultiModule.kt")
+      public void testAnnotationRetentionsMultiModule() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationRetentionsMultiModule.kt");
+      }
+
+      @Test
       @TestMetadata("annotationsInAnnotationArguments.kt")
       public void testAnnotationsInAnnotationArguments() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
@@ -709,6 +727,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @TestMetadata("receiverParameterWithAnnotations.kt")
       public void testReceiverParameterWithAnnotations() {
         runTest("compiler/testData/ir/irText/declarations/annotations/receiverParameterWithAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("specialAnnotationsMetadata.kt")
+      public void testSpecialAnnotationsMetadata() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/specialAnnotationsMetadata.kt");
       }
 
       @Test
@@ -1008,6 +1032,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
         @TestMetadata("expectedEnumClass.kt")
         public void testExpectedEnumClass() {
           runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectedEnumClass.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedFun.kt")
+        public void testExpectedFun() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectedFun.kt");
         }
 
         @Test
@@ -1707,6 +1737,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     }
 
     @Test
+    @TestMetadata("lambdaWithParameterName.kt")
+    public void testLambdaWithParameterName() {
+      runTest("compiler/testData/ir/irText/expressions/lambdaWithParameterName.kt");
+    }
+
+    @Test
     @TestMetadata("literals.kt")
     public void testLiterals() {
       runTest("compiler/testData/ir/irText/expressions/literals.kt");
@@ -1998,6 +2034,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("compiler/testData/ir/irText/expressions/vararg.kt");
+    }
+
+    @Test
+    @TestMetadata("varargListOfJsStatement.kt")
+    public void testVarargListOfJsStatement() {
+      runTest("compiler/testData/ir/irText/expressions/varargListOfJsStatement.kt");
     }
 
     @Test
@@ -2360,6 +2402,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Test
     public void testAllFilesPresentInFakeOverrides() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("capturedTypeInFakeOverride.kt")
+    public void testCapturedTypeInFakeOverride() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/capturedTypeInFakeOverride.kt");
     }
 
     @Test
@@ -2822,6 +2870,18 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @TestMetadata("timesInBuilder.kt")
     public void testTimesInBuilder() {
       runTest("compiler/testData/ir/irText/firProblems/timesInBuilder.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasInImport.kt")
+    public void testTypeAliasInImport() {
+      runTest("compiler/testData/ir/irText/firProblems/TypeAliasInImport.kt");
+    }
+
+    @Test
+    @TestMetadata("typeOfNonExhaustiveWhen.kt")
+    public void testTypeOfNonExhaustiveWhen() {
+      runTest("compiler/testData/ir/irText/firProblems/typeOfNonExhaustiveWhen.kt");
     }
 
     @Test

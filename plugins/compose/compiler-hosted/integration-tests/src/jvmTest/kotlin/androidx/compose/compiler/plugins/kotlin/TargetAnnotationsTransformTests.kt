@@ -225,11 +225,8 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
     fun testReceiverScope() = verifyGoldenComposeIrTransform(
         """
         import androidx.compose.runtime.*
-        import androidx.compose.ui.layout.*
-        import androidx.compose.foundation.text.*
-        import androidx.compose.ui.text.*
-        import androidx.compose.ui.text.style.*
         import androidx.compose.ui.*
+        import androidx.compose.ui.layout.*
 
         @Immutable
         interface LocalBoxScope {
@@ -259,7 +256,11 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 content = { LocalBoxScopeInstance.content() }
             )
         }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiUnitJar(),
+        )
     )
 
     @Test
@@ -267,9 +268,8 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
         import androidx.compose.runtime.*
         import androidx.compose.ui.layout.*
-        import androidx.compose.foundation.text.*
         import androidx.compose.ui.text.*
-        import androidx.compose.ui.text.style.*
+        import androidx.compose.foundation.text.*
 
         @Composable
         fun Test1() {
@@ -311,7 +311,13 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
         @Composable
         fun T(value: String) { }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiGraphicsJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationTextJar()
+        )
     )
 
     @Suppress("unused")

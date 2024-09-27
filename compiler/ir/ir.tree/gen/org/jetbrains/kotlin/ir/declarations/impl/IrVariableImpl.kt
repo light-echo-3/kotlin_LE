@@ -13,29 +13,28 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.name.Name
 
-class IrVariableImpl(
+class IrVariableImpl internal constructor(
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrVariableSymbol,
     override var name: Name,
     override var type: IrType,
+    override val symbol: IrVariableSymbol,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
 ) : IrVariable() {
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override lateinit var parent: IrDeclarationParent
 
     override val factory: IrFactory
         get() = error("Create IrVariableImpl directly")

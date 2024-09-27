@@ -1,18 +1,23 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -20,21 +25,71 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+private val validateIrBeforeLowering = makeIrModulePhase<JsIrBackendContext>(
+    ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69457:
+                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                    // Call sites of only non-private functions are allowed at this stage.
+                    else -> !inlineFunction.isConsideredAsPrivateForInlining()
+                }
+            }
+        )
+    },
+    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
+    description = "Validate IR after only private functions have been inlined",
+)
+
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<JsIrBackendContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
+    description = "Dump synthetic accessors and their call sites (used only for testing and debugging)",
+)
+
+private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        IrValidationAfterInliningAllFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage.
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69457:
+                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                    // TODO: remove this condition after the fix of KT-70361:
+                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
+
+                    else -> false // forbidden
+                }
+            }
+        )
+    },
+    name = "IrValidationAfterInliningAllFunctionsPhase",
+    description = "Validate IR after all functions have been inlined",
+)
+
+private val validateIrAfterLowering = makeIrModulePhase<JsIrBackendContext>(
+    ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -49,6 +104,12 @@ private val prepareCollectionsToExportLowering = makeIrModulePhase(
     ::PrepareCollectionsToExportLowering,
     name = "PrepareCollectionsToExportLowering",
     description = "Add @JsImplicitExport to exportable collections all the declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
+)
+
+private val removeImplicitExportsFromCollections = makeIrModulePhase(
+    ::RemoveImplicitExportsFromCollections,
+    name = "RemoveImplicitExportsFromCollections",
+    description = "Remove @JsImplicitExport from unused collections if there is no strict-mode for TypeScript",
 )
 
 private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
@@ -135,17 +196,17 @@ private val jsCodeOutliningPhase = makeIrModulePhase(
     description = "Outline js() calls where JS code references Kotlin locals"
 )
 
-private val arrayConstructorReferencePhase = makeIrModulePhase(
-    ::ArrayConstructorReferenceLowering,
-    name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a lambda"
+private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>(
+    ::JsInlineCallableReferenceToLambdaPhase,
+    name = "JsInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop",
-    prerequisite = setOf(arrayConstructorReferencePhase)
+    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -153,6 +214,12 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     name = "SharedVariablesLowering",
     description = "Box captured mutable variables",
     prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
+)
+
+private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+    description = "Generate a special private member accessor for outer@this implicit value parameter in inline functions"
 )
 
 private val localClassesInInlineLambdasPhase = makeIrModulePhase(
@@ -176,10 +243,10 @@ private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(localClassesInInlineFunctionsPhase)
 )
 
-private val syntheticAccessorLoweringPhase = makeIrModulePhase(
-    ::SyntheticAccessorLowering,
-    name = "syntheticAccessorLoweringPhase",
-    description = "Wrap top level inline function to access through them from inline functions"
+private val legacySyntheticAccessorLoweringPhase = makeIrModulePhase(
+    ::LegacySyntheticAccessorLowering,
+    name = "LegacySyntheticAccessorLowering",
+    description = "Wrap top level inline function to access through them from inline functions (legacy lowering)"
 )
 
 private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
@@ -194,43 +261,79 @@ private val replaceSuspendIntrinsicLowering = makeIrModulePhase(
     description = "Replace suspend intrinsic for generator based coroutines"
 )
 
-private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
-    ::SaveInlineFunctionsBeforeInlining,
-    name = "SaveInlineFunctionsBeforeInlining",
-    description = "Save inline function before inlining",
+private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        FunctionInlining(
+            context,
+            JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
+            produceOuterThisFields = false,
+        )
+    },
+    name = "InlineOnlyPrivateFunctions",
+    description = "The first phase of inlining (inline only private functions)",
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+)
+
+internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
+    lowering = ::SyntheticAccessorLowering,
+    name = "SyntheticAccessorGeneration",
+    description = "Generate synthetic accessors from private declarations referenced from inline functions",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+)
+
+// TODO: KT-67220: consider removing it
+private val cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = true)
+    },
+    name = "CacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase",
+    description = "Cache copies of inline functions before InlineOnlyPrivateFunctions phase",
     prerequisite = setOf(
-        replaceSuspendIntrinsicLowering,
         sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
-        syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
+        localClassesInInlineLambdasPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
 
-private val functionInliningPhase = makeIrModulePhase(
-    {
+// TODO: KT-67220: consider removing it
+private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = false)
+    },
+    name = "CacheInlineFunctionsBeforeInliningAllFunctionsPhase",
+    description = "Cache copies of inline functions before InlineAllFunctions phase",
+    prerequisite = setOf(
+        sharedVariablesLoweringPhase,
+        localClassesInInlineLambdasPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering
+    )
+)
+
+private val inlineAllFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
         FunctionInlining(
-            it,
-            JsInlineFunctionResolver(it),
-            it.innerClassesSupport,
+            context,
+            JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
+            produceOuterThisFields = false,
         )
     },
-    name = "FunctionInliningPhase",
-    description = "Perform function inlining",
-    prerequisite = setOf(saveInlineFunctionsBeforeInlining)
+    name = "InlineAllFunctions",
+    description = "The second phase of inlining (inline all functions)",
+    prerequisite = setOf(cacheInlineFunctionsBeforeInliningAllFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
     ::CopyInlineFunctionBodyLowering,
     name = "CopyInlineFunctionBody",
     description = "Copy inline function body",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
     { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
     description = "Remove Inline functions with reified parameters from context",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val captureStackTraceInThrowablesPhase = makeIrModulePhase(
@@ -334,14 +437,14 @@ private val callableReferenceLowering = makeIrModulePhase(
     ::CallableReferenceLowering,
     name = "CallableReferenceLowering",
     description = "Build a lambda/callable reference class",
-    prerequisite = setOf(functionInliningPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
+    prerequisite = setOf(inlineAllFunctionsPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
 )
 
 private val returnableBlockLoweringPhase = makeIrModulePhase(
     ::JsReturnableBlockLowering,
     name = "JsReturnableBlockLowering",
     description = "Introduce temporary variable for result and change returnable block's type to Unit",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val rangeContainsLoweringPhase = makeIrModulePhase(
@@ -578,19 +681,6 @@ private val multipleCatchesLoweringPhase = makeIrModulePhase(
     description = "Replace multiple catches with single one"
 )
 
-private val errorExpressionLoweringPhase = makeIrModulePhase(
-    ::JsErrorExpressionLowering,
-    name = "errorExpressionLoweringPhase",
-    description = "Transform error expressions into simple ir code",
-    prerequisite = setOf(multipleCatchesLoweringPhase)
-)
-
-private val errorDeclarationLoweringPhase = makeIrModulePhase(
-    ::JsErrorDeclarationLowering,
-    name = "errorDeclarationLoweringPhase",
-    description = "Transform error declarations into simple ir code"
-)
-
 private val bridgesConstructionPhase = makeIrModulePhase(
     ::JsBridgesConstruction,
     name = "BridgesConstruction",
@@ -611,7 +701,7 @@ private val typeOperatorLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(
         bridgesConstructionPhase,
         removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
-        singleAbstractMethodPhase, errorExpressionLoweringPhase,
+        singleAbstractMethodPhase,
         interopCallableReferenceLoweringPhase,
     )
 )
@@ -652,6 +742,12 @@ private val inlineClassUsageLoweringPhase = makeIrModulePhase(
     )
 )
 
+private val expressionBodyTransformer = makeIrModulePhase(
+    ::ExpressionBodyTransformer,
+    name = "ExpressionBodyTransformer",
+    description = "Replace IrExpressionBody with IrBlockBody"
+)
+
 private val autoboxingTransformerPhase = makeIrModulePhase<JsIrBackendContext>(
     { AutoboxingTransformer(it, replaceTypesInsideInlinedFunctionBlock = true) },
     name = "AutoboxingTransformer",
@@ -669,7 +765,7 @@ private val jsClassUsageInReflectionPhase = makeIrModulePhase(
     ::JsClassUsageInReflectionLowering,
     name = "JsClassUsageInReflectionLowering",
     description = "[Optimization] Eliminate ClassReference and GetClassExpression usages in a simple case of usage raw js constructor",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
@@ -780,26 +876,43 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
     description = "Generate main function call inside the wrapper-function"
 )
 
-val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
+fun getJsLowerings(
+    configuration: CompilerConfiguration
+): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
+    // BEGIN: Common Native/JS prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
-    arrayConstructorReferencePhase,
-    arrayConstructorPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     sharedVariablesLoweringPhase,
+    outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
-    syntheticAccessorLoweringPhase,
+    localClassesInInlineFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    localClassesExtractionFromInlineFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineCallableReferenceToLambdaPhase,
+    arrayConstructorPhase,
+    legacySyntheticAccessorLoweringPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    replaceSuspendIntrinsicLowering,
-    saveInlineFunctionsBeforeInlining,
-    functionInliningPhase,
+    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    syntheticAccessorGenerationPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+    // just because it goes so in Native.
+    validateIrAfterInliningOnlyPrivateFunctions.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    dumpSyntheticAccessorsPhase.takeIf {
+        !configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) &&
+                configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
+    },
+    cacheInlineFunctionsBeforeInliningAllFunctionsPhase,
+    inlineAllFunctionsPhase,
+    validateIrAfterInliningAllFunctions,
+    // END: Common Native/JS prefix.
+
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+    replaceSuspendIntrinsicLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,
@@ -866,8 +979,6 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     throwableSuccessorsLoweringPhase,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
-    errorExpressionLoweringPhase,
-    errorDeclarationLoweringPhase,
     bridgesConstructionPhase,
     typeOperatorLoweringPhase,
     secondaryConstructorLoweringPhase,
@@ -876,6 +987,7 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     constLoweringPhase,
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
+    expressionBodyTransformer,
     autoboxingTransformerPhase,
     objectDeclarationLoweringPhase,
     blockDecomposerLoweringPhase,
@@ -887,16 +999,19 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
+    removeImplicitExportsFromCollections,
     mainFunctionCallWrapperLowering,
     cleanupLoweringPhase,
     validateIrAfterLowering,
 )
 
-val jsPhases = SameTypeNamedCompilerPhase(
+fun getJsPhases(
+    configuration: CompilerConfiguration
+): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    lower = getJsLowerings(configuration).toCompilerPhase(),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
 
@@ -960,6 +1075,6 @@ val jsOptimizationPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleOptimizationLowering",
     description = "IR module optimization lowering",
     lower = optimizationLoweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

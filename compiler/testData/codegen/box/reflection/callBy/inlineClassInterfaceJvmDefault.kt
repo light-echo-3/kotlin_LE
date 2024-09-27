@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // IGNORE_BACKEND: ANDROID
 
 
@@ -12,7 +12,8 @@ interface IIC {
     fun f(i1: Int = 1): Int
 }
 
-inline class IC(val x: Int) : IIC {
+@JvmInline
+value class IC(val x: Int) : IIC {
     override fun f(i1: Int) = x + i1
 }
 

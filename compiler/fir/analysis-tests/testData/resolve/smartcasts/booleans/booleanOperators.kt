@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 interface A {
     fun foo()
 
@@ -58,15 +58,13 @@ fun test_6(x: Any) {
 
 fun test_7(x: Any) {
     if (x is A || false) {
-        // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }
 
 fun test_8(x: Any) {
     if (false || x is A) {
-        // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }
 

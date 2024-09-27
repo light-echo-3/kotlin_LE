@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
@@ -51,8 +51,8 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.*;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
@@ -139,15 +139,22 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     }
 
     protected void loadFiles(@NotNull String... names) {
-        myFiles = CodegenTestFiles.create(myEnvironment.getProject(), names);
+        List<KtFile> files = new ArrayList<>(names.length);
+        for (String name : names) {
+            try {
+                String content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataPathBase() + "/codegen/", name);
+                KtFile file = KtTestUtil.createFile(name, content, myEnvironment.getProject());
+                files.add(file);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        myFiles = CodegenTestFiles.create(files);
     }
 
     protected void loadFile() {
         loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
-    }
-
-    protected void loadMultiFiles(@NotNull List<TestFile> files) {
-        myFiles = loadMultiFiles(files, myEnvironment.getProject());
     }
 
     @NotNull
@@ -189,7 +196,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -223,8 +230,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             files.addAll(additionalDependencies);
         }
 
-        ScriptDependenciesProvider externalImportsProvider =
-                ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
+        ScriptConfigurationsProvider externalImportsProvider =
+                ScriptConfigurationsProvider.Companion.getInstance(myEnvironment.getProject());
         if (externalImportsProvider != null) {
             myEnvironment.getSourceFiles().forEach(
                     file -> {
@@ -250,15 +257,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     protected String generateToText() {
-        return generateToText(null);
-    }
-
-    @NotNull
-    protected String generateToText(@Nullable String ignorePathPrefix) {
         if (classFileFactory == null) {
             classFileFactory = generateFiles(myEnvironment, myFiles);
         }
-        return classFileFactory.createText(ignorePathPrefix);
+        return classFileFactory.createText(null);
     }
 
     @NotNull
@@ -425,7 +427,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         );
         setupEnvironment(myEnvironment);
 
-        loadMultiFiles(files);
+        myFiles = loadMultiFiles(files, myEnvironment.getProject());
 
         generateClassesInFile(reportProblems);
 
@@ -451,7 +453,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                     configuration.get(JVMConfigurationKeys.JVM_TARGET),
                     configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
             );
-            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
+            boolean isJava9Module = false; // No Java modules in legacy tests
+            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory, isJava9Module);
 
             try {
                 runJavacTask(
@@ -489,27 +492,26 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
-        if (kotlinTarget != null && isJvmPreviewEnabled) {
-            javacOptions.add("--release");
-            javacOptions.add(kotlinTarget.getDescription());
-            javacOptions.add("--enable-preview");
-            return javacOptions;
+        if (kotlinTarget != null) {
+            if (isJvmPreviewEnabled) {
+                javacOptions.add("--release");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("--enable-preview");
+            } else {
+                javacOptions.add("-source");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("-target");
+                javacOptions.add(kotlinTarget.getDescription());
+            }
         }
 
-        String javaTarget = CodegenTestUtil.computeJavaTarget(javacOptions, kotlinTarget);
-        if (javaTarget != null) {
-            javacOptions.add("-source");
-            javacOptions.add(javaTarget);
-            javacOptions.add("-target");
-            javacOptions.add(javaTarget);
-        }
         return javacOptions;
     }
 
     @NotNull
     @Override
-    public TargetBackend getBackend() {
-        return TargetBackend.JVM;
+    public final TargetBackend getBackend() {
+        return TargetBackend.JVM_IR;
     }
 
     @Override

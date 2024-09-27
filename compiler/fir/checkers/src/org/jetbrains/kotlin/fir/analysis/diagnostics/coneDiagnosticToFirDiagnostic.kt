@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -49,7 +52,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import javax.xml.ws.spi.Invoker
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement?,
@@ -101,12 +103,6 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
 
     is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source)
-    is ConeSetterVisibilityError -> FirErrors.INVISIBLE_SETTER.createOn(
-        source,
-        symbol,
-        symbol.setterSymbol?.visibility ?: symbol.visibility,
-        symbol.callableId
-    )
     is ConeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(source)
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
@@ -115,14 +111,31 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>)
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
+        // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
+        candidates.all {
+            if (it !is AbstractCallCandidate<*>) return@all false
+            // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
+            if (!it.argumentMappingInitialized) return@all false
+            it.argumentMapping.keys.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) ||
+                    it.contextReceiverArguments?.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) == true ||
+                    it.chosenExtensionReceiver?.containsErrorTypeForSuppressingAmbiguityError() == true
+        } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
-            mapUnsafeCallError(candidate, unsafeCall, source, callOrAssignmentSource)
+            val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableNullableReceiver>()?.to(it)
+            }
+            if (diagnosticAndCandidate != null) {
+                mapInapplicableNullableReceiver(diagnosticAndCandidate.second, diagnosticAndCandidate.first, source, callOrAssignmentSource)
+            } else {
+                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
+            }
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
-            val unstableSmartcast = this.candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnstableSmartCast>() }
+            val unstableSmartcast = this.candidates.firstNotNullOf {
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnstableSmartCast>()
+            }
             unstableSmartcast.mapUnstableSmartCast()
         }
 
@@ -187,9 +200,15 @@ private fun ConeDiagnostic.toKtDiagnostic(
         FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(source, listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase))
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
-    is ConeMissingConstructorKeyword -> FirErrors.MISSING_CONSTRUCTOR_KEYWORD.createOn(source)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
+    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false)
+    is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, "dynamic type")
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+}
+
+private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
+    val arg = expression
+    return arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
 }
 
 /**
@@ -218,9 +237,9 @@ fun ConeDiagnostic.toFirDiagnostics(
     }
 }
 
-private fun mapUnsafeCallError(
-    candidate: AbstractCandidate,
-    rootCause: UnsafeCall,
+private fun mapInapplicableNullableReceiver(
+    candidate: AbstractCallCandidate<*>,
+    rootCause: InapplicableNullableReceiver,
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): KtDiagnostic {
@@ -293,8 +312,22 @@ private fun mapInapplicableCandidateError(
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
-                    rootCause.actualType.removeTypeVariableTypes(typeContext),
+                    // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
+                    if (rootCause.argument is FirAnonymousFunctionExpression && !rootCause.argument.resolvedType.hasError()) {
+                        rootCause.argument.resolvedType
+                    } else {
+                        rootCause.actualType.removeTypeVariableTypes(typeContext)
+                    },
                     rootCause.isMismatchDueToNullability
+                )
+            }
+
+            is UnitReturnTypeLambdaContradictsExpectedType -> {
+                FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
+                    rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
+                    rootCause.wholeLambdaExpectedType.removeTypeVariableTypes(typeContext),
+                    rootCause.lambda.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    false // not isMismatchDueToNullability
                 )
             }
 
@@ -303,7 +336,7 @@ private fun mapInapplicableCandidateError(
             is ErrorTypeInArguments -> null
 
             // see EagerResolveOfCallableReferences
-            is UnsuccessfulCallableReferenceAtom -> null
+            is UnsuccessfulCallableReferenceArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
@@ -355,7 +388,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: source
             )
 
-            is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
+            is InapplicableNullableReceiver -> mapInapplicableNullableReceiver(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
@@ -395,6 +428,11 @@ private fun mapInapplicableCandidateError(
             is MissingInnerClassConstructorReceiver -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(
                 qualifiedAccessSource ?: source,
                 rootCause.candidateSymbol
+            )
+
+            is WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(
+                qualifiedAccessSource ?: source,
+                rootCause.desiredCount, rootCause.symbol
             )
 
             else -> genericDiagnostic
@@ -467,7 +505,7 @@ private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
     typeContext: ConeTypeContext,
-    candidate: AbstractCandidate,
+    candidate: AbstractCallCandidate<*>,
 ): KtDiagnostic? {
     return when (this) {
         is NewConstraintError -> {
@@ -504,7 +542,7 @@ private fun ConstraintSystemError.toDiagnostic(
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType
                         else
-                            upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
+                            upperConeType.withNullability(nullable = true, typeContext)
 
                     FirErrors.TYPE_MISMATCH.createOn(
                         qualifiedAccessSource ?: source,
@@ -585,7 +623,7 @@ private fun ConstraintSystemError.toDiagnostic(
     }
 }
 
-private fun AbstractCandidate.sourceOfCallToSymbolWith(
+private fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(
     typeVariable: ConeTypeVariable,
 ): KtSourceElement? {
     if (typeVariable !is ConeTypeParameterBasedTypeVariable) return null
@@ -641,6 +679,8 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
         DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
         DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
+        DiagnosticKind.AmbiguousLabel -> FirErrors.AMBIGUOUS_LABEL
+        DiagnosticKind.LabelNameClash -> FirErrors.LABEL_NAME_CLASH
         DiagnosticKind.NoThis -> FirErrors.NO_THIS
         DiagnosticKind.IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
         DiagnosticKind.IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE
@@ -660,7 +700,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
         DiagnosticKind.NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
         DiagnosticKind.VariableExpected -> FirErrors.VARIABLE_EXPECTED
-        DiagnosticKind.ValueParameterWithNoTypeAnnotation -> FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION
+        DiagnosticKind.ValueParameterWithNoTypeAnnotation -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE
         DiagnosticKind.CannotInferParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE
         DiagnosticKind.IllegalProjectionUsage -> FirErrors.ILLEGAL_PROJECTION_USAGE
         DiagnosticKind.MissingStdlibClass -> FirErrors.MISSING_STDLIB_CLASS
@@ -680,7 +720,8 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.EnumEntryAsType -> FirErrors.ENUM_ENTRY_AS_TYPE
         DiagnosticKind.NotASupertype -> FirErrors.NOT_A_SUPERTYPE
         DiagnosticKind.SuperNotAvailable -> FirErrors.SUPER_NOT_AVAILABLE
-        DiagnosticKind.AnnotationNotAllowed -> FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
+        DiagnosticKind.AnnotationInWhereClause -> FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
+        DiagnosticKind.AnnotationInContract -> FirErrors.ANNOTATION_IN_CONTRACT_ERROR
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR

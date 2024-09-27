@@ -38,8 +38,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
 ) : IrConstructor() {
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    override lateinit var parent: IrDeclarationParent
-
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var metadata: MetadataSource? = null
@@ -49,8 +47,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override var dispatchReceiverParameter: IrValueParameter? = null
 
     override var extensionReceiverParameter: IrValueParameter? = null
-
-    override var valueParameters: List<IrValueParameter> = emptyList()
 
     override var contextReceiverParametersCount: Int = 0
 

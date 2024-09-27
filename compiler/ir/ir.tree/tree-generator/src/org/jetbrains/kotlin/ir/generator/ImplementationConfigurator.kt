@@ -5,23 +5,25 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.Visibility
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.utils.withIndent
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
-        allImplOf(declaration) {
-            isLateinit("parent")
-            isMutable("parent")
-        }
-
         allImplOf(attributeContainer) {
             default("attributeOwnerId", "this")
             defaultNull("originalBeforeInline")
@@ -56,7 +58,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         allImplOf(function) {
-            defaultEmptyList("valueParameters")
             defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body")
             default("contextReceiverParametersCount", "0")
             isLateinit("returnType")
@@ -69,7 +70,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(simpleFunction, "IrFunctionImpl")
 
         impl(functionWithLateBinding) {
-            configureDeclarationWithLateBindinig(simpleFunctionSymbolType)
+            configureDeclarationWithLateBindinig(simpleFunctionSymbol)
         }
 
         impl(field) {
@@ -83,7 +84,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(property)
 
         impl(propertyWithLateBinding) {
-            configureDeclarationWithLateBindinig(propertySymbolType)
+            configureDeclarationWithLateBindinig(propertySymbol)
         }
 
         impl(localDelegatedProperty) {
@@ -100,9 +101,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(variable) {
-            implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride =
-                listOf("startOffset", "endOffset", "origin", "symbol", "name", "type", "isVar", "isConst", "isLateinit")
+            implementation.isConstructorPublic = false
             defaultNull("initializer")
             default("factory") {
                 value = "error(\"Create IrVariableImpl directly\")"
@@ -111,7 +110,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(`class`) {
-            kind = ImplementationKind.OpenClass
             defaultNull("thisReceiver", "valueClassRepresentation")
             defaultEmptyList("superTypes", "sealedSubclasses")
             defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
@@ -137,6 +135,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("startOffset", undefinedOffset(), withGetter = true)
             default("endOffset", undefinedOffset(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
+        }.apply {
+            // TODO: should be generated again after KT-68314 is fixed
+            doPrint = false
         }
 
         impl(errorDeclaration) {
@@ -159,8 +160,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("endOffset", undefinedOffset(), withGetter = true)
             implementation.generationCallback = {
                 println()
-                print()
-                println(
+                printlnMultiLine(
                     """
                     companion object {
                         @Deprecated(
@@ -170,7 +170,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
                             org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
                     }
-                    """.replaceIndent(currentIndent)
+                    """
                 )
             }
         }
@@ -190,9 +190,213 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 }
             }
         }
+
+        allImplOf(loop) {
+            isLateinit("condition")
+            defaultNull("label", "body")
+        }
+
+        allImplOf(breakContinue) {
+            defaultNull("label")
+        }
+
+        impl(branch)
+
+        impl(`when`) {
+            default("branches", "ArrayList(2)")
+        }
+
+        impl(catch) {
+            isLateinit("result")
+        }
+
+        impl(`try`) {
+            isLateinit("tryResult")
+            defaultNull("finallyExpression")
+            default("catches", smartList())
+        }
+
+        impl(constantObject) {
+            default("typeArguments", smartList())
+            default("valueArguments", smartList())
+        }
+
+        impl(constantArray) {
+            default("elements", smartList())
+        }
+
+        impl(dynamicOperatorExpression) {
+            isLateinit("receiver")
+            default("arguments", smartList())
+        }
+
+        impl(errorCallExpression) {
+            defaultNull("explicitReceiver")
+            default("arguments", smartList())
+        }
+
+        allImplOf(fieldAccessExpression) {
+            defaultNull("receiver")
+        }
+
+        impl(setField) {
+            isLateinit("value")
+        }
+
+        impl(stringConcatenation) {
+            default("arguments", "ArrayList(2)")
+        }
+
+        impl(block)
+
+        impl(returnableBlock) {
+            default("descriptor", "symbol.descriptor", withGetter = true)
+        }
+
+        impl(errorExpression)
+
+        impl(vararg) {
+            default("elements", smartList())
+        }
+
+
+        impl(composite) {
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                    // A temporary API for compatibility with Flysto user project, see KQA-1254
+                    constructor(
+                        startOffset: Int,
+                        endOffset: Int,
+                        type: IrType,
+                        origin: IrStatementOrigin?,
+                        statements: List<IrStatement>,
+                    ) : this(
+                        constructorIndicator = null,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = type,
+                        origin = origin,
+                    ) {
+                        this.statements.addAll(statements)
+                    }
+                """.replaceIndent(currentIndent))
+            }
+        }
+
+        impl(`return`) {
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                    // A temporary API for compatibility with Flysto user project, see KQA-1254
+                    constructor(
+                        startOffset: Int,
+                        endOffset: Int,
+                        type: IrType,
+                        returnTargetSymbol: IrReturnTargetSymbol,
+                        value: IrExpression,
+                    ) : this(
+                        constructorIndicator = null,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = type,
+                        returnTargetSymbol = returnTargetSymbol,
+                        value = value,
+                    )
+                """.replaceIndent(currentIndent))
+            }
+        }
+
+        impl(const) {
+            implementation.generationCallback = {
+                println()
+                printlnMultiLine("""
+                    companion object {
+                        fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
+                
+                        fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, value)
+                
+                        fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Null, null)
+                
+                        fun boolean(startOffset: Int, endOffset: Int, type: IrType, value: Boolean): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
+                
+                        fun constTrue(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            boolean(startOffset, endOffset, type, true)
+                
+                        fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            boolean(startOffset, endOffset, type, false)
+                
+                        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
+                
+                        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
+                
+                        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
+                
+                        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
+                
+                        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
+                
+                        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
+                    }
+                """.trimIndent())
+            }
+        }
+
+        allImplOf(memberAccessExpression) {
+            defaultNull("dispatchReceiver", "extensionReceiver")
+        }
+
+        impl(call) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(constructorCall) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            undefinedOffset()
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(delegatingConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(enumConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(functionReference) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
     }
 
-    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
+    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: Symbol) {
         implementation.bindOwnedSymbol = false
         default("isBound") {
             value = "_symbol != null"
@@ -236,16 +440,15 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configureAllImplementations(model: Model) {
         configureFieldInAllImplementations(
             fieldName = null,
-            fieldPredicate = { it is ListField && it.isChild && it.listType == StandardTypes.mutableList }
+            fieldPredicate = { it is ListField && it.isChild && it.listType == StandardTypes.mutableList && it.implementationDefaultStrategy?.defaultValue == null }
         ) {
             default(it, "ArrayList()")
         }
 
-        // Generation of implementation classes of IrExpression are left out for subsequent MR, as a part of KT-65773.
         for (element in model.elements) {
-            if (element.category == Element.Category.Expression) {
-                for (implementation in element.implementations) {
-                    implementation.doPrint = false
+            for (implementation in element.implementations) {
+                if (element.category == Element.Category.Expression) {
+                    implementation.isConstructorPublic = false
                 }
             }
         }

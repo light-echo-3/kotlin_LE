@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -35,19 +36,9 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ProjectionKind
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isArrayType
-import org.jetbrains.kotlin.fir.types.isString
-import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 fun FirAnnotationContainer.hasComposableAnnotation(session: FirSession): Boolean =
@@ -88,6 +79,7 @@ fun FirCallableSymbol<*>.isReadOnlyComposable(session: FirSession): Boolean =
 @OptIn(SymbolInternals::class)
 private fun FirPropertyAccessorSymbol.isComposableDelegate(session: FirSession): Boolean {
     if (!propertySymbol.hasDelegate) return false
+    fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     return ((fir
         .body
         ?.statements
@@ -100,7 +92,7 @@ private fun FirPropertyAccessorSymbol.isComposableDelegate(session: FirSession):
 }
 
 fun FirFunction.getDirectOverriddenFunctions(
-    context: CheckerContext
+    context: CheckerContext,
 ): List<FirFunctionSymbol<*>> {
     if (!isOverride && (this as? FirPropertyAccessor)?.propertySymbol?.isOverride != true)
         return listOf()
@@ -170,5 +162,5 @@ private fun FirNamedFunctionSymbol.jvmNameAsString(session: FirSession): String 
 
 private val FirFunctionSymbol<*>.explicitParameterTypes: List<ConeKotlinType>
     get() = resolvedContextReceivers.map { it.typeRef.coneType } +
-        listOfNotNull(receiverParameter?.typeRef?.coneType) +
-        valueParameterSymbols.map { it.resolvedReturnType }
+            listOfNotNull(receiverParameter?.typeRef?.coneType) +
+            valueParameterSymbols.map { it.resolvedReturnType }

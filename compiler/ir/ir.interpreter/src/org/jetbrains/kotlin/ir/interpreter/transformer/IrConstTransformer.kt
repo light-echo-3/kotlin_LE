@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -26,10 +25,10 @@ import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 fun IrElement.transformConst(
     irFile: IrFile,
@@ -54,9 +53,10 @@ fun IrElement.transformConst(
         interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
 
-    return this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
-        .transform(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
-        .transform(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+    return this.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data()).apply {
+        irConstDeclarationAnnotationTransformer.visitAnnotations(this)
+        irConstTypeAnnotationTransformer.visitAnnotations(this)
+    }
 }
 
 fun IrFile.runConstOptimizations(
@@ -74,7 +74,7 @@ fun IrFile.runConstOptimizations(
         { _, _, _ -> }, { _, _, _ -> },
         suppressExceptions
     )
-    preprocessedFile.transform(irConstExpressionTransformer, IrConstTransformer.Data())
+    preprocessedFile.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data())
 }
 
 private fun IrFile.preprocessForConstTransformer(
@@ -98,9 +98,7 @@ internal abstract class IrConstTransformer(
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
-) : IrElementTransformer<IrConstTransformer.Data> {
-    internal data class Data(val inConstantExpression: Boolean = false)
-
+) {
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)
@@ -124,9 +122,8 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.canBeInterpreted(): Boolean {
         return try {
             this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
-        } catch (e: ProcessCanceledException) {
-            throw e
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
                 return false
             }
@@ -137,29 +134,31 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.interpret(failAsError: Boolean): IrExpression {
         val result = try {
             interpreter.interpret(this, irFile)
-        } catch (e: ProcessCanceledException) {
-            throw e
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
                 return this
             }
             throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
         }
 
-        evaluatedConstTracker?.save(
-            result.startOffset, result.endOffset, irFile.nameWithPackage,
-            constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
-            else (result as IrConst<*>).toConstantValue()
-        )
+        result.saveInConstTracker()
 
-        if (result is IrConst<*>) {
+        if (result is IrConst) {
             reportInlinedJavaConst(result)
         }
 
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
     }
 
-    private fun IrExpression.reportInlinedJavaConst(result: IrConst<*>) {
+    protected fun IrExpression.saveInConstTracker() {
+        evaluatedConstTracker?.save(
+            startOffset, endOffset, irFile.nameWithPackage,
+            constant = if (this is IrErrorExpression) ErrorValue.create(description) else this.toConstantValue()
+        )
+    }
+
+    private fun IrExpression.reportInlinedJavaConst(result: IrConst) {
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -182,7 +181,7 @@ internal abstract class IrConstTransformer(
     }
 }
 
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst<*>) {
+fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
     if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
     val path = irFile.path

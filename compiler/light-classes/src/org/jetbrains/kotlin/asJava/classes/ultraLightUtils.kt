@@ -9,12 +9,12 @@ import com.google.common.collect.Lists
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
-import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
-import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
+import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_PROVIDER
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
@@ -22,6 +22,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -59,7 +60,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.text.StringCharacterIterator
 
 private interface TypeParametersSupport<D, T> {
     fun parameters(declaration: D): List<T>
@@ -216,10 +216,9 @@ private fun createTypeFromCanonicalText(
     canonicalSignature: String,
     psiContext: PsiElement,
 ): PsiType {
-    val signature = StringCharacterIterator(canonicalSignature)
-    val javaType = SignatureParsing.parseTypeString(signature, GUESSING_MAPPER)
-    val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
+    val signature = SignatureParsing.CharIterator(canonicalSignature)
+    val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, GUESSING_PROVIDER)
+    val typeText = typeInfo.text() ?: return PsiTypes.nullType()
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
     val type = if (kotlinType != null)
@@ -545,3 +544,16 @@ internal fun List<KtAnnotationEntry>.toLightAnnotations(
             parent = parent
         )
     }
+
+internal fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
+    val trackerService = KotlinModificationTrackerService.getInstance(project)
+    return with(trackerService) {
+        when {
+            !isLocal -> listOf(outOfBlockModificationTracker)
+            else -> when (val file = containingFile) {
+                is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
+                else -> listOf(outOfBlockModificationTracker)
+            }
+        }
+    }
+}

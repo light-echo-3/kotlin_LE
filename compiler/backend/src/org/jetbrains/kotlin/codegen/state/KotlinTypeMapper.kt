@@ -1435,9 +1435,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
             for (i in 0 until type.argumentsCount()) {
                 val projection = type.getArgument(i)
-                if (projection.isStarProjection()) continue
-
-                val argument = projection.getType()
+                val argument = projection.getType() ?: continue
 
                 if (argument.isNullableNothing() ||
                     argument.isNothing() && typeConstructor.getParameter(i).getVariance() != TypeVariance.IN
@@ -1447,10 +1445,12 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return false
         }
 
+        // Used from KSP.
+        @Suppress("unused")
         fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance =
             SimpleClassicTypeSystemContext.getVarianceForWildcard(parameter, projection, mode)
 
-        private fun TypeSystemCommonBackendContext.getVarianceForWildcard(
+        fun TypeSystemCommonBackendContext.getVarianceForWildcard(
             parameter: TypeParameterMarker?, projection: TypeArgumentMarker, mode: TypeMappingMode
         ): Variance {
             val projectionKind = projection.getVariance().convertVariance()
@@ -1465,12 +1465,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
 
             if (projectionKind == Variance.INVARIANT || projectionKind == parameterVariance) {
-                if (mode.skipDeclarationSiteWildcardsIfPossible && !projection.isStarProjection()) {
-                    if (parameterVariance == Variance.OUT_VARIANCE && isMostPreciseCovariantArgument(projection.getType())) {
+                val type = projection.getType()
+                if (mode.skipDeclarationSiteWildcardsIfPossible && type != null) {
+                    if (parameterVariance == Variance.OUT_VARIANCE && isMostPreciseCovariantArgument(type)) {
                         return Variance.INVARIANT
                     }
 
-                    if (parameterVariance == Variance.IN_VARIANCE && isMostPreciseContravariantArgument(projection.getType())) {
+                    if (parameterVariance == Variance.IN_VARIANCE && isMostPreciseContravariantArgument(type)) {
                         return Variance.INVARIANT
                     }
                 }
@@ -1489,28 +1490,45 @@ class KotlinTypeMapper @JvmOverloads constructor(
             mode: TypeMappingMode,
             mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
         ) {
-            for ((parameter, argument) in parameters.zipWithNulls(arguments)) {
-                if (argument == null) break
-                if (argument.isStarProjection() ||
-                    // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
-                    argument.getType().isNothing() && parameter?.getVariance() == TypeVariance.IN
-                ) {
+            processGenericArguments(
+                arguments,
+                parameters,
+                mode,
+                processUnboundedWildcard = {
                     signatureVisitor.writeUnboundedWildcard()
-                } else {
-                    val argumentMode = mode.updateArgumentModeFromAnnotations(argument.getType(), this)
-                    val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
-
+                },
+                processTypeArgument = { _, type, projectionKind, parameterVariance, newMode ->
                     signatureVisitor.writeTypeArgument(projectionKind)
-
-                    val parameterVariance = parameter?.getVariance()?.convertVariance() ?: Variance.INVARIANT
-                    mapType(
-                        argument.getType(), signatureVisitor,
-                        argumentMode.toGenericArgumentMode(
-                            getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
-                        )
-                    )
-
+                    mapType(type, signatureVisitor, newMode)
                     signatureVisitor.writeTypeArgumentEnd()
+                }
+            )
+        }
+
+        fun TypeSystemCommonBackendContext.processGenericArguments(
+            arguments: List<TypeArgumentMarker>,
+            parameters: List<TypeParameterMarker>,
+            mode: TypeMappingMode,
+            processUnboundedWildcard: () -> Unit,
+            processTypeArgument: (index: Int, type: KotlinTypeMarker, projectionKind: Variance, parameterVariance: Variance, mode: TypeMappingMode) -> Unit,
+        ) {
+            for ((index, pair) in parameters.zipWithNulls(arguments).withIndex()) {
+                val (parameter, argument) = pair
+                if (argument == null) break
+                val type = argument.getType()
+                if (type == null ||
+                    // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+                    type.isNothing() && parameter?.getVariance() == TypeVariance.IN
+                ) {
+                    processUnboundedWildcard()
+                } else {
+                    val argumentMode = mode.updateArgumentModeFromAnnotations(type, this)
+                    val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
+                    val parameterVariance = parameter?.getVariance()?.convertVariance() ?: Variance.INVARIANT
+                    val newMode = argumentMode.toGenericArgumentMode(
+                        getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
+                    )
+                    processTypeArgument(index, type, projectionKind, parameterVariance, newMode)
                 }
             }
         }

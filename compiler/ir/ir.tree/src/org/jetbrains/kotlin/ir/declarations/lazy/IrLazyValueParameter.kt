@@ -27,7 +27,6 @@ class IrLazyValueParameter(
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
-    override var index: Int,
     kotlinType: KotlinType,
     varargElementKotlinType: KotlinType?,
     override var isCrossinline: Boolean,
@@ -37,8 +36,6 @@ class IrLazyValueParameter(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), IrLazyDeclarationBase {
-    override lateinit var parent: IrDeclarationParent
-
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

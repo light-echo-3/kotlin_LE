@@ -10,12 +10,10 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
@@ -63,6 +61,16 @@ internal class FileStructure private constructor(
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             return FileStructure(ktFile, firFile, moduleComponents)
         }
+
+        /**
+         * Returns [KtDeclaration] which will be used inside [getStructureElementFor].
+         * `null` means that [KtElement.containingKtFile] will be used instead.
+         *
+         * @see getNonLocalContainingOrThisDeclaration
+         */
+        private fun findNonLocalContainer(element: KtElement): KtDeclaration? {
+            return element.getNonLocalContainingOrThisDeclaration(KtDeclaration::isAutonomousDeclaration)
+        }
     }
 
     private val firProvider = firFile.moduleData.session.firProvider
@@ -78,20 +86,30 @@ internal class FileStructure private constructor(
      * @see getNonLocalReanalyzableContainingDeclaration
      */
     fun invalidateElement(element: KtElement) {
-        val container = getContainerKtElement(element)
+        val container = getContainerKtElement(element, findNonLocalContainer(element))
         structureElements.remove(container)
     }
 
     /**
      * @return [FileStructureElement] for the closest non-local declaration which contains this [element].
      */
-    fun getStructureElementFor(element: KtElement): FileStructureElement {
-        val container = getContainerKtElement(element)
+    fun getStructureElementFor(
+        element: KtElement,
+        nonLocalContainer: KtDeclaration? = findNonLocalContainer(element),
+    ): FileStructureElement {
+        val container = getContainerKtElement(element, nonLocalContainer)
         return structureElements.getOrPut(container) { createStructureElement(container) }
     }
 
-    private fun getContainerKtElement(element: KtElement): KtElement {
-        val declaration = getStructureKtElement(element)
+    private fun addStructureElementForTo(element: KtElement, result: MutableCollection<FileStructureElement>) {
+        checkCanceled()
+        LLFirDiagnosticVisitor.suppressAndLogExceptions {
+            result += getStructureElementFor(element)
+        }
+    }
+
+    private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
+        val declaration = getStructureKtElement(element, nonLocalContainer)
         val container: KtElement
         if (declaration != null) {
             container = declaration
@@ -107,9 +125,11 @@ internal class FileStructure private constructor(
         return container
     }
 
-    private fun getStructureKtElement(element: KtElement): KtDeclaration? {
-        val container = element.getNonLocalContainingOrThisDeclaration {
-            it.isAutonomousDeclaration
+    private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {
+        val container = if (nonLocalContainer?.isAutonomousDeclaration == true)
+            nonLocalContainer
+        else {
+            nonLocalContainer?.let(::findNonLocalContainer)
         }
 
         val resultedContainer = when {
@@ -156,15 +176,16 @@ internal class FileStructure private constructor(
     }
 
     fun getAllStructureElements(): Collection<FileStructureElement> {
-        val structureElements = mutableSetOf(getStructureElementFor(ktFile))
+        val structureElements = mutableSetOf<FileStructureElement>()
+        addStructureElementForTo(ktFile, structureElements)
+
         ktFile.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }
 
             override fun visitDeclaration(dcl: KtDeclaration) {
-                val structureElement = getStructureElementFor(dcl)
-                structureElements += structureElement
+                addStructureElementForTo(dcl, structureElements)
 
                 // Go down only in the case of container declaration
                 val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript || dcl is KtDestructuringDeclaration
@@ -175,7 +196,7 @@ internal class FileStructure private constructor(
 
             override fun visitModifierList(list: KtModifierList) {
                 if (list.parent == ktFile) {
-                    structureElements += getStructureElementFor(list)
+                    addStructureElementForTo(list, structureElements)
                 }
             }
         })

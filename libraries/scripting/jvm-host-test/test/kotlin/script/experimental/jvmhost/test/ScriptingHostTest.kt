@@ -7,8 +7,12 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -24,6 +28,7 @@ import java.util.jar.JarFile
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
+import kotlin.script.experimental.host.ScriptDefinition
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
@@ -283,18 +288,10 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     fun testScriptWithImplicitReceiversWithSameNamedProperty() {
-        val result = listOf("first")
-        val script = "println(v)"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
                 updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.TestClass1>())
@@ -310,13 +307,13 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
+
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+        if (isK2) {
+            // this is not supported in K1
+            definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
+        }
     }
 
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
@@ -338,13 +335,7 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     fun testScriptImplicitReceiversTransitiveVisibility() {
@@ -374,14 +365,7 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val evalRes = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            )
-            val retVal = evalRes.valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     @Test
@@ -487,7 +471,7 @@ class ScriptingHostTest : TestCase() {
 
         val output = captureOut {
             val res1 = evalScriptWithConfiguration(script) {
-                compilerOptions("-Xallow-kotlin-package")
+                compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
             }
             Assert.assertTrue(res1.reports.none { it.message == error })
             Assert.assertTrue(res1 is ResultWithDiagnostics.Success)
@@ -541,13 +525,13 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "sealed interface Interface {\n    fun invoke()\n}"
+        val script = "value class Holder<T>(val value: T)"
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-language-version", "1.4")
+            compilerOptions(CommonCompilerArguments::languageVersion.cliArgument, "1.7")
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"sealed interfaces\" is only available since language version 1.5") }
+        res.reports.find { it.message.startsWith("The feature \"generic inline class parameter\" is only available since language version 1.8") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -556,7 +540,7 @@ class ScriptingHostTest : TestCase() {
         val script = "println(\"Hi\")"
 
         val res1 = evalScriptWithConfiguration(script) {
-            compilerOptions("-no-stdlib")
+            compilerOptions(K2JVMCompilerArguments::noStdlib.cliArgument)
         }
         assertTrue(res1 is ResultWithDiagnostics.Failure)
         val regex = "Unresolved reference\\W+println".toRegex()
@@ -567,7 +551,7 @@ class ScriptingHostTest : TestCase() {
             refineConfiguration {
                 beforeCompiling { ctx ->
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {
-                        compilerOptions("-no-stdlib")
+                        compilerOptions(K2JVMCompilerArguments::noStdlib.cliArgument)
                     }.asSuccess()
                 }
             }
@@ -624,26 +608,38 @@ class ScriptingHostTest : TestCase() {
     fun testIgnoredOptionsWarning() {
         val script = "println(\"Hi\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-version", "-d", "destDir", "-Xreport-perf", "-no-reflect")
+            compilerOptions(
+                K2JVMCompilerArguments::version.cliArgument,
+                K2JVMCompilerArguments::destination.cliArgument,
+                "destDir",
+                K2JVMCompilerArguments::reportPerf.cliArgument,
+                K2JVMCompilerArguments::noReflect.cliArgument
+            )
             refineConfiguration {
                 beforeCompiling { ctx ->
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {
-                        compilerOptions.append("-no-jdk", "-version", "-no-stdlib", "-Xdump-perf", "-no-inline")
+                        compilerOptions.append(
+                            K2JVMCompilerArguments::noJdk.cliArgument,
+                            K2JVMCompilerArguments::version.cliArgument,
+                            K2JVMCompilerArguments::noStdlib.cliArgument,
+                            K2JVMCompilerArguments::dumpPerf.cliArgument,
+                            K2JVMCompilerArguments::noInline.cliArgument
+                        )
                     }.asSuccess()
                 }
             }
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Success)
-        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -version, -d, -Xreport-perf" })
-        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -Xdump-perf" })
-        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored when configured from refinement callbacks: -no-jdk, -no-stdlib" })
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: ${K2JVMCompilerArguments::version.cliArgument}, ${K2JVMCompilerArguments::destination.cliArgument}, ${K2JVMCompilerArguments::reportPerf.cliArgument}" })
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: ${K2JVMCompilerArguments::dumpPerf.cliArgument}" })
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored when configured from refinement callbacks: ${K2JVMCompilerArguments::noJdk.cliArgument}, ${K2JVMCompilerArguments::noStdlib.cliArgument}" })
     }
 
     fun jvmTargetTestImpl(target: String, expectedVersion: Int) {
         val script = "println(\"Hi\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-jvm-target", target)
+            compilerOptions(K2JVMCompilerArguments::jvmTarget.cliArgument, target)
         }
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val compiledScript = runBlocking { compiler(script.toScriptSource(name = "SavedScript.kts"), compilationConfiguration) }
@@ -762,6 +758,16 @@ internal fun evalScriptWithConfiguration(
 ): ResultWithDiagnostics<EvaluationResult> {
     val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
     return host.eval(script.toScriptSource(), compilationConfiguration, null)
+}
+
+private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOutput: List<String>) {
+    val output = captureOut {
+        val retVal = BasicJvmScriptingHost().eval(
+            script.toScriptSource(), compilationConfiguration, evaluationConfiguration
+        ).valueOrThrow().returnValue
+        if (retVal is ResultValue.Error) throw retVal.error
+    }.lines()
+    Assert.assertEquals(expectedOutput, output)
 }
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {

@@ -9,26 +9,25 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
-import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurator() {
     protected abstract val testModuleFactory: KtTestModuleFactory
@@ -40,20 +39,8 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
         builder.apply {
             useAdditionalService<KtTestModuleFactory> { testModuleFactory }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
-            configureLibraryCompilationSupport(this)
+            configureLibraryCompilationSupport()
             configureOptionalTestCompilerPlugin()
-        }
-    }
-
-    fun configureLibraryCompilationSupport(builder: TestConfigurationBuilder) {
-        builder.apply {
-            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
-            useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
-            useConfigurators(
-                ::CommonEnvironmentConfigurator,
-                ::AnalysisApiJvmEnvironmentConfigurator,
-                ::JsEnvironmentConfigurator
-            )
         }
     }
 
@@ -65,10 +52,12 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> =
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> =
         listOf(
             AnalysisApiBaseTestServiceRegistrar,
+            AnalysisApiIdeModeTestServiceRegistrar,
             AnalysisApiDecompiledCodeTestServiceRegistrar,
+            FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
             AnalysisApiLibraryBaseTestServiceRegistrar,
         )

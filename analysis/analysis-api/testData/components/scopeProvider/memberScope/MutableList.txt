@@ -1,6 +1,7 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.add
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.add
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,58 +17,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: add
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.add
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.add
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -83,82 +90,93 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: add
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.addAll
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.addAll
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -174,87 +192,176 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: elements
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: E
+        ]
+        type: kotlin/collections/Collection<E>
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin.collections.MutableList
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: E
+    ]
+    type: kotlin/collections/MutableList<E>
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.MutableList
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.addAll
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: addAll
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.addAll
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.clear
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -270,106 +377,35 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  modality: ABSTRACT
-  name: addAll
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isCrossinline: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVararg: false
-      name: elements
-      origin: LIBRARY
-      receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: []
-            type: E
-        ]
-        type: kotlin/collections/Collection<E>
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
-  ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
-        type: E
-    ]
-    type: kotlin/collections/MutableList<E>
-  getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.clear
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.listIterator
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -385,38 +421,39 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableListIterator<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.listIterator
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -432,63 +469,69 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableListIterator<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.remove
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.remove
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -504,58 +547,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.removeAll
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.removeAll
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -571,63 +620,69 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.removeAt
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.removeAt
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -643,58 +698,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.retainAll
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.retainAll
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -710,63 +771,69 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.set
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.set
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -782,81 +849,92 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: set
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.subList
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.subList
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -872,88 +950,99 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: fromIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: toIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: kotlin/collections/MutableList.size
+  callableId: kotlin/collections/MutableList.size
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -970,38 +1059,39 @@ KtKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: true
+  location: CLASS
   modality: ABSTRACT
   name: size
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getSize
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.isEmpty
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1017,34 +1107,35 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: isEmpty
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.contains
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.contains
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1060,58 +1151,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: contains
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.iterator
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.iterator
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1127,38 +1224,39 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: iterator
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableIterator<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.containsAll
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.containsAll
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1174,63 +1272,69 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: containsAll
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: elements
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtTypeParameterType:
-            annotationsList: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.get
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.get
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1246,58 +1350,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: get
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.indexOf
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.indexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1313,58 +1423,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.lastIndexOf
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.lastIndexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1380,58 +1496,64 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: E
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.equals
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1447,55 +1569,61 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.hashCode
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1511,30 +1639,31 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.toString
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1550,30 +1679,31 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.getFirst
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.getFirst
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1589,33 +1719,34 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getFirst
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.getLast
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/MutableList.getLast
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1631,26 +1762,26 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getLast
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.MutableList
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null

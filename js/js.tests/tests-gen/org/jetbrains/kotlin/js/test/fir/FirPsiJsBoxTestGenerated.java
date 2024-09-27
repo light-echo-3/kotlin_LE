@@ -690,6 +690,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
       }
 
       @Test
+      @TestMetadata("keywordEscaping.kt")
+      public void testKeywordEscaping() {
+        runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/keywordEscaping.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaChain.kt")
       public void testLambdaChain() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaChain.kt");
@@ -705,6 +711,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
       @TestMetadata("localParameterInCallback.kt")
       public void testLocalParameterInCallback() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/localParameterInCallback.kt");
+      }
+
+      @Test
+      @TestMetadata("superInLambda.kt")
+      public void testSuperInLambda() {
+        runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/superInLambda.kt");
       }
 
       @Test
@@ -5901,6 +5913,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("jsCodeInLambda.kt")
+    public void testJsCodeInLambda() {
+      runTest("js/js.translator/testData/box/inline/jsCodeInLambda.kt");
+    }
+
+    @Test
     @TestMetadata("jsCodeVarDeclared.kt")
     public void testJsCodeVarDeclared() {
       runTest("js/js.translator/testData/box/inline/jsCodeVarDeclared.kt");
@@ -7364,6 +7382,30 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     @TestMetadata("labelSiblingClash.kt")
     public void testLabelSiblingClash() {
       runTest("js/js.translator/testData/box/jsCode/labelSiblingClash.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaCrossInline.kt")
+    public void testLambdaCrossInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaCrossInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaInline.kt")
+    public void testLambdaInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaNoInline.kt")
+    public void testLambdaNoInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaNoInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaNonLocalReturn.kt")
+    public void testLambdaNonLocalReturn() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaNonLocalReturn.kt");
     }
 
     @Test

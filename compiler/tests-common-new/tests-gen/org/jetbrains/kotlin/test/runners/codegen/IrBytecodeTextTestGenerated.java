@@ -254,18 +254,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
   }
 
   @Test
-  @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
-  public void testJavaFieldsWithIntersectionTypes_k1() {
-    runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
-  }
-
-  @Test
-  @TestMetadata("javaFields_k1.kt")
-  public void testJavaFields_k1() {
-    runTest("compiler/testData/codegen/bytecodeText/javaFields_k1.kt");
-  }
-
-  @Test
   @TestMetadata("javaStatics.kt")
   public void testJavaStatics() {
     runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");
@@ -1269,21 +1257,9 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
-    @TestMetadata("privateCompanionObjectAccessors_before.kt")
-    public void testPrivateCompanionObjectAccessors_before() {
-      runTest("compiler/testData/codegen/bytecodeText/companion/privateCompanionObjectAccessors_before.kt");
-    }
-
-    @Test
     @TestMetadata("protectedCompanionObjectAccessors_after.kt")
     public void testProtectedCompanionObjectAccessors_after() {
       runTest("compiler/testData/codegen/bytecodeText/companion/protectedCompanionObjectAccessors_after.kt");
-    }
-
-    @Test
-    @TestMetadata("protectedCompanionObjectAccessors_before.kt")
-    public void testProtectedCompanionObjectAccessors_before() {
-      runTest("compiler/testData/codegen/bytecodeText/companion/protectedCompanionObjectAccessors_before.kt");
     }
   }
 
@@ -1484,12 +1460,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("nonConstValHasNoDefaultValue_after.kt")
     public void testNonConstValHasNoDefaultValue_after() {
       runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_after.kt");
-    }
-
-    @Test
-    @TestMetadata("nonConstValHasNoDefaultValue_before.kt")
-    public void testNonConstValHasNoDefaultValue_before() {
-      runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_before.kt");
     }
   }
 
@@ -3671,6 +3641,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("syntheticPropertyReference.kt")
+    public void testSyntheticPropertyReference() {
+      runTest("compiler/testData/codegen/bytecodeText/inline/syntheticPropertyReference.kt");
+    }
+
+    @Test
     @TestMetadata("whenMappingOnCallSite.kt")
     public void testWhenMappingOnCallSite() {
       runTest("compiler/testData/codegen/bytecodeText/inline/whenMappingOnCallSite.kt");
@@ -4013,12 +3989,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
-    @TestMetadata("noReturnTypeMangling.kt")
-    public void testNoReturnTypeMangling() {
-      runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noReturnTypeMangling.kt");
-    }
-
-    @Test
     @TestMetadata("nonOverridingMethodsAreCalledByInlineClass.kt")
     public void testNonOverridingMethodsAreCalledByInlineClass() {
       runTest("compiler/testData/codegen/bytecodeText/inlineClasses/nonOverridingMethodsAreCalledByInlineClass.kt");
@@ -4154,6 +4124,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("unboxMethodCalledByInlineClass.kt")
     public void testUnboxMethodCalledByInlineClass() {
       runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unboxMethodCalledByInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeMangling.kt")
+    public void testWithReturnTypeMangling() {
+      runTest("compiler/testData/codegen/bytecodeText/inlineClasses/withReturnTypeMangling.kt");
     }
   }
 
@@ -4293,12 +4269,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
-    @TestMetadata("byteSmartCast_before.kt")
-    public void testByteSmartCast_before() {
-      runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/byteSmartCast_before.kt");
-    }
-
-    @Test
     @TestMetadata("charSmartCast.kt")
     public void testCharSmartCast() {
       runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/charSmartCast.kt");
@@ -4311,21 +4281,9 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
-    @TestMetadata("differentTypes_before.kt")
-    public void testDifferentTypes_before() {
-      runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/differentTypes_before.kt");
-    }
-
-    @Test
     @TestMetadata("intSmartCast_after.kt")
     public void testIntSmartCast_after() {
       runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/intSmartCast_after.kt");
-    }
-
-    @Test
-    @TestMetadata("intSmartCast_before.kt")
-    public void testIntSmartCast_before() {
-      runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/intSmartCast_before.kt");
     }
 
     @Test
@@ -4338,12 +4296,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("shortSmartCast_after.kt")
     public void testShortSmartCast_after() {
       runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/shortSmartCast_after.kt");
-    }
-
-    @Test
-    @TestMetadata("shortSmartCast_before.kt")
-    public void testShortSmartCast_before() {
-      runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/shortSmartCast_before.kt");
     }
   }
 
@@ -6007,6 +5959,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("innerWhenEnumTableSwitch.kt")
+    public void testInnerWhenEnumTableSwitch() {
+      runTest("compiler/testData/codegen/bytecodeText/when/innerWhenEnumTableSwitch.kt");
+    }
+
+    @Test
     @TestMetadata("integralWhenWithNoInlinedConstants.kt")
     public void testIntegralWhenWithNoInlinedConstants() {
       runTest("compiler/testData/codegen/bytecodeText/when/integralWhenWithNoInlinedConstants.kt");
@@ -6128,18 +6086,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("bigEnum.kt")
     public void testBigEnum() {
       runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/bigEnum.kt");
-    }
-
-    @Test
-    @TestMetadata("differentEnumClasses.kt")
-    public void testDifferentEnumClasses() {
-      runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses.kt");
-    }
-
-    @Test
-    @TestMetadata("differentEnumClasses2.kt")
-    public void testDifferentEnumClasses2() {
-      runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses2.kt");
     }
 
     @Test

@@ -284,18 +284,18 @@ fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(ba
             addAll(extractProjectionsForAllCapturedTypes(flexibleType.upperBound()))
         }
     }
-    val simpleBaseType = baseType.asSimpleType()?.originalIfDefinitelyNotNullable()
+    val simpleBaseType = baseType.asRigidType()?.asCapturedTypeUnwrappingDnn()
 
     return buildSet {
-        val projectionType = if (simpleBaseType is CapturedTypeMarker) {
-            val typeArgument = simpleBaseType.typeConstructorProjection().takeIf { !it.isStarProjection() } ?: return@buildSet
-            typeArgument.getType().also(::add)
+        val projectionType = if (simpleBaseType != null) {
+            val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return@buildSet
+            argumentType.also(::add)
         } else baseType
         val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
 
         for (i in 0 until argumentsCount) {
-            val typeArgument = projectionType.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
-            addAll(extractProjectionsForAllCapturedTypes(typeArgument.getType()))
+            val argumentType = projectionType.getArgument(i).getType() ?: continue
+            addAll(extractProjectionsForAllCapturedTypes(argumentType))
         }
     }
 }

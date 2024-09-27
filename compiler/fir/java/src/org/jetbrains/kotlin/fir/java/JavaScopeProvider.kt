@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -78,7 +77,6 @@ object JavaScopeProvider : FirScopeProvider() {
             useSiteSession.declaredMemberScopeWithLazyNestedScope(
                 regularClass,
                 existingNames = regularClass.existingNestedClassifierNames,
-                symbolProvider = useSiteSession.symbolProvider
             )
         } else {
             useSiteSession.declaredMemberScope(regularClass, memberRequiredPhase = null)
@@ -94,7 +92,7 @@ object JavaScopeProvider : FirScopeProvider() {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
             val superTypes = if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
+                listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false))
             else
                 lookupSuperTypes(
                     regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
@@ -113,13 +111,21 @@ object JavaScopeProvider : FirScopeProvider() {
         }
     }
 
-    override fun getStaticMemberScopeForCallables(
+    override fun getStaticCallableMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         val scope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession, hashSetOf()) ?: return null
         return FirNameAwareOnlyCallablesScope(FirStaticScope(scope))
+    }
+
+    override fun getStaticCallableMemberScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirContainingNamesAwareScope? {
+        return getStaticCallableMemberScope(klass, useSiteSession, scopeSession)
     }
 
     private fun getStaticMemberScopeForCallables(
@@ -162,7 +168,7 @@ object JavaScopeProvider : FirScopeProvider() {
     private tailrec fun FirRegularClass.findJavaSuperClass(useSiteSession: FirSession): FirRegularClass? {
         val superClass = superConeTypes.firstNotNullOfOrNull {
             if (it.isAny) return@firstNotNullOfOrNull null
-            (it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass)?.takeIf { superClass ->
+            it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir?.takeIf { superClass ->
                 superClass.classKind == ClassKind.CLASS
             }
         } ?: return null
@@ -177,7 +183,7 @@ object JavaScopeProvider : FirScopeProvider() {
         DFS.dfs(listOf(this),
                 { regularClass ->
                     regularClass.superConeTypes.mapNotNull {
-                        it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass
+                        it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
                     }
                 },
                 object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {
@@ -205,9 +211,9 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
+            useSiteSession,
             klass.classId,
-            (klass as FirJavaClass).existingNestedClassifierNames,
-            useSiteSession.symbolProvider
+            (klass as FirJavaClass).existingNestedClassifierNames
         )
     }
 }

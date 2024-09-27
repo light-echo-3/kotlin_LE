@@ -197,6 +197,9 @@ public class DefaultErrorMessages {
         MAP.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_USAGE_FUTURE_ERROR, "{1}", TO_STRING, STRING);
 
+        MAP.put(OPT_IN_TO_INHERITANCE, "{1}", TO_STRING, STRING);
+        MAP.put(OPT_IN_TO_INHERITANCE_ERROR, "{1}", TO_STRING, STRING);
+
         MAP.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING);
 
@@ -214,6 +217,7 @@ public class DefaultErrorMessages {
         MAP.put(OPT_IN_MARKER_ON_OVERRIDE_WARNING, "Opt-in requirement marker annotation on override makes no sense without the same marker on base declaration");
 
         MAP.put(SUBCLASS_OPT_IN_INAPPLICABLE, "@SubclassOptInRequired is inapplicable on {0}", STRING);
+        MAP.put(SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not annotated with ''@RequiresOptIn''.", TO_STRING);
 
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "{0}", STRING);
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "{0}", STRING);

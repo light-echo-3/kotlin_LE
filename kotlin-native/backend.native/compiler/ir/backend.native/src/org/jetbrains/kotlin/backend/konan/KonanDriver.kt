@@ -106,7 +106,23 @@ class KonanDriver(
         if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
             konanConfig.targetManager.list()
         }
-        if (konanConfig.infoArgsOnly) return
+
+        val hasIncludedLibraries = configuration[KonanConfigKeys.INCLUDED_LIBRARIES]?.isNotEmpty() == true
+        val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
+                && configuration[KonanConfigKeys.LIBRARY_FILES]?.isNotEmpty() == true && !hasIncludedLibraries
+        val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
+                || hasIncludedLibraries
+                || configuration[KonanConfigKeys.EXPORTED_LIBRARIES]?.isNotEmpty() == true
+                || konanConfig.libraryToCache != null
+                || konanConfig.compileFromBitcode?.isNotEmpty() == true
+                || isProducingExecutableFromLibraries
+
+        if (!hasCompilerInput) return
+
+        if (isProducingExecutableFromLibraries && configuration.get(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE) {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                    "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
+        }
 
         // Avoid showing warning twice in 2-phase compilation.
         if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in softDeprecatedTargets) {
@@ -126,7 +142,13 @@ class KonanDriver(
             konanConfig.cacheSupport.checkConsistency()
         }
 
-        DynamicCompilerDriver().run(konanConfig, environment)
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val sourcesFiles = environment.getSourceFiles()
+        performanceManager?.notifyCompilerInitialized(
+                sourcesFiles.size, environment.countLinesOfCode(sourcesFiles), "${konanConfig.moduleId}-${konanConfig.produce}"
+        )
+
+        DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -173,7 +195,6 @@ class KonanDriver(
             put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
             copyNotNull(CLIConfigurationKeys.CONTENT_ROOTS)
             copyNotNull(KonanConfigKeys.LIBRARY_FILES)
-            copyNotNull(KonanConfigKeys.REPOSITORIES)
             copy(KonanConfigKeys.FRIEND_MODULES)
             copy(KonanConfigKeys.REFINES_MODULES)
             copy(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)
@@ -183,7 +204,6 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
-            copy(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR)
         }
 
         // For the second stage, remove already compiled source files from the configuration.

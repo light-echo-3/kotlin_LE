@@ -35,6 +35,14 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
                 }
             }
             for (from in node.previousNodes) {
+                val labelAllowed = node is FinallyBlockEnterNode ||
+                        from is FinallyBlockExitNode ||
+                        (from is AnonymousFunctionCaptureNode && node is FunctionEnterNode)
+                if (!labelAllowed) {
+                    val label = node.edgeFrom(from).label
+                    val correctedLabel = if (label == PostponedPath) NormalPath else label
+                    assertions.assertEquals(correctedLabel, NormalPath) { "edge from $from to $node cannot be labeled" }
+                }
                 assertions.assertContainsElements(from.followingNodes, node)
             }
             assertions.assertFalse(node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) { "Unconnected CFG node: $node" }

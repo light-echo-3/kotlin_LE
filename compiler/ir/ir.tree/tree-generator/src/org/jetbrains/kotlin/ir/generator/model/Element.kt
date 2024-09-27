@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementBaseType
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
@@ -29,26 +29,6 @@ class Element(
 
     override val packageName: String = category.packageName
 
-    override val elementParents = mutableListOf<ElementRef>()
-    override var otherParents: MutableList<ClassRef<*>> = mutableListOf()
-
-    override val params = mutableListOf<TypeVariable>()
-
-    override val fields = mutableSetOf<Field>()
-
-    val additionalIrFactoryMethodParameters = mutableListOf<Field>()
-    var generateIrFactoryMethod = category == Category.Declaration
-    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
-
-    override val element: Element
-        get() = this
-
-    override val nullable: Boolean
-        get() = false
-
-    override val args: Map<NamedTypeParameterRef, TypeRef>
-        get() = emptyMap()
-
     /**
      * Allows to forcibly skip generation of the method for this element in visitors.
      */
@@ -61,19 +41,6 @@ class Element(
                 ?: elementParents.singleOrNull { it.typeKind == TypeKind.Class }?.element
                 ?: IrTree.rootElement.takeIf { elementBaseType in otherParents }
         }
-
-
-    var typeKind: TypeKind? = null
-        set(value) {
-            kind = when (value) {
-                TypeKind.Class -> ImplementationKind.AbstractClass
-                TypeKind.Interface -> ImplementationKind.Interface
-                null -> null
-            }
-            field = value
-        }
-
-    override var kind: ImplementationKind? = null
 
     override val namePrefix: String
         get() = "Ir"
@@ -108,20 +75,5 @@ class Element(
     var transformByChildren = false
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
-    var generationCallback: (context(ImportCollector) SmartPrinter.() -> Unit)? = null
-
-    override var kDoc: String? = null
-
-    override fun toString() = name
-
-    operator fun TypeVariable.unaryPlus() = apply {
-        params.add(this)
-    }
-
-    operator fun Field.unaryPlus() = apply {
-        fields.add(this)
-    }
+    var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 }
-
-typealias ElementRef = GenericElementRef<Element>
-typealias ElementOrRef = GenericElementOrRef<Element>

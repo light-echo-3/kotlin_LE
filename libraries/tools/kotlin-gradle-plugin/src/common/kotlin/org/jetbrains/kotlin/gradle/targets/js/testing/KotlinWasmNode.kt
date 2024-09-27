@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -44,7 +43,7 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile.parentFile, task.inputFileProperty.get().asFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -62,7 +61,6 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
         val args = mutableListOf<String>()
         with(args) {
             addAll(nodeJsArgs)
-            addWasmExperimentalArguments()
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())
         }

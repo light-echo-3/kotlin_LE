@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import kotlin.reflect.KClass
@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
 @FirExtensionApiInternals
 abstract class FirFunctionCallRefinementExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("FunctionCallRefinementExtension")
+        val NAME: FirExtensionPointName = FirExtensionPointName("FunctionCallRefinementExtension")
     }
 
     final override val name: FirExtensionPointName

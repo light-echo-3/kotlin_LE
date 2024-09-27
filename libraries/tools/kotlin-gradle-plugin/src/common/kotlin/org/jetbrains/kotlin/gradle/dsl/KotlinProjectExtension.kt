@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -69,7 +68,7 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
 
     override lateinit var coreLibrariesVersion: String
 
-    private val toolchainSupport = ToolchainSupport.createToolchain(project, this)
+    private val toolchainSupport = ToolchainSupport.createToolchain(project)
 
     /**
      * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.
@@ -211,9 +210,7 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
         project.launch(Undispatched) { targetFuture.await().body() }
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects
-        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryNext(project)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
@@ -350,9 +347,7 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
         targetFuture.await().body()
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects
-        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryNext(project)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)

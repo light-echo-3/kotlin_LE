@@ -123,7 +123,6 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                     }
                     is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
-                    else -> error("Unknown function declaration")
                 }
             }.statements
         }
@@ -323,7 +322,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, type, it as IrConstructorSymbol,
                     typeArgumentsCount = typeArgumentsCount,
-                    valueArgumentsCount = it.owner.valueParameters.size
                 )
             }
         }
@@ -351,7 +349,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset, type, it as IrConstructorSymbol,
                     typeArgumentsCount = typeArgumentsCount,
-                    valueArgumentsCount = it.owner.valueParameters.size
                 )
             }
         }
@@ -366,7 +363,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArgumentsCount - typeParametersToRemove,
-                    valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
@@ -511,7 +507,7 @@ class DefaultParameterPatchOverridenSymbolsLowering(
         if (declaration is IrSimpleFunction) {
             (context.mapping.defaultArgumentsOriginalFunction[declaration] as? IrSimpleFunction)?.run {
                 declaration.overriddenSymbols = declaration.overriddenSymbols memoryOptimizedPlus overriddenSymbols.mapNotNull {
-                    (context.mapping.defaultArgumentsDispatchFunction[it.owner] as? IrSimpleFunction)?.symbol
+                    (it.owner.defaultArgumentsDispatchFunction as? IrSimpleFunction)?.symbol
                 }
             }
         }

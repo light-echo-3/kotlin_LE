@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.explicitVisibility
+import org.jetbrains.kotlin.fir.copyWithNewDefaults
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -17,11 +20,10 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,8 +44,11 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
         val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: emptyList()
         val visibility = findVisibility(declaration, owners) ?: return status
-        if (visibility == status.visibility) return status
-        return status.transform(visibility = visibility)
+
+        return when (declaration.source?.explicitVisibility) {
+            null -> status.copyWithNewDefaults(visibility = visibility, defaultVisibility = visibility)
+            else -> status.copyWithNewDefaults(defaultVisibility = visibility)
+        }
     }
 
     private fun findVisibility(declaration: FirDeclaration, owners: List<FirBasedSymbol<*>>): Visibility? {
@@ -56,7 +61,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
 
     private fun FirBasedSymbol<*>.visibilityFromAnnotation(): Visibility? {
         val annotation = annotations.firstOrNull {
-            it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
+            it.annotationTypeRef.coneType.classLikeLookupTagIfAny?.classId == AllPublicClassId
         } as? FirAnnotationCall ?: return null
         val argument = annotation.arguments.firstOrNull() as? FirPropertyAccessExpression ?: return null
         val reference = argument.calleeReference as? FirNamedReference ?: return null
@@ -70,6 +75,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
     }
 
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {
+        if (declaration is FirClass) return false
         return session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 

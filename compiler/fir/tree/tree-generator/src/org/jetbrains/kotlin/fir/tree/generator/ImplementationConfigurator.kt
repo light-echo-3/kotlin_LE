@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declaration
+import org.jetbrains.kotlin.fir.tree.generator.FirTree.declaration
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
-    override fun configure(model: Model) = with(FirTreeBuilder) {
+    override fun configure(model: Model) = with(FirTree) {
+
+        impl(receiverParameter)
+
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }
@@ -113,7 +116,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "!isThis"
                 withGetter = true
             }
-            additionalImports(explicitThisReferenceType, explicitSuperReferenceType)
+            default("coneTypeOrNull") {
+                value = "ConeClassLikeTypeImpl(StandardClassIds.Unit.toLookupTag(), typeArguments = emptyArray(), isMarkedNullable = false)"
+                isMutable = false
+            }
+            additionalImports(
+                explicitThisReferenceType, explicitSuperReferenceType, coneClassLikeTypeImplType,
+                standardClassIdsType, toSymbolUtilityFunction
+            )
         }
 
         impl(multiDelegatedConstructorCall) {
@@ -151,6 +161,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             default("isSuper") {
                 value = "!isThis"
+                withGetter = true
+            }
+            default("coneTypeOrNull") {
+                value = "delegatedConstructorCalls.last().coneTypeOrNull"
                 withGetter = true
             }
             publicImplementation()
@@ -346,6 +360,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(standardClassIdsType, constructClassLikeTypeImport)
         }
 
+        impl(whenBranch, "FirRegularWhenBranch") {
+            defaultFalse("hasGuard", withGetter = true)
+        }
+        impl(whenBranch, "FirGuardedWhenBranch") {
+            defaultTrue("hasGuard", withGetter = true)
+        }
+
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
             defaultClassIdFromRelativeClassName()
@@ -417,6 +438,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(desugaredAssignmentValueReferenceExpression) {
             additionalImports(expression)
+            default("coneTypeOrNull") {
+                value = "expressionRef.value.coneTypeOrNull"
+                withGetter = true
+            }
         }
 
         impl(wrappedDelegateExpression) {
@@ -428,7 +453,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(enumEntryDeserializedAccessExpression) {
             noSource()
             default("coneTypeOrNull") {
-                value = "enumClassId.toLookupTag().constructClassType(emptyArray(), false)"
+                value = "enumClassId.toLookupTag().constructClassType()"
                 additionalImports(toLookupTagImport, constructClassTypeImport)
             }
         }

@@ -7,8 +7,8 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
-import org.jetbrains.kotlin.generators.tree.StandardTypes.boolean
-import org.jetbrains.kotlin.generators.tree.StandardTypes.string
+import org.jetbrains.kotlin.generators.tree.config.element
+import org.jetbrains.kotlin.generators.tree.config.sealedElement
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilder
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 
@@ -39,6 +39,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = rootElement
         parent(mutableDeclarationContainer)
         parent(named)
+        +listField("imports", importType, isMutableList = true)
     }
 
     val declaration by sealedElement {
@@ -49,6 +50,16 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("parent", declarationParent, mutable = true, isChild = false) {
             useInBaseTransformerDetection = false
         }
+        +listField("attributes", attributeType, isMutableList = true)
+    }
+
+    val classMemberDeclaration by sealedElement {
+        customParentInVisitor = declaration
+        parent(declaration)
+
+        +field("isOverride", boolean)
+        +field("isInstance", boolean)
+        +field("modality", modalityKind)
     }
 
     val extension: Element by element {
@@ -89,6 +100,9 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
+
+        +field("superClass", typeType, nullable = true)
+        +field("modality", modalityKind)
     }
 
     val `typealias`: Element by element {
@@ -101,7 +115,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val callable by sealedElement {
         parent(declaration)
 
-        +field("kind", callableKind)
         +field("body", functionBodyType, nullable = true, mutable = true)
     }
 
@@ -113,11 +126,14 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("parameters", parameterType)
 
         +field("initKind", initKind)
+
+        +field("isOverride", boolean)
     }
 
     val function by element {
         customParentInVisitor = callable
         parent(callable)
+        parent(classMemberDeclaration)
 
         +field("name", string)
         +listField("parameters", parameterType)
@@ -143,18 +159,12 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = declaration
         parent(declaration)
         parent(declarationParent)
+        parent(classMemberDeclaration)
 
         +field("name", string)
         +field("type", typeType)
 
         +field("getter", getter)
         +field("setter", setter, nullable = true)
-    }
-
-    val import by element {
-        customParentInVisitor = declaration
-        parent(declaration)
-
-        +field("moduleName", string)
     }
 }

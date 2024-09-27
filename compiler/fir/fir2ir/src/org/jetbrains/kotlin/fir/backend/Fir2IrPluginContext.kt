@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
@@ -22,7 +24,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.CallableId
@@ -34,7 +35,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
-    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor
+    override val irBuiltIns: IrBuiltIns,
+    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
+    @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
 ) : IrPluginContext {
     companion object {
         private const val ERROR_MESSAGE = "This API is not supported for K2"
@@ -58,13 +61,7 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
-    override val symbolTable: ReferenceSymbolTable
-        get() = c.symbolTable
-
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, symbolTable)
-
-    override val irBuiltIns: IrBuiltIns
-        get() = c.irBuiltIns
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider
@@ -127,7 +124,7 @@ class Fir2IrPluginContext(
         return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
     }
 
-    override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {
+    override fun createDiagnosticReporter(pluginId: String): MessageCollector {
         error(ERROR_MESSAGE)
     }
 

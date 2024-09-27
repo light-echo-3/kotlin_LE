@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -37,9 +38,9 @@ fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
-    if (shouldSkipDump()) return ""
+    val correctedLineNumber = if (shouldSkipDump()) UNDEFINED_OFFSET else lineNumber
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, options), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, correctedLineNumber, sb, options), null)
     return sb.toString()
 }
 
@@ -51,6 +52,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
  * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered
  *   declaration references.
+ * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
+ * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
@@ -60,10 +63,12 @@ data class DumpIrTreeOptions(
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
     val printFlagsInDeclarationReferences: Boolean = true,
+    val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
     val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
+    val printExpectDeclarations: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 
@@ -152,6 +157,7 @@ class DumpIrTreeVisitor(
 
     override fun visitClass(declaration: IrClass, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
@@ -178,6 +184,7 @@ class DumpIrTreeVisitor(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
@@ -337,11 +344,10 @@ class DumpIrTreeVisitor(
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
         getTypeArgument(index)?.render() ?: "<none>"
 
-    override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
-        expression.dumpLabeledElementWith(data) {
-            expression.inlinedElement.dumpInternal("inlinedElement")
-            expression.acceptChildren(this, "")
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
+        inlinedBlock.dumpLabeledElementWith(data) {
+            inlinedBlock.inlineFunctionSymbol?.dumpInternal("inlineFunctionSymbol")
+            inlinedBlock.acceptChildren(this, "")
         }
     }
 

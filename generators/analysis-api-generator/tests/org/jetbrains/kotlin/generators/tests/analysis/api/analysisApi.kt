@@ -6,22 +6,17 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderForSetterParameterTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingModuleByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractDanglingFileCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractElementDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
@@ -39,6 +34,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
@@ -60,49 +56,81 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleStateModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
-    test<AbstractReferenceResolveTest>(
+    component(
+        directory = "resolver",
         filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
-                analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
-    ) { data ->
-        when (data.moduleKind) {
-            TestModuleKind.LibrarySource -> {
-                model(
-                    "referenceResolve",
-                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-                    excludeDirsRecursively = listOf("withErrors")
-                )
+                analysisSessionModeIs(AnalysisSessionMode.Normal),
+    ) {
+        val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+            val excludeDirs = buildList {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone ||
+                    data.frontend == FrontendKind.Fe10 ||
+                    data.moduleKind == TestModuleKind.LibrarySource
+                ) {
+                    add("withTestCompilerPluginEnabled")
+                }
+
+                when (data.moduleKind) {
+                    TestModuleKind.LibrarySource -> {
+                        // Sources with errors cannot be compiled to a library.
+                        add("withErrors")
+
+                        // Tests which rely on missing dependencies (e.g. the main module missing a dependency to a library module) will not
+                        // work as expected with library source modules, because they use "rest symbol providers" which provide symbols from
+                        // all other libraries (as dependencies between libraries are not usually known). So the "missing" dependencies
+                        // would effectively not be missing.
+                        add("missingDependency")
+
+                        // Tests which rely on a particular project structure where independent modules depend on globally duplicate
+                        // libraries will not work as expected with library source modules because of "rest symbol providers." For example,
+                        // we could have two libraries `L1` and `L2` which both contain a class `X` of the same name. We have two
+                        // independent modules `A` and `B`, where `A` depends on `L1`, and `B` depends on `L2`. From `A`, we should see `X`
+                        // from `L1`, and from `B`, we should see `X` from `L2`.
+                        //
+                        // "Rest symbol providers" break such tests. Let's say `A` is a `LibrarySource` module. Then its rest library
+                        // provider will find both versions of `X` from `L1` and `L2`. It will return a symbol for one version, which may
+                        // not be the one expected by `A`.
+                        add("globallyDuplicateLibraries")
+                    }
+
+                    else -> {}
+                }
             }
 
-            TestModuleKind.ScriptSource -> model(data, "referenceResolve")
+            model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
+        }
 
-            else -> {
-                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        test<AbstractResolveCallTest>(init = singleByPsiInit)
+        test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
+        test<AbstractResolveReferenceTest>(init = singleByPsiInit)
+
+        group(filter = testModuleKindIs(TestModuleKind.Source)) {
+            val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+                model(data, "allByPsi")
             }
+
+            test<AbstractResolveCallByFileTest>(init = allByPsiInit)
+            test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
+            test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
         }
     }
 
-    test<AbstractDanglingFileReferenceResolveTest>(
+    test<AbstractResolveDanglingFileReferenceTest>(
         filter = frontendIs(FrontendKind.Fir)
                 and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
     ) {
@@ -131,15 +159,23 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
     group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
         generateAnalysisApiComponentsTests()
-        generateAnalysisApiNonComponentsTests()
         generateResolveExtensionsTests()
     }
-    group(
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinaryDecompiled) and
-                analysisApiModeIs(AnalysisApiMode.Standalone)
+
+    component(
+        "compilerPluginGeneratedDeclarationsProvider",
+        filter = frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
-        generateAnalysisApiStandaloneTests()
+        test<AbstractCompilerPluginGeneratedDeclarationsTest> {
+            model(it, "compilerPluginGeneratedDeclarations")
+        }
     }
+
+
+    generateAnalysisApiNonComponentsTests()
 }
 
 private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
@@ -149,99 +185,119 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
                 frontendIs(FrontendKind.Fir) and
                 testModuleKindIs(TestModuleKind.Source)
     ) {
-        test<AbstractReferenceResolveWithResolveExtensionTest> {
+        test<AbstractResolveReferenceWithResolveExtensionTest> {
             model(it, "referenceResolve")
         }
     }
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
-    group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test<AbstractSymbolByPsiTest> {
-            model(it, "symbolByPsi")
-        }
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+        group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.frontend == FrontendKind.Fe10) {
+                    model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                } else {
+                    model(data, path)
+                }
+            }
 
-        test<AbstractSymbolByJavaPsiTest>(filter = frontendIs(FrontendKind.Fir)) {
-            model(it, "symbolByJavaPsi")
-        }
+            test<AbstractSymbolByPsiTest> {
+                symbolsModel(it, "symbolByPsi")
+            }
 
-        test<AbstractSingleSymbolByPsiTest> {
-            model(it, "singleSymbolByPsi")
-        }
+            test<AbstractSymbolByJavaPsiTest>(filter = frontendIs(FrontendKind.Fir)) {
+                symbolsModel(it, "symbolByJavaPsi")
+            }
 
-        test<AbstractSymbolRestoreFromDifferentModuleTest> {
-            model(it, "symbolRestoreFromDifferentModule")
-        }
+            test<AbstractSingleSymbolByPsiTest> {
+                symbolsModel(it, "singleSymbolByPsi")
+            }
 
-        test<AbstractMultiModuleSymbolByPsiTest> {
-            model(it, "multiModuleSymbolByPsi")
-        }
+            test<AbstractSymbolRestoreFromDifferentModuleTest> {
+                symbolsModel(it, "symbolRestoreFromDifferentModule")
+            }
 
-        test<AbstractSymbolByFqNameTest> {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model(it, "symbolByFqName")
-                AnalysisApiMode.Standalone ->
-                    model(it, "symbolByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+            test<AbstractMultiModuleSymbolByPsiTest> {
+                symbolsModel(it, "multiModuleSymbolByPsi")
+            }
+
+            test<AbstractSymbolByFqNameTest> {
+                symbolsModel(it, "symbolByFqName")
+            }
+
+            test<AbstractSymbolByReferenceTest> {
+                symbolsModel(it, "symbolByReference")
             }
         }
 
-        test<AbstractSymbolByReferenceTest> {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model(it, "symbolByReference")
-                AnalysisApiMode.Standalone ->
-                    model(it, "symbolByReference", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+        group("annotations") {
+            test<AbstractAnalysisApiAnnotationsOnTypesTest> {
+                model(it, "annotationsOnTypes")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
+                model(it, "annotationsOnDeclaration")
+            }
+
+            test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
+                model(it, "specificAnnotations")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnFilesTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
+            ) {
+                model(it, "annotationsOnFiles")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
+                model(it, "metaAnnotations")
+            }
+
+        }
+
+        group("imports", filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractReferenceImportAliasTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+            ) {
+                model(it, "importAliases")
+            }
+        }
+
+        group("references") {
+            test<AbstractIsReferenceToTest>(filter = frontendIs(FrontendKind.Fir)) {
+                model(it, "isReferenceTo")
+            }
+        }
+
+        group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractAnalysisApiSubstitutorsTest> {
+                model(it, "typeSubstitution")
             }
         }
     }
 
     group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test<AbstractTypeByDeclarationReturnTypeTest> {
-            model(it, "byDeclarationReturnType")
+        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+            test<AbstractTypeByDeclarationReturnTypeTest> {
+                model(it, "byDeclarationReturnType")
+            }
+
+            test<AbstractBuiltInTypeTest> {
+                model(it, "builtins")
+            }
+
+            group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractTypePointerConsistencyTest> {
+                    model(it, "consistency")
+                }
+            }
         }
 
-        test<AbstractBuiltInTypeTest> {
-            model(it, "builtins")
-        }
-    }
-
-    group("annotations") {
-        test<AbstractAnalysisApiAnnotationsOnTypesTest> {
-            model(it, "annotationsOnTypes")
-        }
-
-        test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
-            model(it, "annotationsOnDeclaration")
-        }
-
-        test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
-            model(it, "specificAnnotations")
-        }
-
-        test<AbstractAnalysisApiAnnotationsOnFilesTest>(
-            filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
-        ) {
-            model(it, "annotationsOnFiles")
-        }
-
-        test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
-            model(it, "metaAnnotations")
-        }
-
-    }
-
-    group("imports", filter = frontendIs(FrontendKind.Fir)) {
-        test<AbstractReferenceImportAliasTest>(
-            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
-        ) {
-            model(it, "importAliases")
-        }
-    }
-
-    group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
-        test<AbstractAnalysisApiSubstitutorsTest> {
-            model(it, "typeSubstitution")
+        group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
+            test<AbstractAbbreviatedTypeTest> {
+                model(it, "abbreviatedType")
+            }
         }
     }
 
@@ -281,38 +337,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     }
 }
 
-private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
-    group("standalone") {
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.Source)
-        ) {
-            model(it, "source")
-        }
-
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.LibraryBinaryDecompiled)
-        ) {
-            model(it, "binary")
-        }
-    }
-}
-
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
-    component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test<AbstractResolveCallTest> {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model(it, "resolveCall")
-                AnalysisApiMode.Standalone ->
-                    model(it, "resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-            }
-        }
-
-        test<AbstractResolveCandidatesTest> {
-            model(it, "resolveCandidates")
-        }
-    }
-
     component("compileTimeConstantProvider") {
         test<AbstractCompileTimeConstantEvaluatorTest> {
             model(it, "evaluate")
@@ -368,6 +393,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractDanglingFileCollectDiagnosticsTest>(filter = frontendIs(FrontendKind.Fir)) {
             model(it, "diagnostics")
+        }
+
+        test<AbstractElementDiagnosticsTest> {
+            model(it, "elementDiagnostics")
         }
 
         test<AbstractCodeFragmentCollectDiagnosticsTest>(
@@ -550,6 +579,39 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
+    component("typeRelationChecker") {
+        test<AbstractTypeEqualityTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientTypeEqualityTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractSubtypingTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientSubtypingTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+    }
 
     component("referenceResolveProvider") {
         test<AbstractIsImplicitCompanionReferenceTest> {
@@ -573,29 +635,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
 
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-            test<AbstractSubstitutionOverridesUnwrappingTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "substitutionOverridesUnwrapping")
-            }
-
-            test<AbstractMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model(it, "memberScope")
-                    AnalysisApiMode.Standalone ->
-                        model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
-            }
-
-            test<AbstractStaticMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "staticMemberScope")
-            }
-
             test<AbstractFileScopeTest> {
                 model(it, "fileScopeTest")
             }
@@ -604,22 +643,39 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "delegatedMemberScope")
             }
 
-            test<AbstractDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "declaredMemberScope")
+            test<AbstractPackageScopeTest> {
+                model(it, "packageScope")
             }
 
-            test<AbstractStaticDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "staticDeclaredMemberScope")
+            test<AbstractSubstitutionOverridesUnwrappingTest> {
+                model(it, "substitutionOverridesUnwrapping")
             }
 
-            test<AbstractCombinedDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "combinedDeclaredMemberScope")
+            group(filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractMemberScopeTest> {
+                    when (it.analysisApiMode) {
+                        AnalysisApiMode.Ide ->
+                            model(it, "memberScope")
+                        AnalysisApiMode.Standalone ->
+                            model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                    }
+                }
+
+                test<AbstractStaticMemberScopeTest> {
+                    model(it, "staticMemberScope")
+                }
+
+                test<AbstractDeclaredMemberScopeTest> {
+                    model(it, "declaredMemberScope")
+                }
+
+                test<AbstractStaticDeclaredMemberScopeTest> {
+                    model(it, "staticDeclaredMemberScope")
+                }
+
+                test<AbstractCombinedDeclaredMemberScopeTest> {
+                    model(it, "combinedDeclaredMemberScope")
+                }
             }
         }
     }

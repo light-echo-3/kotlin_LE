@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
  * @see [HideFromObjCDeclarationsSet]
  */
 class AddHiddenFromObjCSerializationPlugin(
-    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet
+    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet,
 ) : DescriptorSerializerPlugin {
 
     private val hasAnnotationFlag = Flags.HAS_ANNOTATIONS.toFlags(true)
@@ -47,12 +48,26 @@ class AddHiddenFromObjCSerializationPlugin(
             id = extension.stringTable.getQualifiedClassNameIndex(annotationToAdd)
         }.build()
 
+    override fun afterClass(
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: DescriptorSerializer,
+        extension: SerializerExtension,
+    ) {
+        if (descriptor in hideFromObjCDeclarationsSet) {
+            val annotationProto = createAnnotationProto(extension)
+            proto.addExtension(KlibMetadataSerializerProtocol.classAnnotation, annotationProto)
+            proto.flags = proto.flags or hasAnnotationFlag
+        }
+    }
+
     override fun afterConstructor(
         descriptor: ConstructorDescriptor,
         proto: ProtoBuf.Constructor.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)
@@ -69,7 +84,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Function.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)
@@ -83,7 +98,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Property.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)

@@ -109,6 +109,18 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("crossModuleModifyClassAncestors")
+  public void testCrossModuleModifyClassAncestors() {
+    runTest("js/js.translator/testData/incremental/invalidation/crossModuleModifyClassAncestors/");
+  }
+
+  @Test
+  @TestMetadata("crossModuleObjectInitialization")
+  public void testCrossModuleObjectInitialization() {
+    runTest("js/js.translator/testData/incremental/invalidation/crossModuleObjectInitialization/");
+  }
+
+  @Test
   @TestMetadata("crossModuleReferences")
   public void testCrossModuleReferences() {
     runTest("js/js.translator/testData/incremental/invalidation/crossModuleReferences/");
@@ -190,6 +202,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   @TestMetadata("fastPath2")
   public void testFastPath2() {
     runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
+  }
+
+  @Test
+  @TestMetadata("fileNameCaseClash")
+  public void testFileNameCaseClash() {
+    runTest("js/js.translator/testData/incremental/invalidation/fileNameCaseClash/");
   }
 
   @Test
@@ -409,6 +427,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("modifyClassAncestors")
+  public void testModifyClassAncestors() {
+    runTest("js/js.translator/testData/incremental/invalidation/modifyClassAncestors/");
+  }
+
+  @Test
   @TestMetadata("moveAndModifyInlineFunction")
   public void testMoveAndModifyInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunction/");
@@ -574,6 +598,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   @TestMetadata("unicodeSerializationAndDeserialization")
   public void testUnicodeSerializationAndDeserialization() {
     runTest("js/js.translator/testData/incremental/invalidation/unicodeSerializationAndDeserialization/");
+  }
+
+  @Test
+  @TestMetadata("unstableIrReproducer")
+  public void testUnstableIrReproducer() {
+    runTest("js/js.translator/testData/incremental/invalidation/unstableIrReproducer/");
   }
 
   @Test

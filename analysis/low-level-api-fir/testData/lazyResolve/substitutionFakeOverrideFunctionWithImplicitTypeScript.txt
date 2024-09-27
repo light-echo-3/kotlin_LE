@@ -2,18 +2,18 @@ STATUS:
 TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -29,18 +29,18 @@ EXPECT_ACTUAL_MATCHING:
 TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,18 +56,18 @@ CONTRACTS:
 TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -83,18 +83,18 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -114,18 +114,18 @@ CONSTANT_EVALUATION:
 TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -145,18 +145,18 @@ ANNOTATION_ARGUMENTS:
 TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,18 +176,18 @@ BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/String>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -205,18 +205,18 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScri
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<kotlin/String>| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 super<R|second/AbstractClass<kotlin/String>|>()
             }
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/AbstractClass<T>| {
                 super<R|kotlin/Any|>()
             }
@@ -230,3 +230,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionWithImplicitTyp
             }
 
         }
+

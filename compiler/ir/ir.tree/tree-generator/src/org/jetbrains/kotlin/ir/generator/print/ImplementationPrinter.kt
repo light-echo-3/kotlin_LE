@@ -5,22 +5,29 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
+import org.jetbrains.kotlin.generators.tree.AbstractImplementationPrinter
+import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.isSubclassOf
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.irElementConstructorIndicatorType
 import org.jetbrains.kotlin.ir.generator.irImplementationDetailType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Implementation
-import org.jetbrains.kotlin.utils.SmartPrinter
 
-internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
-    override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {
+internal class ImplementationPrinter(
+    printer: ImportCollectingPrinter
+) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
+    override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<Field>(printer) {
         override fun forceMutable(field: Field) = field.isMutable
     }
 
-    override val pureAbstractElementType: ClassRef<*>
-        get() = org.jetbrains.kotlin.ir.generator.elementBaseType
+    override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
+        org.jetbrains.kotlin.ir.generator.elementBaseType
 
     override val implementationOptInAnnotation: ClassRef<*>
         get() = irImplementationDetailType
@@ -28,14 +35,10 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
     override val separateFieldsWithBlankLine: Boolean
         get() = true
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {
-        implementation.generationCallback?.invoke(this@ImportCollector, this)
+    override fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
+        implementation.generationCallback?.invoke(this)
 
-        if (
-            implementation.element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.symbolOwner } &&
-            implementation.bindOwnedSymbol
-        ) {
+        if (implementation.element.isSubclassOf(IrTree.symbolOwner) && implementation.bindOwnedSymbol) {
             val symbolField = implementation.getOrNull("symbol")
             if (symbolField != null) {
                 println()
@@ -46,4 +49,11 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
             }
         }
     }
+
+    override fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> =
+        if (implementation.element.category == Element.Category.Expression || implementation.element == IrTree.variable) {
+            listOf(FunctionParameter("constructorIndicator", irElementConstructorIndicatorType.copy(nullable = true), markAsUnused = true))
+        } else {
+            emptyList()
+        }
 }

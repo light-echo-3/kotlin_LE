@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,17 +10,18 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.*
@@ -42,15 +45,16 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.*
@@ -75,7 +79,7 @@ class JsIrBackendContext(
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
-    val globalInternationService = IrInterningService()
+    val globalIrInterner = IrInterningService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
     val classToItsId = WeakHashMap<IrClass, String>()
@@ -104,15 +108,14 @@ class JsIrBackendContext(
                 call.symbol == intrinsics.jsUnboxIntrinsic
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
-    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
     val platformArgumentsProviderJsExpression = configuration[JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS]
 
-    val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
+    override val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
-    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
+    override val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
-    val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
+    override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
@@ -120,22 +123,7 @@ class JsIrBackendContext(
     val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
-
-    override fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
-        val irFile = container.file
-        return irFactory.stageController.restrictTo(container) {
-            testFunsPerFile.getOrPut(irFile) {
-                irFactory.addFunction(irFile) {
-                    name = Name.identifier("test fun")
-                    returnType = irBuiltIns.unitType
-                    origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-                }.apply {
-                    body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
-                }
-            }
-        }
-    }
+    override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
@@ -161,7 +149,7 @@ class JsIrBackendContext(
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
     private val internalCollectionPackage = module.getPackage(COLLECTION_PACKAGE_FQNAME)
 
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
@@ -193,7 +181,7 @@ class JsIrBackendContext(
             if (rhsType == null)
                 candidates.singleOrNull()
             else
-                candidates.singleOrNull { it.owner.valueParameters[0].type.cast<IrSimpleType>().classifier == rhsType.classifier }
+                candidates.singleOrNull { it.owner.valueParameters[0].type.classifierOrNull == rhsType.classifier }
         }
 
     override val coroutineSymbols =
@@ -293,7 +281,9 @@ class JsIrBackendContext(
             override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toUIntSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                        ?: irError("Expected extension receiver for") {
+                            withIrEntry("it.owner", it.owner)
+                        }
                 }
             }
 
@@ -302,7 +292,9 @@ class JsIrBackendContext(
             override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toULongSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                        ?: irError("Expected extension receiver for") {
+                            withIrEntry("it.owner", it.owner)
+                        }
                 }
             }
         }
@@ -311,9 +303,6 @@ class JsIrBackendContext(
     }
 
     // classes forced to be loaded
-
-    val errorCodeSymbol: IrSimpleFunctionSymbol? =
-        if (errorPolicy.allowErrors) symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
 
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
@@ -401,42 +390,71 @@ class JsIrBackendContext(
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) print(message())
-    }
-
-    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        /*TODO*/
-        print(message)
-    }
-
-    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
-
-    fun addOutlinedJsCode(symbol: IrSimpleFunctionSymbol, outlinedJsCode: JsFunction) {
-        outlinedJsCodeFunctions[symbol] = outlinedJsCode
-    }
-
-    fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
-        val jsFunction = outlinedJsCodeFunctions[symbol]
-        if (jsFunction != null) return jsFunction
-        val jsFunAnnotation = symbol.owner.getAnnotation(JsAnnotations.jsFunFqn) ?: return null
-        val jsCode = jsFunAnnotation.getValueArgument(0)
-            ?: compilationException("@JsFun annotation must contain an argument", jsFunAnnotation)
-        val statements = translateJsCodeIntoStatementList(jsCode, this, symbol.owner)
-            ?: compilationException("Could not parse JS code", jsFunAnnotation)
+    private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
+        val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
+            ?: return null
+        val jsCode = annotation.getValueArgument(0)
+            ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
+        val statements = translateJsCodeIntoStatementList(jsCode, this, declaration)
+            ?: compilationException("Could not parse JS code", annotation)
         val parsedJsFunction = statements.singleOrNull()
             ?.safeAs<JsExpressionStatement>()
             ?.expression
             ?.safeAs<JsFunction>()
-            ?: compilationException("Provided JS code is not a js function", jsFunAnnotation)
-        outlinedJsCodeFunctions[symbol] = parsedJsFunction
-        return parsedJsFunction
+            ?: compilationException("Provided JS code is not a js function", annotation)
+        return annotation to parsedJsFunction
+    }
+
+    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
+    fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
+        val originalSymbol = symbol.owner.originalFunction.symbol
+        val jsFunction = outlinedJsCodeFunctions[originalSymbol]
+        if (jsFunction != null) return jsFunction
+
+        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
+            ?.let { (annotation, parsedJsFunction) ->
+                val sourceMap = (annotation.getValueArgument(1) as? IrConst)?.value as? String
+                val parsedSourceMap = sourceMap?.let { parseSourceMap(it, originalSymbol.owner.fileOrNull, annotation) }
+                if (parsedSourceMap != null) {
+                    val remapper = SourceMapLocationRemapper(parsedSourceMap)
+                    remapper.remap(parsedJsFunction)
+                }
+                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                return parsedJsFunction
+            }
+
+        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsFun)
+            ?.let { (_, parsedJsFunction) ->
+                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                return parsedJsFunction
+            }
+        return null
+    }
+
+    private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConstructorCall): SourceMap? {
+        if (sourceMap.isEmpty()) return null
+        return when (val result = SourceMapParser.parse(sourceMap)) {
+            is SourceMapSuccess -> result.value
+            is SourceMapError -> {
+                reportWarning(
+                    """
+                    Invalid source map in annotation:
+                    ${annotation.dumpKotlinLike()}
+                    ${result.message.replaceFirstChar(Char::uppercase)}.
+                    Some debug information may be unavailable.
+                    If you believe this is not your fault, please create an issue: https://kotl.in/issue
+                    """.trimIndent(),
+                    file,
+                    annotation,
+                )
+                null
+            }
+        }
     }
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        configuration.irMessageLogger
+        configuration.messageCollector
     )
 }

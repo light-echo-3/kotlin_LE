@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
 @OptIn(CheckersComponentInternal::class)
 class ExpressionCheckersDiagnosticComponent(
@@ -46,7 +48,7 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allTypeOperatorCallCheckers.check(typeOperatorCall, data)
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: CheckerContext) {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: CheckerContext) {
         checkers.allLiteralExpressionCheckers.check(literalExpression, data)
     }
 
@@ -125,8 +127,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allLoopExpressionCheckers.check(errorLoop, data)
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {
-        checkers.allLogicExpressionCheckers.check(binaryLogicExpression, data)
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: CheckerContext) {
+        checkers.allBooleanOperatorExpressionCheckers.check(booleanOperatorExpression, data)
     }
 
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: CheckerContext) {
@@ -189,6 +191,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allCallCheckers.check(delegatedConstructorCall, data)
     }
 
+    override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall, data: CheckerContext) {
+        checkers.allCallCheckers.check(multiDelegatedConstructorCall, data)
+    }
+
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
         checkers.allThrowExpressionCheckers.check(throwExpression, data)
     }
@@ -218,7 +224,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(smartCastExpression, data)
+        checkers.allSmartCastExpressionCheckers.check(smartCastExpression, data)
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CheckerContext) {
@@ -258,12 +264,19 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(qualifiedErrorAccessExpression, data)
     }
 
-    private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(
+    private inline fun <reified E : FirStatement> Array<FirExpressionChecker<E>>.check(
         expression: E,
         context: CheckerContext
     ) {
         for (checker in this) {
-            checker.check(expression, context, reporter)
+            try {
+                checker.check(expression, context, reporter)
+            } catch (e: Exception) {
+                rethrowExceptionWithDetails("Exception in expression checker", e) {
+                    withFirEntry("expression", expression)
+                    context.containingFilePath?.let { withEntry("file", it) }
+                }
+            }
         }
     }
 }

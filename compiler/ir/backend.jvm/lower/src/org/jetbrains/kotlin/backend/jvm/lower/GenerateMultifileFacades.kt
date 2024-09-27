@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -62,7 +61,9 @@ internal class GenerateMultifileFacades(private val context: JvmBackendContext) 
 
         context.multifileFacadesToAdd.clear()
 
-        functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
+        for ((member, newMember) in functionDelegates) {
+            newMember.multifileFacadePartMember = member
+        }
     }
 }
 
@@ -79,7 +80,7 @@ private fun generateMultifileFacades(
             throw UnsupportedOperationException(
                 "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
                         partClasses.joinToString("\n  ") { klass ->
-                            "Class ${klass.fqNameWhenAvailable}, JVM name ${context.classNameOverride[klass]}"
+                            "Class ${klass.fqNameWhenAvailable}, JVM name ${klass.classNameOverride}"
                         }
             )
         }
@@ -98,7 +99,7 @@ private fun generateMultifileFacades(
             createImplicitParameterDeclarationWithWrappedDescriptor()
             origin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
-                context.classNameOverride[this] = jvmClassName
+                this.classNameOverride = jvmClassName
             }
             if (shouldGeneratePartHierarchy) {
                 val superClass = modifyMultifilePartsForHierarchy(context, partClasses)
@@ -133,8 +134,8 @@ private fun generateMultifileFacades(
         file.declarations.add(facadeClass)
 
         for (partClass in partClasses) {
-            context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
-            context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
+            partClass.multifileFacadeForPart = jvmClassName
+            partClass.multifileFacadeClassForPart = facadeClass
 
             val correspondingProperties = CorrespondingPropertyCache(context, facadeClass)
             for (member in partClass.declarations) {
@@ -217,7 +218,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-        origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
+        origin == LoweredDeclarationOrigins.INLINE_LAMBDA ||
         origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
         origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||
         origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR ||
@@ -345,7 +346,7 @@ private class UpdateConstantFacadePropertyReferences(
             else -> null
         } ?: return null
         val parent = declaration.parent as? IrClass ?: return null
-        val facadeClass = context.multifileFacadeClassForPart[parent.attributeOwnerId]
+        val facadeClass = parent.multifileFacadeClassForPart
 
         return if (shouldGeneratePartHierarchy ||
             (declaration is IrProperty && declaration.backingField?.shouldMoveToFacade() == true)

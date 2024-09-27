@@ -40,13 +40,15 @@ class IrLazyClass(
     override var isFun: Boolean,
     override var hasEnumEntries: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
-    override val typeTranslator: TypeTranslator
-) : IrClass(), IrLazyDeclarationBase, DeserializableClass {
+    override val typeTranslator: TypeTranslator,
+) : IrClass(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
+        this.deserializedIr = lazy {
+            assert(parent is IrPackageFragment)
+            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent)
+        }
     }
-
-    override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
@@ -119,12 +121,4 @@ class IrLazyClass(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
-
-    private var irLoaded: Boolean? = null
-
-    override fun loadIr(): Boolean {
-        assert(parent is IrPackageFragment)
-        return irLoaded
-            ?: stubGenerator.extensions.deserializeClass(this, stubGenerator, parent).also { irLoaded = it }
-    }
 }

@@ -1,6 +1,9 @@
+import gradle.GradlePluginVariant
+
 plugins {
     id("gradle-plugin-common-configuration")
     `jvm-test-suite`
+    id("gradle-plugin-api-reference")
 }
 
 dependencies {
@@ -13,9 +16,24 @@ gradlePlugin {
     plugins {
         create("kotlinComposeCompilerPlugin") {
             id = "org.jetbrains.kotlin.plugin.compose"
-            displayName = "Kotlin Compose Compiler plugin"
+            displayName = "Compose Compiler Gradle plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin"
+        }
+    }
+}
+
+pluginApiReference {
+    enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    enableKotlinlangDocumentation()
+
+    failOnWarning = true
+
+    additionalDokkaConfiguration {
+        reportUndocumented.set(true)
+        perPackageOption {
+            matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
+            suppress.set(true)
         }
     }
 }

@@ -7,27 +7,21 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
 import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
-import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -35,163 +29,139 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CL
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-/**
- * @return [AnnotationUseSiteTargetFilter] which allows [this] and [NoAnnotationUseSiteTargetFilter] filter
- */
-internal fun AnnotationUseSiteTarget?.toOptionalFilter(): AnnotationUseSiteTargetFilter {
-    if (this == null) return NoAnnotationUseSiteTargetFilter
-
-    return annotationUseSiteTargetFilterOf(NoAnnotationUseSiteTargetFilter, toFilter())
+internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
+    if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
+    return JVM_SYNTHETIC_ANNOTATION_CLASS_ID in annotations
 }
 
-internal fun annotationUseSiteTargetFilterOf(
-    vararg filters: AnnotationUseSiteTargetFilter,
-): AnnotationUseSiteTargetFilter = AnnotationUseSiteTargetFilter { useSiteTarget ->
-    filters.any { filter -> filter.isAllowed(useSiteTarget) }
-}
-
-internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean {
-    if (this is KtPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation(useSiteTargetFilter) == true
-    return hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, useSiteTargetFilter)
-}
-
-internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): String? {
-    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
+    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName)
     return annotation?.let {
-        (it.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? String
+        (it.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
     }
 }
 
-context(KtAnalysisSession)
-internal fun isHiddenByDeprecation(
-    symbol: KtAnnotatedSymbol,
+internal fun KaSession.isHiddenByDeprecation(
+    symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean = symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
+): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
-) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(useSiteTargetFilter)
+) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation()
 
-internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmField)
+internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 
-internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.PublishedApi, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(): Boolean = StandardClassIds.Annotations.PublishedApi in annotations
 
-internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClassIds.Annotations.Deprecated in annotations
 
-internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotation(JVM_OVERLOADS_CLASS_ID)
+internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
-internal fun KtAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmName)
+internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
 
-internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmStatic in annotations
 
-internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
+internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
-context(KtAnalysisSession)
-internal fun KtDeclarationSymbol.suppressWildcardMode(
-    declarationFilter: (KtDeclarationSymbol) -> Boolean = { true },
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaDeclarationSymbol.suppressWildcardMode(
+    declarationFilter: (KaDeclarationSymbol) -> Boolean = { true },
 ): Boolean? {
     return getContainingSymbolsWithSelf().firstNotNullOfOrNull { symbol ->
         symbol.takeIf(declarationFilter)?.suppressWildcard()
     }
 }
 
-internal fun KtAnnotatedSymbol.suppressWildcard(): Boolean? {
+internal fun KaAnnotatedSymbol.suppressWildcard(): Boolean? {
     if (hasJvmWildcardAnnotation()) return true
     return getJvmSuppressWildcardsFromAnnotation()
 }
 
-internal fun KtAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
-    return annotationsByClassId(JvmStandardClassIds.Annotations.JvmSuppressWildcards).firstOrNull()?.let { annoApp ->
-        (annoApp.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? Boolean
+internal fun KaAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
+    return annotations[JvmStandardClassIds.Annotations.JvmSuppressWildcards].firstOrNull()?.let { annoApp ->
+        (annoApp.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? Boolean
     }
 }
 
-internal fun KtAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmWildcard)
+internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmWildcard in annotations
 
-internal fun KtAnnotatedSymbol.findAnnotation(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): KtAnnotationApplicationWithArgumentsInfo? {
-    if (!hasAnnotation(classId, useSiteTargetFilter)) return null
+internal fun KaAnnotatedSymbol.findAnnotation(classId: ClassId): KaAnnotation? = annotations[classId].firstOrNull()
 
-    return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
-}
-
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.computeThrowsList(
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) {
-    if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
+    if (containingClass.isEnum && this is KaNamedFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
         builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
+    val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws) ?: return
 
-    fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {
-        is KtArrayAnnotationValue -> {
-            annotationValue.values.forEach(::handleAnnotationValue)
-        }
-
-        is KtNonLocalKClassAnnotationValue -> {
-            val psiType = buildClassType(annotationValue.classId).asPsiType(
-                useSitePosition,
-                allowErrorTypes = true,
-                KtTypeMappingMode.DEFAULT,
-                containingClass.isAnnotationType,
-            )
-            (psiType as? PsiClassType)?.let {
-                builder.addReference(it)
+    fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
+        when (annotationValue) {
+            is KaAnnotationValue.ArrayValue -> {
+                annotationValue.values.forEach(::handleAnnotationValue)
             }
+
+            is KaAnnotationValue.ClassLiteralValue -> {
+                if (annotationValue.type is KaClassType) {
+                    val psiType = annotationValue.type.asPsiType(
+                        useSitePosition,
+                        allowErrorTypes = true,
+                        KaTypeMappingMode.DEFAULT,
+                        containingClass.isAnnotationType,
+                        forceValueClassResolution = false,
+                        allowNonJvmPlatforms = true,
+                    )
+                    (psiType as? PsiClassType)?.let {
+                        builder.addReference(it)
+                    }
+                }
+            }
+
+            else -> {}
         }
-        else -> {}
     }
 
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }
 }
 
-context(KtAnalysisSession)
-@KtAnalysisNonPublicApi
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+@KaImplementationDetail
 fun annotateByKtType(
     psiType: PsiType,
-    ktType: KtType,
+    ktType: KaType,
     annotationParent: PsiElement,
 ): PsiType {
-    fun getAnnotationsSequence(type: KtType): Sequence<List<PsiAnnotation>> = sequence {
+    fun getAnnotationsSequence(type: KaType): Sequence<List<PsiAnnotation>> = sequence {
         val unwrappedType = when (type) {
             // We assume that flexible types have to have the same set of annotations on upper and lower bound.
             // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
-            is KtFlexibleType -> type.upperBound
+            is KaFlexibleType -> type.upperBound
             else -> type
         }
 
-        val explicitTypeAnnotations = unwrappedType.annotations.map { annoApp ->
+        val explicitTypeAnnotations = unwrappedType.annotations.map { annotationApplication ->
             SymbolLightSimpleAnnotation(
-                annoApp.classId?.asFqNameString(),
+                annotationApplication.classId?.asFqNameString(),
                 annotationParent,
-                annoApp.arguments,
-                annoApp.psi,
+                annotationApplication.arguments.map { it.toLightClassAnnotationArgument() },
+                annotationApplication.psi,
             )
         }
 
         // Original type should be used to infer nullability
         val typeNullability = when {
-            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KtTypeNullability.NON_NULLABLE
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
             else -> getTypeNullability(type)
         }
 
@@ -201,8 +171,8 @@ fun annotateByKtType(
 
         yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
 
-        if (unwrappedType is KtNonErrorClassType) {
-            unwrappedType.ownTypeArguments.forEach { typeProjection ->
+        if (unwrappedType is KaClassType) {
+            unwrappedType.typeArguments.forEach { typeProjection ->
                 typeProjection.type?.let {
                     yieldAll(getAnnotationsSequence(it))
                 }

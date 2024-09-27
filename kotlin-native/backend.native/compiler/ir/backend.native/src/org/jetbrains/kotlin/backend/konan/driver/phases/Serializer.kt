@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal data class SerializerInput(
@@ -29,26 +29,25 @@ typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.S
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
         "Serializer", "IR serializer",
-        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
+        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
-    val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
-    val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
+    val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
-                KtDiagnosticReporterWithImplicitIrBasedContext(
-                        DiagnosticReporterFactory.createPendingReporter(),
-                        config.languageVersionSettings
-                ),
-                ir.irBuiltins,
-                compatibilityMode = CompatibilityMode.CURRENT,
-                normalizeAbsolutePaths = normalizeAbsolutePaths,
-                sourceBaseDirs = relativePathBase,
-                languageVersionSettings = config.languageVersionSettings,
-                bodiesOnlyForInlines = input.produceHeaderKlib,
-                publicAbiOnly = input.produceHeaderKlib,
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                config.languageVersionSettings
+            ),
+            ir.irBuiltins,
+            compatibilityMode = CompatibilityMode.CURRENT,
+            normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+            sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
+            languageVersionSettings = config.languageVersionSettings,
+            bodiesOnlyForInlines = input.produceHeaderKlib,
+            publicAbiOnly = input.produceHeaderKlib,
         ).serializedIrModule(ir)
     }
 
@@ -63,7 +62,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     )
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
-    SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
+    SerializerOutput(serializedMetadata, serializedIr, neededLibraries)
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(

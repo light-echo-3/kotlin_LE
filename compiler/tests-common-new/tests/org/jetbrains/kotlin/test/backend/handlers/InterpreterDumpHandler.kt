@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
@@ -92,6 +92,8 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
         val resultMap = mutableMapOf<TestFile, MutableList<ParsedCodeMetaInfo>>()
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
         this.load(irFile.nameWithPackage)?.forEach { (pair, constantValue) ->
+            if (constantValue is AnnotationValue) return@forEach
+            
             val (start, end) = pair
             if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
 
@@ -132,7 +134,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
 
         fun render(result: FirElement, start: Int, end: Int) {
             if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return
-            if (result !is FirLiteralExpression<*>) return
+            if (result !is FirLiteralExpression) return
 
             val message = result.value.toString()
             val metaInfo = ParsedCodeMetaInfo(
@@ -145,7 +147,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
             resultMap.getOrPut(testFile) { mutableListOf() }.add(metaInfo)
         }
 
-        fun render(result: FirLiteralExpression<*>, source: KtSourceElement?) {
+        fun render(result: FirLiteralExpression, source: KtSourceElement?) {
             val start = source?.startOffset ?: return
             val end = result.source?.endOffset ?: return
             render(result, start, end)
@@ -161,7 +163,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
                 element.acceptChildren(this, data)
             }
 
-            override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Options) {
+            override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Options) {
                 if (!data.renderLiterals) return
                 render(literalExpression, literalExpression.source)
             }

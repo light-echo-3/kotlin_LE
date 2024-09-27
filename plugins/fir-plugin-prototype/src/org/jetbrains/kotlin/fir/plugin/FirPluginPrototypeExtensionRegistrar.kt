@@ -23,6 +23,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::AllOpenPredicateMatcher
         +::AllPublicVisibilityTransformer
         +::SomeAdditionalSupertypeGenerator
+        +::AdditionalSuperclassGenerator
         +::SupertypeWithArgumentGenerator
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
@@ -41,6 +42,11 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::CompanionGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator
+
+        +::NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument
+        +::NestedClassGeneratorWithLocalClassesSupport
+        +::NestedClassSupertypesDependantOnAnnotationArgumentAdder
+        +::SupertypesDependantOnAnnotationArgumentComponent
     }
 }
 

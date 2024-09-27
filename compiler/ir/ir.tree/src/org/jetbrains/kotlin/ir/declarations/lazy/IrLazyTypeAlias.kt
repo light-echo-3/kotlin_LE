@@ -33,8 +33,6 @@ class IrLazyTypeAlias(
         symbol.bind(this)
     }
 
-    override var parent: IrDeclarationParent by createLazyParent()
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
@@ -48,4 +46,8 @@ class IrLazyTypeAlias(
             descriptor.expandedType.toIrType()
         }
     }
+
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
 }

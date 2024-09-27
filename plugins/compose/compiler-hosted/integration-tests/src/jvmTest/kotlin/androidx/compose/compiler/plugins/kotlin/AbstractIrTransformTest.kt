@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
-import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
@@ -26,12 +25,19 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.File
+
+internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/src/jvmTest/resources"
 
 abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS, listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
     }
 
     @JvmField
@@ -40,8 +46,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
 
     @JvmField
     @Rule
-    val goldenTransformRule =
-        GoldenTransformRule("src/test/resources/golden")
+    val goldenTransformRule = GoldenTransformRule()
 
     fun verifyCrossModuleComposeIrTransform(
         @Language("kotlin")
@@ -124,7 +129,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
             .replace(
                 Regex(
                     "(%composer\\.start(Restart|Movable|Replaceable|Replace)" +
-                        "Group\\()-?((0b)?[-\\d]+)"
+                            "Group\\()-?((0b)?[-\\d]+)"
                 )
             ) {
                 val stringKey = it.groupValues[3]
@@ -157,14 +162,14 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
 
                     TruncateTracingInfoMode.KEEP_INFO_STRING ->
                         "traceEventStart(<>, ${it.groupValues[1]}, ${it.groupValues[2]}, " +
-                            it.groupValues[3]
+                                it.groupValues[3]
                 }
             }
             // replace source information with source it references
             .replace(
                 Regex(
                     "(%composer\\.start(Restart|Movable|Replaceable|Replace)Group\\" +
-                        "([^\"\\n]*)\"(.*)\"\\)"
+                            "([^\"\\n]*)\"(.*)\"\\)"
                 )
             ) {
                 "${it.groupValues[1]}\"${generateSourceInfo(it.groupValues[4], source)}\")"
@@ -177,7 +182,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
             .replace(
                 Regex(
                     "(composableLambda[N]?\\" +
-                        "([^\"\\n]*)\"(.*)\"\\)"
+                            "([^\"\\n]*)\"(.*)\"\\)"
                 )
             ) {
                 "${it.groupValues[1]}\"${generateSourceInfo(it.groupValues[2], source)}\")"

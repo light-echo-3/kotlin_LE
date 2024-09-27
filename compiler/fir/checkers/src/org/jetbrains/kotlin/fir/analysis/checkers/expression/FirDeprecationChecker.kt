@@ -16,21 +16,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
-import org.jetbrains.kotlin.fir.declarations.RequireKotlinDeprecationInfo
-import org.jetbrains.kotlin.fir.declarations.getDeprecation
-import org.jetbrains.kotlin.fir.declarations.getOwnDeprecation
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
-import org.jetbrains.kotlin.fir.resolve.firClassLike
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isTypealiasExpansion
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
@@ -56,7 +54,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         if (expression is FirDelegatedConstructorCall) {
             // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
-            val isTypealiasExpansion = expression.constructedTypeRef.firClassLike(context.session)?.symbol is FirTypeAliasSymbol
+            val isTypealiasExpansion = expression.constructedTypeRef.coneType.fullyExpandedType(context.session).isTypealiasExpansion
 
             reportApiStatus(
                 source, referencedSymbol, isTypealiasExpansion,
@@ -126,7 +124,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation, reporter, context)
     }
 
-    private fun DeprecationInfo.isTypealiasExpansionOf(
+    private fun FirDeprecationInfo.isTypealiasExpansionOf(
         referencedSymbol: FirBasedSymbol<*>,
         callSite: FirElement?,
         context: CheckerContext,
@@ -149,7 +147,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         isTypealiasExpansion: Boolean,
-        deprecationInfo: DeprecationInfo,
+        deprecationInfo: FirDeprecationInfo,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
@@ -184,7 +182,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             referencedSymbol,
             deprecationInfo.versionRequirement.version,
             currentVersionString,
-            deprecationInfo.message ?: "",
+            deprecationInfo.getMessage(context.session) ?: "",
             context
         )
     }
@@ -193,7 +191,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         isTypealiasExpansion: Boolean,
-        deprecationInfo: DeprecationInfo,
+        deprecationInfo: FirDeprecationInfo,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
@@ -202,13 +200,13 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
             }
-            reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.message ?: "", context)
+            reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.getMessage(context.session) ?: "", context)
         } else {
             val diagnostic = when (deprecationInfo.deprecationLevel) {
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
             }
-            reporter.reportOn(source, diagnostic, referencedSymbol, referencedSymbol, deprecationInfo.message ?: "", context)
+            reporter.reportOn(source, diagnostic, referencedSymbol, referencedSymbol, deprecationInfo.getMessage(context.session) ?: "", context)
         }
     }
 
@@ -231,7 +229,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         callSite: FirElement?,
         symbol: FirBasedSymbol<*>,
         context: CheckerContext
-    ): DeprecationInfo? {
+    ): FirDeprecationInfo? {
         val deprecationInfos = listOfNotNull(
             (symbol as? FirConstructorSymbol)
                 ?.classSymbolItIsCalledThrough(context)

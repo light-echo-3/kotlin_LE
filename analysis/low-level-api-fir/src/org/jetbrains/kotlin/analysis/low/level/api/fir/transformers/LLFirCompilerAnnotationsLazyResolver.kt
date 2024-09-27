@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
+import org.jetbrains.kotlin.fir.extensions.withGeneratedDeclarationsSymbolProviderDisabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.shortName
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -139,14 +142,20 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             }
         }
 
-        // 5. Transform annotations in the air
-        annotationTransformer.transformAnnotations()
+        // N.B. We disable generated declarations provider to avoid infinite resolve problems (see KT-67483)
+        @OptIn(FirSymbolProviderInternals::class)
+        transformer.session.withGeneratedDeclarationsSymbolProviderDisabled {
 
-        // 6. Move some annotations to the proper positions
-        annotationTransformer.balanceAnnotations(target)
+            // 5. Transform annotations in the air
+            annotationTransformer.transformAnnotations()
 
-        // 7. Calculate deprecations in the air
-        annotationTransformer.calculateDeprecations(target)
+            // 6. Move some annotations to the proper positions
+            annotationTransformer.balanceAnnotations(target)
+
+            // 7. Calculate deprecations in the air
+            annotationTransformer.calculateDeprecations(target)
+
+        }
 
         // 8. Publish result
         performCustomResolveUnderLock(target) {
@@ -269,6 +278,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
         if (annotations.isEmpty()) return
 
+        val namesWithArguments = resolveTargetSession.annotationPlatformSupport.requiredAnnotationsWithArgumentsShortClassNames
+
         var hasApplicableAnnotation = false
         val containerForAnnotations = ArrayList<FirAnnotation>(annotations.size)
         for (annotation in annotations) {
@@ -287,8 +298,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     annotationTypeRef = transformer.annotationTransformer.createDeepCopyOfTypeRef(userTypeRef)
 
                     // Non-empty arguments must be lazy expressions
-                    if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) {
-                        argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, llFirSession)
+                    if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation) && userTypeRef.shortName in namesWithArguments) {
+                        argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, resolveTargetSession)
                     }
                 }
             } else {

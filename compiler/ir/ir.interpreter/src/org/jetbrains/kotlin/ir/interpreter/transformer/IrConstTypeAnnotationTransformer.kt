@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.visitors.IrTypeTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class IrConstTypeAnnotationTransformer(
     interpreter: IrInterpreter,
@@ -30,15 +30,18 @@ internal class IrConstTypeAnnotationTransformer(
     suppressExceptions: Boolean,
 ) : IrConstAnnotationTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrTypeTransformer<IrConstTransformer.Data> {
+) {
+    override fun visitAnnotations(element: IrElement) {
+        element.acceptVoid(
+            object : IrTypeVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
 
-    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
-        if (type == null) return type
-
-        transformAnnotations(type)
-        if (type is IrSimpleType) {
-            type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it, data) }
-        }
-        return type
+                override fun visitType(container: IrElement, type: IrType) {
+                    transformAnnotations(type)
+                }
+            }
+        )
     }
 }

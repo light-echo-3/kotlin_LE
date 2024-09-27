@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -110,7 +110,7 @@ object FirExpressionEvaluator {
             error("FIR element \"${element::class}\" is not supported in constant evaluation")
         }
 
-        override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?): FirEvaluatorResult {
+        override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): FirEvaluatorResult {
             return literalExpression.wrap()
         }
 
@@ -187,7 +187,7 @@ object FirExpressionEvaluator {
             }
 
             fun evaluateOrCopy(initializer: FirExpression?): FirEvaluatorResult = propertySymbol.visit {
-                if (initializer is FirLiteralExpression<*>) {
+                if (initializer is FirLiteralExpression) {
                     // We need a copy here to copy a source of the original expression
                     initializer.copy(propertyAccessExpression).wrap()
                 } else {
@@ -228,7 +228,7 @@ object FirExpressionEvaluator {
         private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): FirEvaluatorResult {
             val receivers = listOfNotNull(functionCall.dispatchReceiver, functionCall.extensionReceiver)
             val evaluatedArgs = receivers.plus(functionCall.arguments).map {
-                evaluate(it).unwrapOr<FirLiteralExpression<*>> { return it } ?: return NotEvaluated
+                evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
 
             val opr1 = evaluatedArgs.getOrNull(0) ?: return NotEvaluated
@@ -264,7 +264,7 @@ object FirExpressionEvaluator {
                 }
                 type.isUnsignedType -> {
                     val argument = evaluate(constructorCall.argument)
-                        .unwrapOr<FirLiteralExpression<*>> { return it }?.value ?: return NotEvaluated
+                        .unwrapOr<FirLiteralExpression> { return it }?.value ?: return NotEvaluated
                     return argument.adjustTypeAndConvertToLiteral(constructorCall)
                 }
                 else -> return NotEvaluated
@@ -280,7 +280,7 @@ object FirExpressionEvaluator {
 
         override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?): FirEvaluatorResult {
             return visitFunctionCall(comparisonExpression.compareToCall, data).let {
-                val intResult = it.unwrapOr<FirLiteralExpression<*>> { return it }?.value as? Int ?: return NotEvaluated
+                val intResult = it.unwrapOr<FirLiteralExpression> { return it }?.value as? Int ?: return NotEvaluated
                 val compareToResult = when (comparisonExpression.operation) {
                     FirOperation.LT -> intResult < 0
                     FirOperation.LT_EQ -> intResult <= 0
@@ -294,7 +294,7 @@ object FirExpressionEvaluator {
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): FirEvaluatorResult {
             val evaluatedArgs = equalityOperatorCall.arguments.map {
-                evaluate(it).unwrapOr<FirLiteralExpression<*>> { return it } ?: return NotEvaluated
+                evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
             if (evaluatedArgs.size != 2) return NotEvaluated
 
@@ -307,24 +307,24 @@ object FirExpressionEvaluator {
             return result.toConstExpression(ConstantValueKind.Boolean, equalityOperatorCall).wrap()
         }
 
-        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): FirEvaluatorResult {
-            val left = evaluate(binaryLogicExpression.leftOperand)
-            val right = evaluate(binaryLogicExpression.rightOperand)
+        override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): FirEvaluatorResult {
+            val left = evaluate(booleanOperatorExpression.leftOperand)
+            val right = evaluate(booleanOperatorExpression.rightOperand)
 
-            val leftBoolean = left.unwrapOr<FirLiteralExpression<*>> { return it }?.value as? Boolean ?: return NotEvaluated
-            val rightBoolean = right.unwrapOr<FirLiteralExpression<*>> { return it }?.value as? Boolean ?: return NotEvaluated
-            val result = when (binaryLogicExpression.kind) {
+            val leftBoolean = left.unwrapOr<FirLiteralExpression> { return it }?.value as? Boolean ?: return NotEvaluated
+            val rightBoolean = right.unwrapOr<FirLiteralExpression> { return it }?.value as? Boolean ?: return NotEvaluated
+            val result = when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> leftBoolean && rightBoolean
                 LogicOperationKind.OR -> leftBoolean || rightBoolean
-                else -> error("Boolean logic expression of a kind \"${binaryLogicExpression.kind}\" is not supported in compile time evaluation")
+                else -> error("Boolean logic expression of a kind \"${booleanOperatorExpression.kind}\" is not supported in compile time evaluation")
             }
 
-            return result.toConstExpression(ConstantValueKind.Boolean, binaryLogicExpression).wrap()
+            return result.toConstExpression(ConstantValueKind.Boolean, booleanOperatorExpression).wrap()
         }
 
         override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): FirEvaluatorResult {
             val strings = stringConcatenationCall.argumentList.arguments.map {
-                evaluate(it).unwrapOr<FirLiteralExpression<*>> { return it } ?: return NotEvaluated
+                evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
             val result = strings.joinToString(separator = "") { it.value.toString() }
             return result.toConstExpression(ConstantValueKind.String, stringConcatenationCall).wrap()
@@ -332,7 +332,7 @@ object FirExpressionEvaluator {
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): FirEvaluatorResult {
             if (typeOperatorCall.operation != FirOperation.AS) return NotEvaluated
-            val result = evaluate(typeOperatorCall.argument).unwrapOr<FirLiteralExpression<*>> { return it } ?: return NotEvaluated
+            val result = evaluate(typeOperatorCall.argument).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             if (result.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType, session)) {
                 return result.wrap()
             }
@@ -376,7 +376,7 @@ object FirExpressionEvaluator {
     }
 }
 
-private fun <T> ConstantValueKind<T>.toCompileTimeType(): CompileTimeType {
+private fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
     return when (this) {
         ConstantValueKind.Byte -> CompileTimeType.BYTE
         ConstantValueKind.Short -> CompileTimeType.SHORT
@@ -394,7 +394,7 @@ private fun <T> ConstantValueKind<T>.toCompileTimeType(): CompileTimeType {
 
 // Unary operators
 private fun evaluateUnary(arg: FirExpression, callableId: CallableId): Any? {
-    if (arg !is FirLiteralExpression<*> || arg.value == null) return null
+    if (arg !is FirLiteralExpression || arg.value == null) return null
 
     val opr = arg.kind.convertToGivenKind(arg.value) ?: return null
     return evalUnaryOp(
@@ -410,8 +410,8 @@ private fun evaluateBinary(
     callableId: CallableId,
     arg2: FirExpression
 ): Any? {
-    if (arg1 !is FirLiteralExpression<*> || arg1.value == null) return null
-    if (arg2 !is FirLiteralExpression<*> || arg2.value == null) return null
+    if (arg1 !is FirLiteralExpression || arg1.value == null) return null
+    if (arg2 !is FirLiteralExpression || arg2.value == null) return null
     // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
     val rightType = when {
         callableId.isStringEquals -> CompileTimeType.ANY
@@ -464,7 +464,7 @@ private val CallableId.isCharCode: Boolean
 
 ////// KINDS
 
-private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
+private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind? =
     when (this) {
         is ConeErrorType -> null
         is ConeLookupTagBasedType -> (lookupTag as? ConeClassLikeLookupTag)?.classId?.toConstantValueKind()
@@ -475,7 +475,7 @@ private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
         is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
     }
 
-private fun ClassId.toConstantValueKind(): ConstantValueKind<*>? =
+private fun ClassId.toConstantValueKind(): ConstantValueKind? =
     when (this) {
         StandardClassIds.Byte -> ConstantValueKind.Byte
         StandardClassIds.Double -> ConstantValueKind.Double
@@ -496,7 +496,7 @@ private fun ClassId.toConstantValueKind(): ConstantValueKind<*>? =
         else -> null
     }
 
-private fun ConstantValueKind<*>.convertToGivenKind(value: Any?): Any? {
+private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
     if (value == null) {
         return null
     }
@@ -510,30 +510,47 @@ private fun ConstantValueKind<*>.convertToGivenKind(value: Any?): Any? {
         ConstantValueKind.Int -> (value as Number).toInt()
         ConstantValueKind.Long -> (value as Number).toLong()
         ConstantValueKind.Short -> (value as Number).toShort()
-        ConstantValueKind.UnsignedByte -> (value as Number).toLong().toUByte()
-        ConstantValueKind.UnsignedShort -> (value as Number).toLong().toUShort()
-        ConstantValueKind.UnsignedInt -> (value as Number).toLong().toUInt()
-        ConstantValueKind.UnsignedLong -> (value as Number).toLong().toULong()
-        ConstantValueKind.UnsignedIntegerLiteral -> (value as Number).toLong().toULong()
+        ConstantValueKind.UnsignedByte -> {
+            if (value is UByte) value
+            else (value as Number).toLong().toUByte()
+        }
+        ConstantValueKind.UnsignedShort -> {
+            if (value is UShort) value
+            else (value as Number).toLong().toUShort()
+        }
+        ConstantValueKind.UnsignedInt -> {
+            if (value is UInt) value
+            else (value as Number).toLong().toUInt()
+        }
+        ConstantValueKind.UnsignedLong -> {
+            if (value is ULong) value
+            else (value as Number).toLong().toULong()
+        }
+        ConstantValueKind.UnsignedIntegerLiteral -> {
+            when (value) {
+                is UInt -> value.toULong()
+                is ULong -> value
+                else -> (value as Number).toLong().toULong()
+            }
+        }
         else -> null
     }
 }
 
-private fun <T> Any?.toConstExpression(
-    kind: ConstantValueKind<T>,
+private fun Any?.toConstExpression(
+    kind: ConstantValueKind,
     originalExpression: FirExpression
-): FirLiteralExpression<T> {
-    @Suppress("UNCHECKED_CAST")
+): FirLiteralExpression {
     return buildLiteralExpression(
         originalExpression.source,
         kind,
-        this as T,
+        this,
         originalExpression.annotations.takeIf { it.isNotEmpty() }?.toMutableList(),
         setType = false,
     ).apply { replaceConeTypeOrNull(originalExpression.resolvedType) }
 }
 
-private fun <T> FirLiteralExpression<T>.copy(originalExpression: FirExpression): FirLiteralExpression<T> {
+private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
     return this.value.toConstExpression(this.kind, originalExpression)
 }
 

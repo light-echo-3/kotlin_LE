@@ -116,11 +116,24 @@ class DiagnosticsReportingFunctionalTest {
     }
 
     @Test
+    fun testSequentialReportAndReportOnceInvocations() {
+        val project = buildProject()
+
+        project.applyKotlinJvmPlugin()
+        val diagnostic = ToolingDiagnostic("DIAGNOSTIC_ID", "Sample diagnostic", WARNING)
+
+        project.kotlinToolingDiagnosticsCollector.report(project, diagnostic)
+        project.kotlinToolingDiagnosticsCollector.report(project, diagnostic, reportOnce = true)
+
+        project.checkDiagnostics("testSequentialReportAndReportOnceInvocations")
+    }
+
+    @Test
     fun testSuppressedWarnings() {
         buildProject().run {
+            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS, "TEST_DIAGNOSTIC")
             applyKotlinJvmPlugin()
 
-            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS, "TEST_DIAGNOSTIC")
             reportTestDiagnostic()
             evaluate()
             checkDiagnostics("suppressedWarnings")
@@ -130,8 +143,8 @@ class DiagnosticsReportingFunctionalTest {
     @Test
     fun testSuppressedErrors() {
         buildProject().run {
-            applyKotlinJvmPlugin()
             extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS, "TEST_DIAGNOSTIC")
+            applyKotlinJvmPlugin()
             reportTestDiagnostic(severity = ERROR)
             evaluate()
             checkDiagnostics("suppressedErrors")
@@ -141,8 +154,8 @@ class DiagnosticsReportingFunctionalTest {
     @Test
     fun testSuppressForWarningsDoesntWorkForErrors() {
         buildProject().run {
-            applyKotlinJvmPlugin()
             extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS, "TEST_DIAGNOSTIC")
+            applyKotlinJvmPlugin()
             reportTestDiagnostic(severity = ERROR)
             evaluate()
             checkDiagnostics("suppressForWarningsDoesntWorkForErrors")

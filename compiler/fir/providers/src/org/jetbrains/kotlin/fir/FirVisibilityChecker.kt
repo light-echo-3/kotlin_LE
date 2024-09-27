@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -216,10 +215,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                             // Top-level: visible in file
                             provider.getContainingFile(symbol) == useSiteFile
                         }
-                        declaration is FirConstructor && declaration.isFromSealedClass -> {
-                            // Sealed class constructor: visible in same package
-                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
-                        }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
                             canSeePrivateMemberOf(
@@ -312,7 +307,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 dispatchReceiver.resolvedType.findClassRepresentation(
                     dispatchReceiverParameterClassLookupTag.constructClassType(
                         Array(dispatchReceiverParameterClassSymbol.fir.typeParameters.size) { ConeStarProjection },
-                        isNullable = true
+                        isMarkedNullable = true
                     ),
                     session,
                 )
@@ -344,7 +339,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     private fun ConeClassLikeLookupTag.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? {
         if (classId.isLocal) return null
         val outerClassId = classId.outerClassId ?: return null
-        val ownerSymbol = toSymbol(session) as? FirRegularClassSymbol
+        val ownerSymbol = toRegularClassSymbol(session)
 
         if (ownerSymbol?.fir?.isCompanion == true) {
             return outerClassId.toLookupTag()
@@ -564,3 +559,14 @@ val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
     get() = fir.also {
         lazyResolveToPhase(FirResolvePhase.STATUS)
     }
+
+fun FirVisibilityChecker.isVisible(
+    symbol: FirCallableSymbol<*>,
+    session: FirSession,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+    dispatchReceiver: FirExpression?,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
+}

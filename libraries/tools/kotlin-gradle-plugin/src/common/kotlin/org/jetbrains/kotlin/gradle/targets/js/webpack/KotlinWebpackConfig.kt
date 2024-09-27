@@ -63,6 +63,10 @@ data class KotlinWebpackConfig(
                 versions.webpackCli
             )
 
+            it.add(
+                versions.kotlinWebHelpers
+            )
+
             if (sourceMaps) {
                 it.add(
                     versions.sourceMapLoader
@@ -91,7 +95,7 @@ data class KotlinWebpackConfig(
     data class DevServer(
         var open: Any = true,
         var port: Int? = null,
-        var proxy: MutableMap<String, Any>? = null,
+        var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null
@@ -104,6 +108,14 @@ data class KotlinWebpackConfig(
                 var warnings: Boolean
             ) : Serializable
         }
+
+        data class Proxy(
+            val context: MutableList<String>,
+            val target: String,
+            val pathRewrite: MutableMap<String, String>? = null,
+            val secure: Boolean? = null,
+            val changeOrigin: Boolean? = null
+        ) : Serializable
     }
 
     @Suppress("unused")
@@ -215,9 +227,10 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-            ${
-                "config.ignoreWarnings = [/Failed to parse source map/]"
-            }
+                config.ignoreWarnings = [
+                    /Failed to parse source map/,
+                    /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
+                ]
                 
             """.trimIndent()
         )
@@ -287,7 +300,7 @@ data class KotlinWebpackConfig(
             """
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
-                    const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
+                    const tcErrorPlugin = require('kotlin-web-helpers/dist/tc-log-error-webpack');
                     config.plugins.push(new tcErrorPlugin())
                     config.stats = config.stats || {}
                     Object.assign(config.stats, config.stats, {

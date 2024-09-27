@@ -44,9 +44,9 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
                     FirErrors.CONFLICTING_OVERLOADS
                 }
                 conflictingDeclaration is FirClassLikeSymbol<*> &&
-                        conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
+                        conflictingDeclaration.getContainingClassSymbol() == null &&
                         symbols.any { it is FirClassLikeSymbol<*> } -> {
-                    FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                    FirErrors.CLASSIFIER_REDECLARATION
                 }
                 else -> {
                     FirErrors.REDECLARATION
@@ -66,7 +66,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 checkFile(declaration, inspector, context)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
             }
-            is FirRegularClass -> {
+            is FirClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
                     checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
                 }
@@ -140,9 +140,10 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
     private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>, context: CheckerContext) {
-        val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
-            FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
-        }
+        val packageMemberScope: FirPackageMemberScope =
+            context.sessionHolder.scopeSession.getOrBuild(file.packageFqName to context.session, PACKAGE_MEMBER) {
+                FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
+            }
         inspector.collectTopLevel(file, packageMemberScope)
     }
 }
@@ -154,14 +155,16 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
         val file: FirFile?,
     )
 
-    val redeclaredClassifiers = HashMap<ClassId, Set<ClassifierWithFile>>()
+    private val _redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierWithFile>> = HashMap()
+    val redeclaredClassifiers: Map<ClassId, Set<ClassifierWithFile>>
+        get() = _redeclaredClassifiers
 
     override fun registerClassifierRedeclaration(
         classId: ClassId,
         newSymbol: FirClassLikeSymbol<*>, newSymbolFile: FirFile,
         prevSymbol: FirClassLikeSymbol<*>, prevSymbolFile: FirFile?,
     ) {
-        redeclaredClassifiers.merge(
+        _redeclaredClassifiers.merge(
             classId, linkedSetOf(ClassifierWithFile(newSymbol, newSymbolFile), ClassifierWithFile(prevSymbol, prevSymbolFile))
         ) { a, b -> a + b }
     }

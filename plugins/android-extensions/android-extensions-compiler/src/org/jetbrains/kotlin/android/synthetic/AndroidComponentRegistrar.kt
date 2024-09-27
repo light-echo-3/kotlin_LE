@@ -17,23 +17,20 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.parcel.*
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidIrExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -42,7 +39,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.utils.decodePluginOptions
 
@@ -109,20 +105,9 @@ class AndroidComponentRegistrar : ComponentRegistrar {
                 "The Android extensions ('kotlin-android-extensions') compiler plugin is no longer supported. " +
                         "Please use kotlin parcelize and view binding. " +
                         "More information: https://goo.gle/kotlin-android-extensions-deprecation"
-            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 ?.report(CompilerMessageSeverity.ERROR, errorMessage, null)
                 ?: throw IllegalStateException(errorMessage)
-        }
-
-        fun registerParcelExtensions(project: Project) {
-            ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
-            IrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
-            SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtension(
-                project, ParcelableClinitClassBuilderInterceptorExtension()
-            )
-            StorageComponentContainerContributor.registerExtension(project, ParcelizeDeclarationCheckerComponentContainerContributor())
         }
 
         private fun parseVariant(s: String): AndroidVariant? {
@@ -174,10 +159,6 @@ class AndroidComponentRegistrar : ComponentRegistrar {
         val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
-        if (AndroidExtensionsFeature.PARCELIZE in features) {
-            registerParcelExtensions(project)
-        }
-
         if (AndroidExtensionsFeature.VIEWS in features) {
             registerViewExtensions(configuration, isExperimental, project)
         }
@@ -190,17 +171,6 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
     ) {
         if (platform.isJvm()) {
             container.useInstance(AndroidExtensionPropertiesCallChecker())
-        }
-    }
-}
-
-class ParcelizeDeclarationCheckerComponentContainerContributor : StorageComponentContainerContributor {
-    override fun registerModuleComponents(
-        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
-    ) {
-        if (platform.isJvm()) {
-            container.useInstance(ParcelableDeclarationChecker())
-            container.useInstance(ParcelableAnnotationChecker())
         }
     }
 }

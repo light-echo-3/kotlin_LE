@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
+import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -105,15 +105,9 @@ class FirJavaElementFinder(
             if (topLevelClass.isRoot) break
             val classId = ClassId.topLevel(topLevelClass)
 
-            // 1. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
-            val firFile = fileCache.getValue(classId.packageFqName)[classId.relativeClassName.asString()]?.singleOrNull()
-            if (firFile != null) {
-                val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
-                return buildFileAsClassStub(firFile, classId, fileStub).psi
-            }
-
-            // 2. Find regular class
+            // 1. Find regular class
             val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
+
             val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
             val topLevelResult = buildStub(firClass, fileStub).psi
             val tail = fqName.tail(topLevelClass).pathSegments()
@@ -123,13 +117,22 @@ class FirJavaElementFinder(
             }
         }
 
+        // 2. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
+        val classId = ClassId.topLevel(fqName)
+        val firFile = fileCache.getValue(classId.packageFqName)[classId.relativeClassName.asString()]?.singleOrNull()
+
+        if (firFile != null) {
+            val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+            return buildFileAsClassStub(firFile, classId, fileStub).psi
+        }
+
         return null
     }
 
     private fun FirFile.jvmName(): String {
         val jvmNameAnnotation = this.findJvmNameAnnotation()
         val jvmName = jvmNameAnnotation?.findArgumentByName(StandardNames.NAME)
-        val jvmNameValue = (jvmName as? FirLiteralExpression<*>)?.value as? String
+        val jvmNameValue = (jvmName as? FirLiteralExpression)?.value as? String
         return jvmNameValue ?: (this.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
     }
 
@@ -226,7 +229,7 @@ class FirJavaElementFinder(
             // Null result means that the evaluator encountered an error during evaluation.
             // Later on, the compiler should report proper diagnostic.
             fun transformJavaFieldAndGetResultAsString(firProperty: FirProperty): String? {
-                fun FirLiteralExpression<*>.asString(): String {
+                fun FirLiteralExpression.asString(): String {
                     return when (val constVal = value) {
                         is Char -> constVal.code.toString()
                         is String -> "\"$constVal\""
@@ -234,7 +237,7 @@ class FirJavaElementFinder(
                     }
                 }
 
-                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression<*>> {}?.asString()
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression> {}?.asString()
             }
 
             override fun getName(): String = firProperty.name.identifier
@@ -266,7 +269,7 @@ class FirJavaElementFinder(
 private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
     val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
     return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
-        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs)
+        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
     }
 }
 
@@ -329,7 +332,7 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
 
     for (superTypeRef in superTypeRefs) {
         val superConeType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        val supertypeFirClass = superConeType.toFirClass(session) ?: continue
+        val supertypeFirClass = superConeType.toRegularClassSymbol(session) ?: continue
 
         val canonicalString = superConeType.mapToCanonicalString(session)
 
@@ -383,11 +386,6 @@ private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): P
 
     javaFileStub.psi = fakeFile
     return javaFileStub
-}
-
-private fun ConeClassLikeType.toFirClass(session: FirSession): FirRegularClass? {
-    val expandedType = this.fullyExpandedType(session)
-    return (expandedType.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir as? FirRegularClass
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

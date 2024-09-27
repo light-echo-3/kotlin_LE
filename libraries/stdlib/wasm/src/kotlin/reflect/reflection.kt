@@ -9,12 +9,9 @@ import kotlin.reflect.*
 
 internal expect fun <T : Any> getKClassForObject(obj: Any): KClass<T>
 
-//TODO(Replace getKClass to intrinsic argument-less implementation after bootstrap KT-65322")
-//@ExcludedFromCodegen
-//internal fun <T : Any> getKClass(): KClass<T> =
-//    implementedAsIntrinsic
-internal fun <T : Any> getKClass(typeInfoData: TypeInfoData): KClass<T> =
-    KClassImpl(typeInfoData)
+@ExcludedFromCodegen
+internal fun <T : Any> getKClass(): KClass<T> =
+    implementedAsIntrinsic
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
@@ -27,13 +24,13 @@ internal inline fun <reified T : Any> wasmGetKClass(): KClass<T> =
 internal fun createKType(classifier: KClassifier, arguments: Array<KTypeProjection>, isMarkedNullable: Boolean): KType =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
-internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String): KTypeParameter {
+internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String, isReified: Boolean): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
         "out" -> KVariance.OUT
         else -> KVariance.INVARIANT
     }
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, false)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =

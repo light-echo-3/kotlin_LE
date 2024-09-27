@@ -11,14 +11,15 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.init]
  */
-abstract class SirInit : SirCallable() {
+abstract class SirInit : SirElementBase(), SirCallable {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
-    abstract override val kind: SirCallableKind
+    abstract override val attributes: MutableList<SirAttribute>
     abstract override var body: SirFunctionBody?
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val initKind: SirInitializerKind
+    abstract val isOverride: Boolean
 }

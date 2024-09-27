@@ -5,59 +5,52 @@
 
 package org.jetbrains.sir.lightclasses
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildTypealias
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.source.KotlinSource
-import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.nodes.*
-import org.jetbrains.sir.lightclasses.nodes.SirClassFromKtSymbol
-import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtSymbol
-import org.jetbrains.sir.lightclasses.nodes.SirVariableFromKtSymbol
 
 public class SirDeclarationFromKtSymbolProvider(
-    private val ktAnalysisSession: KtAnalysisSession,
+    private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
 
-    override fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration = withSirAnalyse(sirSession, ktAnalysisSession) {
-        when (val ktSymbol = this@sirDeclaration) {
-            is KtNamedClassOrObjectSymbol -> {
+    override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration {
+        return when (val ktSymbol = this@sirDeclaration) {
+            is KaNamedClassSymbol -> {
                 SirClassFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    analysisApiSession = ktAnalysisSession,
+                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtConstructorSymbol -> {
+            is KaConstructorSymbol -> {
                 SirInitFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    analysisApiSession = ktAnalysisSession,
+                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtFunctionLikeSymbol -> {
+            is KaFunctionSymbol -> {
                 SirFunctionFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    analysisApiSession = ktAnalysisSession,
+                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtVariableSymbol -> {
+            is KaVariableSymbol -> {
                 SirVariableFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    analysisApiSession = ktAnalysisSession,
+                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtTypeAliasSymbol -> {
+            is KaTypeAliasSymbol -> {
                 SirTypealiasFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    analysisApiSession = ktAnalysisSession,
+                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }

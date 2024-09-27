@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -79,7 +80,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
             if (setter.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
                 if (isLegallyAbstract) {
                     reporter.reportOn(setter.source, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
-                } else if (!property.isEffectivelyFinal(context)) {
+                } else if (!property.isEffectivelyFinal()) {
                     reporter.reportOn(setter.source, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
                 }
             }
@@ -102,7 +103,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
             reporter.reportOn(valueSetterTypeSource, FirErrors.WRONG_SETTER_PARAMETER_TYPE, propertyType, valueSetterType, context)
         }
 
-        val setterReturnType = setter.returnTypeRef.coneType
+        val setterReturnType = setter.returnTypeRef.coneType.fullyExpandedType(context.session)
 
         if (!setterReturnType.isUnit) {
             reporter.reportOn(setter.returnTypeRef.source, FirErrors.WRONG_SETTER_RETURN_TYPE, context)

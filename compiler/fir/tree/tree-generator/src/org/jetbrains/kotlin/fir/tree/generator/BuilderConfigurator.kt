@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 
-object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder.elements) {
-    override fun configureBuilders() = with(FirTreeBuilder) {
+class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<AbstractFirTreeBuilder>(model) {
+    override fun configureBuilders() = with(FirTree) {
         val declarationBuilder by builder {
             fields from declaration without "symbol"
         }
@@ -33,6 +34,7 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             parents += declarationBuilder
             parents += annotationContainerBuilder
             fields from klass without listOf("symbol", "resolvePhase", "resolveState", "controlFlowGraphReference")
+            isSealed = true
         }
 
         builder(file) {
@@ -251,6 +253,11 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             withCopy()
         }
 
+        builder(backingField) {
+            parents += variableBuilder
+            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
+        }
+
         builder(enumEntry) {
             withCopy()
         }
@@ -287,7 +294,6 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             default("inlineStatus", "InlineStatus.Unknown")
             default("status", "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
             default("typeRef", "FirImplicitTypeRefImplWithoutSource")
-            withCopy()
             additionalImports(resolvedDeclarationStatusImport, firImplicitTypeWithoutSourceType)
         }
 
@@ -368,6 +374,16 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
 
         builder(spreadArgumentExpression) {
             defaultFalse("isNamed", "isFakeSpread")
+        }
+
+        val abstractWhenBranchBuilder by builder {
+            fields from whenBranch without "hasGuard"
+        }
+        builder(whenBranch, type = "FirRegularWhenBranch") {
+            parents += abstractWhenBranchBuilder
+        }
+        builder(whenBranch, type = "FirGuardedWhenBranch") {
+            parents += abstractWhenBranchBuilder
         }
 
         val abstractResolvedQualifierBuilder by builder {

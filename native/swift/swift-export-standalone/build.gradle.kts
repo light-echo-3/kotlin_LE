@@ -34,7 +34,10 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":native:native.tests"))
+
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testApi(projectTests(":native:native.tests"))
+    }
 }
 
 sourceSets {
@@ -53,9 +56,7 @@ val test by nativeTest("test", null) {
     useJUnitPlatform { }
 }
 
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+publish()
 
 runtimeJar()
 sourcesJar()

@@ -206,7 +206,7 @@ open class IrFileSerializer(
     /* ------- IdSignature ------------------------------------------------------ */
 
     private fun protoIdSignature(declaration: IrDeclaration, recordInSignatureClashDetector: Boolean): Int {
-        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.oldSignatures, recordInSignatureClashDetector)
+        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector)
         return idSignatureSerializer.protoIdSignature(idSig)
     }
 
@@ -271,6 +271,7 @@ open class IrFileSerializer(
 
     /* ------- IrTypes ---------------------------------------------------------- */
 
+    // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map {
             for (index in 0 until it.valueArgumentsCount) {
@@ -576,7 +577,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeConst(value: IrConst<*>): ProtoConst {
+    private fun serializeConst(value: IrConst): ProtoConst {
         val proto = ProtoConst.newBuilder()
         when (value.kind) {
             IrConstKind.Null -> proto.`null` = true
@@ -935,7 +936,7 @@ open class IrFileSerializer(
             is IrCall -> operationProto.call = serializeCall(expression)
             is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
             is IrComposite -> operationProto.composite = serializeComposite(expression)
-            is IrConst<*> -> operationProto.const = serializeConst(expression)
+            is IrConst -> operationProto.const = serializeConst(expression)
             is IrContinue -> operationProto.`continue` = serializeContinue(expression)
             is IrDelegatingConstructorCall -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
             is IrDoWhileLoop -> operationProto.doWhile = serializeDoWhile(expression)
@@ -1138,11 +1139,11 @@ open class IrFileSerializer(
             .setNameType(serializeNameAndType(field.name, field.type))
         if (!(bodiesOnlyForInlines &&
                     (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
-                    (field.initializer?.expression !is IrConst<*>))
+                    (field.initializer?.expression !is IrConst))
         ) {
             val initializer = field.initializer?.expression
             if (field.correspondingPropertySymbol?.owner?.isConst == true)
-                require(initializer is IrConst<*>) {
+                require(initializer is IrConst) {
                     "This is a compiler bug, please report it to https://kotl.in/issue : const val property must have a const initializer:\n${field.render()}"
                 }
 
@@ -1282,7 +1283,7 @@ open class IrFileSerializer(
 
     private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry = ProtoFileEntry.newBuilder()
         .setName(entry.matchAndNormalizeFilePath())
-        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsets.asIterable()) }
+        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
         .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
@@ -1367,7 +1368,7 @@ open class IrFileSerializer(
             }
 
             val byteArray = serializeDeclaration(it).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.oldSignatures, recordInSignatureClashDetector = false)
+            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector = false)
             require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 
@@ -1432,7 +1433,7 @@ open class IrFileSerializer(
 }
 
 internal fun IrElement.isValidConstantAnnotationArgument(): Boolean =
-    this is IrConst<*> || this is IrGetEnumValue || this is IrClassReference ||
+    this is IrConst || this is IrGetEnumValue || this is IrClassReference ||
             (this is IrVararg && elements.all { it.isValidConstantAnnotationArgument() }) ||
             (this is IrConstructorCall &&
                     (0 until valueArgumentsCount).all { getValueArgument(it)?.isValidConstantAnnotationArgument() ?: true })

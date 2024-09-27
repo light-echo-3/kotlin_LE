@@ -229,7 +229,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
             replacement.symbol, function.typeParameters.size,
-            replacement.valueParameters.size, expression.reflectionTarget, expression.origin
+            expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
         }.copyAttributes(expression)
@@ -241,9 +241,13 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             ?: return super.visitFunctionAccess(expression)
 
         return IrCallImpl(
-            expression.startOffset, expression.endOffset, function.returnType.substitute(expression.typeSubstitutionMap),
-            replacement.symbol, replacement.typeParameters.size, replacement.valueParameters.size,
-            expression.origin, (expression as? IrCall)?.superQualifierSymbol
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = function.returnType.substitute(expression.typeSubstitutionMap),
+            symbol = replacement.symbol,
+            typeArgumentsCount = replacement.typeParameters.size,
+            origin = expression.origin,
+            superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol
         ).apply {
             buildReplacement(function, expression, replacement)
         }
@@ -338,7 +342,10 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             // since the underlying representations are the same.
             expression.symbol.owner.isInlineClassFieldGetter -> {
                 val arg = expression.dispatchReceiver!!.transform(this, null)
-                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+                val from = expression.symbol.owner.dispatchReceiverParameter!!.type
+                val to = context.inlineClassReplacements.getUnboxFunction(from.erasedUpperBound).returnType
+                // We need direct unboxed parameter type here
+                coerceInlineClasses(arg, from, to)
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
             expression.isEqEqCallOnInlineClass || expression.isEqualsMethodCallOnInlineClass -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
-import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.Assert
 import java.io.File
@@ -47,7 +47,7 @@ fun ScriptEngine.runTestFunction(
         entryModulePath != null && entryModulePath.endsWith(ESM_EXTENSION) -> "globalThis".also {
             eval("import('${entryModulePath.escapePath()}').then(module => Object.assign(globalThis, module)).catch(console.error)")
         }
-        withModuleSystem -> "\$kotlin_test_internal\$.require('" + testModuleName!! + "')"
+        withModuleSystem -> "$KOTLIN_TEST_INTERNAL.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
         else -> testModuleName
     }
@@ -130,6 +130,15 @@ abstract class AbstractJsTestChecker {
     private fun String.normalize() = StringUtil.convertLineSeparators(this)
 
     protected abstract fun run(files: List<String>, f: ScriptEngine.() -> String): String
+
+    protected val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
+    protected var engineUsageCnt = 0
+    protected inline fun periodicScriptEngineRecreate(doCleanup: () -> Unit) {
+        if (engineUsageCnt++ > SCRIPT_ENGINE_REUSAGE_LIMIT) {
+            engineUsageCnt = 0
+            doCleanup()
+        }
+    }
 }
 
 fun ScriptEngine.runAndRestoreContext(f: ScriptEngine.() -> String): String {
@@ -142,9 +151,6 @@ fun ScriptEngine.runAndRestoreContext(f: ScriptEngine.() -> String): String {
 }
 
 abstract class AbstractNashornJsTestChecker : AbstractJsTestChecker() {
-
-    private var engineUsageCnt = 0
-
     private var engineCache: ScriptEngineNashorn? = null
 
     protected val engine: ScriptEngineNashorn
@@ -155,9 +161,8 @@ abstract class AbstractNashornJsTestChecker : AbstractJsTestChecker() {
     protected open fun beforeRun() {}
 
     override fun run(files: List<String>, f: ScriptEngine.() -> String): String {
-        // Recreate the engine once in a while
-        if (engineUsageCnt++ > 100) {
-            engineUsageCnt = 0
+        periodicScriptEngineRecreate {
+            engine.release()
             engineCache = null
         }
 
@@ -231,12 +236,15 @@ object V8JsTestChecker : AbstractJsTestChecker() {
 
         override fun remove() {
             get().release()
+            super.remove()
         }
     }
 
     private val engine get() = engineTL.get()
 
     override fun run(files: List<String>, f: ScriptEngine.() -> String): String {
+        periodicScriptEngineRecreate { engineTL.remove() }
+
         engine.eval(SETUP_KOTLIN_OUTPUT)
         return engine.runAndRestoreContext {
             loadFiles(files)
@@ -250,10 +258,13 @@ object V8IrJsTestChecker : AbstractJsTestChecker() {
         override fun initialValue() = ScriptEngineV8()
         override fun remove() {
             get().release()
+            super.remove()
         }
     }
 
     override fun run(files: List<String>, f: ScriptEngine.() -> String): String {
+        periodicScriptEngineRecreate { engineTL.remove() }
+
         val engine = engineTL.get()
         return try {
             engine.loadFiles(files)

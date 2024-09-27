@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,24 +9,23 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenPropertySymbols
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.PropertySymbols
+import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
+import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -34,25 +33,32 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-@OptIn(FirBasedFakeOverrideGenerator::class)
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
     symbols: PropertySymbols,
-    override var parent: IrDeclarationParent,
-    override var isFakeOverride: Boolean
+    parent: IrDeclarationParent,
+    override var isFakeOverride: Boolean,
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
 
+    override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
+
     init {
+        this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
     }
@@ -109,8 +115,11 @@ class Fir2IrLazyProperty(
                 var irInitializer: IrExpressionBody? = null
                 declarationStorage.withScope(symbol) {
                     with(declarationStorage) {
-                        val firPrimaryConstructor =
-                            fir.containingClassLookupTag()?.toFirRegularClass(session)?.primaryConstructorIfAny(session) ?: return@with
+                        val firPrimaryConstructor = fir.containingClassLookupTag()
+                            ?.toRegularClassSymbol(session)
+                            ?.fir
+                            ?.primaryConstructorIfAny(session)
+                            ?: return@with
 
                         @OptIn(UnsafeDuringIrConstructionAPI::class)
                         declarationStorage.getIrConstructorSymbol(firPrimaryConstructor).owner.putParametersInScope(firPrimaryConstructor.fir)
@@ -121,7 +130,7 @@ class Fir2IrLazyProperty(
                 irInitializer
             }
             // Setting initializers to every other class causes some cryptic errors in lowerings
-            initializer is FirLiteralExpression<*> -> {
+            initializer is FirLiteralExpression -> {
                 fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
                 factory.createExpressionBody(initializer.toIrConst(constType))
@@ -134,7 +143,8 @@ class Fir2IrLazyProperty(
         symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
             val backingFieldType = fir.backingField?.returnTypeRef?.toIrType(c)
-            val initializer = fir.backingField?.initializer ?: fir.initializer
+            val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+            val initializer = fir.backingField?.initializer ?: evaluatedInitializer ?: fir.initializer
             val visibility = fir.backingField?.visibility ?: fir.visibility
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
@@ -151,6 +161,7 @@ class Fir2IrLazyProperty(
             }
         }
         fir.delegate != null -> {
+            fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
                 fir,
@@ -163,6 +174,7 @@ class Fir2IrLazyProperty(
             )
         }
         origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
                 fir,
@@ -174,7 +186,8 @@ class Fir2IrLazyProperty(
                 fir.initializer,
                 type
             ).also { field ->
-                field.initializer = toIrInitializer(fir.initializer)
+                val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+                field.initializer = toIrInitializer(evaluatedInitializer ?: fir.initializer)
             }
         }
         else -> null
@@ -204,8 +217,8 @@ class Fir2IrLazyProperty(
             parent = this@Fir2IrLazyProperty.parent,
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
-        ).apply {
-            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
+        ).also {
+            initializeAccessor(it, fir.getter, ConversionTypeOrigin.DEFAULT)
         }
     }
 
@@ -228,38 +241,68 @@ class Fir2IrLazyProperty(
             parent = this@Fir2IrLazyProperty.parent,
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
-        ).apply {
-            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER)
+        ).also {
+            initializeAccessor(it, fir.setter, ConversionTypeOrigin.SETTER)
         }
     }
 
-    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) {
-        when (configuration.useFirBasedFakeOverrideGenerator) {
-            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
-            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-        }
-    }
+    private fun initializeAccessor(accessor: Fir2IrLazyPropertyAccessor, firAccessor: FirPropertyAccessor?, typeOrigin: ConversionTypeOrigin) {
+        declarationStorage.enterScope(accessor.symbol)
 
-    // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
-    private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrPropertySymbol> {
-        if (containingClass == null) return emptyList()
-        if (isFakeOverride && parent is Fir2IrLazyClass) {
-            fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideProperty(
-                containingClass, this, fir.symbol
+        accessor.classifiersGenerator.setTypeParameters(accessor, fir, typeOrigin)
+
+        val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
+        if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
+            accessor.dispatchReceiverParameter = accessor.declareThisReceiverParameter(
+                c,
+                thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
+                thisOrigin = accessor.origin,
             )
-            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
-                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
-                return it
+        }
+
+        accessor.extensionReceiverParameter = fir.receiverParameter?.let {
+            accessor.declareThisReceiverParameter(
+                c,
+                thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
+                thisOrigin = accessor.origin,
+                explicitReceiver = it
+            )
+        }
+
+        accessor.valueParameters = buildList {
+            callablesGenerator.addContextReceiverParametersTo(
+                accessor.fir.contextReceiversForFunctionOrContainingProperty(),
+                accessor,
+                this@buildList
+            )
+
+            if (accessor.isSetter) {
+                val valueParameter = firAccessor?.valueParameters?.firstOrNull()
+                add(
+                    callablesGenerator.createDefaultSetterParameter(
+                        accessor.startOffset, accessor.endOffset,
+                        (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
+                            typeConverter, typeOrigin
+                        ),
+                        parent = accessor,
+                        firValueParameter = valueParameter,
+                        name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
+                        isCrossinline = valueParameter?.isCrossinline == true,
+                        isNoinline = valueParameter?.isNoinline == true
+                    )
+                )
             }
         }
-        return fir.generateOverriddenPropertySymbols(containingClass, c)
+
+        declarationStorage.leaveScope(accessor.symbol)
     }
 
-    private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrPropertySymbol> {
-        if (containingClass == null || parent !is Fir2IrLazyClass) return emptyList()
+    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
+        if (containingClass == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
+
         val baseFunctionWithDispatchReceiverTag =
-            fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, fir.symbol)
-        return baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+            lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, fir.symbol)
+        baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
             declarationStorage.getIrPropertySymbol(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
         }
     }

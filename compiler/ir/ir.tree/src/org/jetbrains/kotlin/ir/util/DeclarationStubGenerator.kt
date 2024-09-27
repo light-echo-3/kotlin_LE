@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isValueClass
@@ -148,7 +150,7 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                         || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -169,7 +171,7 @@ abstract class DeclarationStubGenerator(
                 isExternal = descriptor.isEffectivelyExternal(),
                 isStatic = (descriptor.dispatchReceiverParameter == null),
                 stubGenerator = this, typeTranslator = typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -201,7 +203,11 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
-            )
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter, true)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter, false)
+                it.valueParameters = it.createValueParameters()
+            }
         }
     }
 
@@ -221,15 +227,43 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter, true)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter, false)
+                it.valueParameters = it.createValueParameters()
+            }
         }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
+    private fun IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
+        typeTranslator.buildWithScope(this) {
+            val result = arrayListOf<IrValueParameter>()
+            descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
+                factory.createValueParameter(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = origin,
+                    name = Name.identifier("contextReceiverParameter$i"),
+                    type = contextReceiverParameter.type.toIrType(),
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
+                ).apply { parent = this@createValueParameters }
+            }
+            descriptor.valueParameters.mapTo(result) {
+                stubGenerator.generateValueParameterStub(it)
+                    .apply { parent = this@createValueParameters }
+            }
+        }
+
+    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
             type, varargElementType,
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
@@ -237,8 +271,17 @@ abstract class DeclarationStubGenerator(
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
-        }
+        }.generateParentDeclaration()
     }
+
+    private fun IrLazyFunctionBase.createReceiverParameter(
+        parameter: ReceiverParameterDescriptor?,
+        functionDispatchReceiver: Boolean,
+    ): IrValueParameter? =
+        if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
+        else typeTranslator.buildWithScope(this) {
+            parameter?.generateReceiverParameterStub()?.also { it.parent = this@createReceiverParameter }
+        }
 
     // in IR Generator enums also have special handling, but here we have not enough data for it
     // probably, that is not a problem, because you can't add new enum value to external module
@@ -259,8 +302,7 @@ abstract class DeclarationStubGenerator(
         // `descriptor`, a symbol created for `descriptor` will be bound, not the built-in symbol which should be. If `generateClassStub` is
         // called twice for such a `descriptor`, an exception will occur because `descriptor`'s symbol will already have been bound.
         //
-        // Note as well that not all symbols have descriptors. For example, `irClassSymbol` might be an `IrClassPublicSymbolImpl` without a
-        // descriptor. For such symbols, the `descriptor` argument needs to be used.
+        // Note as well that not all symbols have descriptors. For such symbols, the `descriptor` argument needs to be used.
         val targetDescriptor = if (irClassSymbol.hasDescriptor) irClassSymbol.descriptor else descriptor
         with(targetDescriptor) {
             val origin = computeOrigin(this)
@@ -279,7 +321,7 @@ abstract class DeclarationStubGenerator(
                     hasEnumEntries = descriptor is DeserializedClassDescriptor && descriptor.hasEnumEntriesMetadataFlag,
                     stubGenerator = this@DeclarationStubGenerator,
                     typeTranslator = typeTranslator
-                )
+                ).generateParentDeclaration()
             }
         }
     }
@@ -295,7 +337,7 @@ abstract class DeclarationStubGenerator(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -314,7 +356,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.isReified,
                 descriptor.variance,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -333,7 +375,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.isReified,
                 descriptor.variance,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -349,7 +391,32 @@ abstract class DeclarationStubGenerator(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.isActual,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
+    }
+
+    private fun <E : IrLazyDeclarationBase> E.generateParentDeclaration(): E {
+        val currentDescriptor = descriptor
+
+        val containingDeclaration =
+            ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
+
+        parent = when (containingDeclaration) {
+            is PackageFragmentDescriptor -> run {
+                val parent = this.takeUnless { it is IrClass }?.let {
+                    generateOrGetFacadeClass(descriptor)
+                } ?: generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration)
+                assert(this !in parent.declarations)
+                parent.declarations.add(this)
+                parent
+            }
+            is ClassDescriptor -> generateClassStub(containingDeclaration)
+            is FunctionDescriptor -> generateFunctionStub(containingDeclaration)
+            is PropertyDescriptor -> generateFunctionStub(containingDeclaration.run { getter ?: setter!! })
+            is TypeAliasDescriptor -> generateTypeAliasStub(containingDeclaration)
+            else -> throw AssertionError("Package or class expected: $containingDeclaration; for $currentDescriptor")
+        }
+
+        return this
     }
 }

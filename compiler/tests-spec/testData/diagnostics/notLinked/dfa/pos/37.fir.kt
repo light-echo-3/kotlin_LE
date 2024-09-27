@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -55,8 +55,8 @@ fun case_4(x: Boolean?) {
         x ?: return
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
 }
 
 /*

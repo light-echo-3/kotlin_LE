@@ -5,46 +5,55 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildExtension
+import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
+import org.jetbrains.kotlin.sir.providers.utils.containingModule
+import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirParentProviderImpl(
-    private val ktAnalysisSession: KtAnalysisSession,
     private val sirSession: SirSession,
+    private val packageEnumGenerator: SirEnumGenerator
 ) : SirParentProvider {
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
 
-    override fun KtDeclarationSymbol.getSirParent(): SirDeclarationContainer = withSirAnalyse(sirSession, ktAnalysisSession) {
+    override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationContainer {
         val symbol = this@getSirParent
-        val parentSymbol = symbol.getContainingSymbol()
+        val parentSymbol = with(ktAnalysisSession) { symbol.containingDeclaration }
 
-        if (parentSymbol == null) {
+        return if (parentSymbol == null) {
             // top level function. -> parent is either extension for package, of plain module in case of <root> package
             val packageFqName = when (symbol) {
-                is KtNamedClassOrObjectSymbol -> symbol.classIdIfNonLocal?.packageFqName
-                is KtCallableSymbol -> symbol.callableIdIfNonLocal?.packageName
-                is KtTypeAliasSymbol -> symbol.classIdIfNonLocal?.packageFqName
+                is KaNamedClassSymbol -> symbol.classId?.packageFqName
+                is KaCallableSymbol -> symbol.callableId?.packageName
+                is KaTypeAliasSymbol -> symbol.classId?.packageFqName
                 else -> null
             } ?: error("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")
 
-            return@withSirAnalyse if (packageFqName.isRoot) {
-                symbol.getContainingModule().sirModule()
+            val ktModule = with(ktAnalysisSession) { symbol.containingModule }
+            val sirModule = with(sirSession) { ktModule.sirModule() }
+            return if (packageFqName.isRoot) {
+                sirModule
             } else {
-                val enumAsPackage = packageFqName.sirPackageEnum(symbol.getContainingModule().sirModule())
-                val containingModule = symbol.getContainingModule().sirModule()
-                val extensionsInModule = createdExtensionsForModule.getOrPut(containingModule) { mutableMapOf() }
+                val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
+                val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
                 val extensionForPackage = extensionsInModule.getOrPut(enumAsPackage) {
-                    containingModule.addChild {
+                    sirModule.updateImport(
+                        SirImport(
+                            moduleName = enumAsPackage.containingModule().name,
+                            // so the user will have access to the Fully Qualified Name for declaration without importing additional modules
+                            mode = SirImport.Mode.Exported,
+                        )
+                    )
+                    sirModule.addChild {
                         buildExtension {
                             origin = enumAsPackage.origin
-
                             extendedType = SirNominalType(enumAsPackage)
                             visibility = SirVisibility.PUBLIC
                         }
@@ -53,7 +62,7 @@ public class SirParentProviderImpl(
                 extensionForPackage
             }
         } else {
-            (parentSymbol.sirDeclaration() as? SirDeclarationContainer)
+            (with(sirSession) { parentSymbol.sirDeclaration() } as? SirDeclarationContainer)
                 ?: error("the found declaration is not parent")
         }
     }

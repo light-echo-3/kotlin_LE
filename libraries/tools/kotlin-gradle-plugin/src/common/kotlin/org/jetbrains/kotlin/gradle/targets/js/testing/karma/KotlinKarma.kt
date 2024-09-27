@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -32,7 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -57,7 +55,7 @@ class KotlinKarma(
     private val platformType = compilation.platformType
 
     @Transient
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
+    private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDirectory }
     private val versions = nodeJs.versions
 
@@ -102,8 +100,10 @@ class KotlinKarma(
 
     init {
         requiredDependencies.add(versions.karma)
+        requiredDependencies.add(versions.kotlinWebHelpers)
 
         useKotlinReporter()
+        useWebpackOutputPlugin()
         useMocha()
         useWebpack()
         useSourceMapSupport()
@@ -152,15 +152,31 @@ class KotlinKarma(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-test-js-runner/karma-kotlin-reporter.js');
+                config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-reporter.js');
                 
                 config.loggers = [
                     {
-                        type: 'kotlin-test-js-runner/tc-log-appender.js',
+                        type: 'kotlin-web-helpers/dist/tc-log-appender.js',
                         //default layout
                         layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
                 ]
+            """.trimIndent()
+            )
+        }
+    }
+
+    private fun useWebpackOutputPlugin() {
+        config.frameworks.add("webpack-output")
+
+        confJsWriters.add {
+            // Not all log events goes through this appender
+            // For example Error in config file
+            //language=ES6
+            it.appendLine(
+                """
+                config.plugins = config.plugins || [];
+                config.plugins.push('kotlin-web-helpers/dist/karma-webpack-output.js');
             """.trimIndent()
             )
         }
@@ -200,17 +216,6 @@ class KotlinKarma(
     fun useChromeCanary() = useChromeLike("ChromeCanary")
 
     fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
-
-    @Deprecated("Chrome supports wasm GC by default, so you can use useChromeHeadless", replaceWith = ReplaceWith("useChromHeadless"))
-    fun useChromeHeadlessWasmGc() {
-        val chromeCanaryHeadlessWasmGc = "ChromeHeadlessWasmGc"
-
-        config.customLaunchers[chromeCanaryHeadlessWasmGc] = CustomLauncher("ChromeHeadless").apply {
-            flags.add("--js-flags=--experimental-wasm-gc")
-        }
-
-        useChromeLike(chromeCanaryHeadlessWasmGc)
-    }
 
     fun useDebuggableChrome() {
         val debuggableChrome = "DebuggableChrome"
@@ -292,7 +297,7 @@ class KotlinKarma(
                 ${
                     """
                     // https://github.com/webpack/webpack/issues/12951
-                    const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
+                    const PatchSourceMapSource = require('kotlin-web-helpers/dist/webpack-5-debug');
                     config.plugins.push(new PatchSourceMapSource())
                     """
                 }
@@ -338,27 +343,15 @@ class KotlinKarma(
         val file = task.inputFileProperty.getFile()
         val fileString = file.toString()
 
-        config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
+        config.files.add(npmProject.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
         if (!debug) {
             if (platformType == KotlinPlatformType.wasm) {
-                val wasmFile = file.parentFile.resolve("${file.nameWithoutExtension}.wasm")
-                val wasmFileString = wasmFile.normalize().absolutePath
-                config.files.add(
-                    KarmaFile(
-                        pattern = wasmFileString,
-                        included = false,
-                        served = true,
-                        watched = false
-                    )
-                )
                 config.files.add(
                     createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
                 )
 
-                config.proxies["/${wasmFile.name}"] = basify(npmProjectDir.getFile(), wasmFile)
-
-                config.customContextFile = npmProject.require("kotlin-test-js-runner/static/context.html")
-                config.customDebugFile = npmProject.require("kotlin-test-js-runner/static/debug.html")
+                config.customContextFile = npmProject.require("kotlin-web-helpers/dist/static/context.html")
+                config.customDebugFile = npmProject.require("kotlin-web-helpers/dist/static/debug.html")
             } else {
                 config.files.add(fileString)
             }
@@ -376,7 +369,7 @@ class KotlinKarma(
                             config.plugins.push('karma-*'); // default
                         }
                         
-                        config.plugins.push('kotlin-test-js-runner/karma-kotlin-debug-plugin.js');
+                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
                     """.trimIndent()
                 )
             }
@@ -441,7 +434,7 @@ class KotlinKarma(
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
             nodeJsArgs + listOf(
-                npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
+                npmProject.require("kotlin-web-helpers/dist/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )
         } else {
@@ -465,12 +458,11 @@ class KotlinKarma(
                 }
             }
 
-            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger, testReporter: MppTestReportHelper) =
+            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
                 object : JSServiceMessagesClient(
                     testResultProcessor,
                     clientSettings,
                     log,
-                    testReporter,
                 ) {
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
@@ -501,10 +493,37 @@ class KotlinKarma(
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
                             actualType = LogType.byValueOrNull(logLevel.toLowerCaseAsciiOnly())
-                            if (actualType?.isErrorLike() == true) {
-                                processFailedBrowsers(text)
+
+                            val onlyErrorLike: (LogType?) -> Boolean = { processingType -> processingType?.isErrorLike() == true }
+
+                            val failedBrowserProcessor = KarmaConsoleProcessor(
+                                onlyErrorLike,
+                                { _ -> true },
+                                { processingText ->
+                                    processFailedBrowsers(processingText)
+                                    processingText
+                                }
+                            )
+
+                            val proxyProcessor = KarmaConsoleRejector(
+                                onlyErrorLike
+                            ) { processingText ->
+                                PROXY_FALSE_WARN.matchEntire(processingText) != null
                             }
-                            message
+
+                            val webpackOutputProcessor = KarmaConsoleRejector(
+                                onlyErrorLike
+                            ) { processingText ->
+                                WEBPACK_OUTPUT_WARN.matchEntire(processingText) != null
+                            }
+
+                            listOf(
+                                failedBrowserProcessor,
+                                proxyProcessor,
+                                webpackOutputProcessor
+                            ).fold(message) { acc, processor ->
+                                processor.process(actualType, acc)
+                            }
                         } else {
                             text
                         }
@@ -640,3 +659,6 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
 
 private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
     .toRegex()
+
+private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
+private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()

@@ -334,7 +334,7 @@ private fun rebindThisRef(
     oldTarget: FirPropertySymbol,
     canHavePropertySymbolAsThisReference: Boolean,
 ) {
-    if (expression is FirLiteralExpression<*>) return
+    if (expression is FirLiteralExpression) return
 
     requireWithAttachment(
         expression is FirThisReceiverExpression,
@@ -496,7 +496,7 @@ private fun rebindPropertyRef(
             source = expression.source
             variance = Variance.INVARIANT
             typeRef = buildResolvedTypeRef {
-                type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                coneType = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
             }
         }
     })

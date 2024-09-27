@@ -23,8 +23,13 @@ import org.junit.Test
 class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                FeatureFlag.IntrinsicRemember.featureName
+            )
+        )
     }
 
     private fun comparisonPropagation(
@@ -32,7 +37,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
@@ -789,13 +794,18 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 }
 
 class RememberIntrinsicTransformTestsStrongSkipping(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.IntrinsicRemember.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                FeatureFlag.StrongSkipping.featureName
+            )
+        )
     }
 
     @Test

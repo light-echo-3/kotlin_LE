@@ -1,0 +1,13 @@
+> b main.kt:12
+> b main.kt:5
+> r
+> p x
+(int) 42[..]
+> n
+> p x
+(int) 1
+> p y
+(int) 24
+> p z
+(int) 5
+> q

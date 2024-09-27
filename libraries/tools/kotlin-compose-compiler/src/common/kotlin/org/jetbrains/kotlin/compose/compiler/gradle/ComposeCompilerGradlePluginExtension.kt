@@ -17,14 +17,26 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import javax.inject.Inject
 
-abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFactory: ObjectFactory) {
+/**
+ * Provides DSL to configure Compose compiler plugin options.
+ *
+ * It is available in the build scripts under "composeCompiler" name:
+ * ```
+ * composeCompiler {
+ *    ...
+ * }
+ * ```
+ */
+abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor(objectFactory: ObjectFactory) {
     /**
      * Generate function key meta classes with annotations indicating the functions and their group keys.
      *
@@ -44,10 +56,12 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
 
     /**
      * Save compose build metrics to this folder.
-     * When specified, the Compose Compiler will dump metrics about the compilation which can be useful when manually optimizing your application's runtime performance.  These metrics include information about which of your composable functions are skippable, which are restartable, which are readonly, etc.
+     * When specified, the Compose Compiler will dump metrics about the current module which can be useful when manually optimizing your
+     * application's runtime performance. The module.json will include the statistics about processed composables and classes, including
+     * number of stable classes/parameters, skippable functions, etc.
      *
      * For more information, see these links:
-     *  - [AndroidX compiler metrics](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md)
+     *  - [AndroidX compiler metrics](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/compiler-metrics.md)
      *  - [Composable metrics blog post](https://chrisbanes.me/posts/composable-metrics/)
      */
     abstract val metricsDestination: DirectoryProperty
@@ -55,12 +69,12 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     /**
      * Save compose build reports to this folder.
      *
-     * When specified, the Compose Compiler will dump metrics about the compilation which can be useful when manually optimizing
-     * your application's runtime performance. These metrics include information about which of your composable functions are skippable,
+     * When specified, the Compose Compiler will dump reports about the compilation which can be useful when manually optimizing
+     * your application's runtime performance. These reports include information about which of your composable functions are skippable,
      * which are restartable, which are readonly, etc.
      *
      * For more information, see these links:
-     *  - [AndroidX compiler metrics](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md)
+     *  - [AndroidX compiler metrics](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/compiler-metrics.md)
      *  - [Composable metrics blog post](https://chrisbanes.me/posts/composable-metrics/)
      */
     abstract val reportsDestination: DirectoryProperty
@@ -71,8 +85,18 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * Intrinsic Remember is an optimization mode which improves the runtime performance of your application by inlining `remember`
      * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
      * results in fewer slots being used and fewer comparisons being done at runtime.
+     *
+     * It is enabled by default.
+     *
+     * To change the default value, use the following code:
+     * ```
+     * composeCompiler {
+     *     enableIntrinsicRemember.set(false)
+     * }
+     * ```
      */
-    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    @Deprecated("Use the featureFlags option instead")
+    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Remove groups around non-skipping composable functions.
@@ -84,6 +108,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      *
      * This feature is still considered experimental and is thus disabled by default.
      */
+    @Deprecated("Use the featureFlags option instead")
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
@@ -94,9 +119,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * unstable parameters become skippable and lambdas with unstable captures will be memoized.
      *
      * For more information, see this link:
-     *  - [AndroidX strong skipping](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/strong-skipping.md)
+     *  - [AndroidX strong skipping](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
      */
-    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    @Deprecated("Use the featureFlags option instead")
+    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Path to the stability configuration file.
@@ -104,7 +130,16 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
      */
+    @Deprecated("Use the stabilityConfigurationFiles option instead")
     abstract val stabilityConfigurationFile: RegularFileProperty
+
+    /**
+     * List of paths to the stability configuration file.
+     *
+     * For more information, see this link:
+     *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
+     */
+    abstract val stabilityConfigurationFiles: ListProperty<RegularFile>
 
     /**
      * Include composition trace markers in the generated code.
@@ -115,7 +150,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
-    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * A set of Kotlin platforms to which the Compose plugin will be applied.
@@ -134,8 +169,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * composeCompiler {
      *     targetKotlinPlatforms.set(
      *         KotlinPlatformType.values()
-     *             .filterNot { it == KotlinPlatformType.native || it == KotlinPlatformType.js }
-     *             .asIterable()
+     *             .filterNot {
+     *                it == KotlinPlatformType.native ||
+     *                it == KotlinPlatformType.js
+     *             }.asIterable()
      *     )
      * }
      * ```
@@ -143,4 +180,26 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     val targetKotlinPlatforms: SetProperty<KotlinPlatformType> = objectFactory
         .setProperty(KotlinPlatformType::class.java)
         .convention(KotlinPlatformType.values().asIterable())
+
+    /**
+     * A set of feature flags to enable. A feature requires a feature flags when it is in the process of becoming the default
+     * behavior of the Compose compiler. Features in this set will eventually be removed and disabling will no longer be
+     * supported. See [ComposeFeatureFlag] for the list of features currently recognized by the plugin.
+     *
+     * @see ComposeFeatureFlag
+     */
+    @Suppress("DEPRECATION")
+    val featureFlags: SetProperty<ComposeFeatureFlag> = objectFactory
+        .setProperty(ComposeFeatureFlag::class.java)
+        .convention(
+            // Add features that used to be added by deprecated options. No other features should be added this way.
+            enableIntrinsicRemember.zip(enableStrongSkippingMode) { intrinsicRemember, strongSkippingMode ->
+                setOfNotNull(
+                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
+                    if (!strongSkippingMode) ComposeFeatureFlag.StrongSkipping.disabled() else null
+                )
+            }.zip(enableNonSkippingGroupOptimization) { features, nonSkippingGroupsOptimization ->
+                if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features
+            }
+        )
 }

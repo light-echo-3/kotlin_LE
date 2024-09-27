@@ -27,6 +27,8 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS = DiagnosticFactory2.create(WARNING);
 
+    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS = DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> SERIALIZABLE_ANNOTATION_IGNORED = DiagnosticFactory0.create(ERROR);
@@ -64,6 +66,10 @@ public interface SerializationErrors {
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_NOT_SERIALIZABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_IN_ANOTHER_MODULE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR = DiagnosticFactory3.create(ERROR);
+
+
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_USELESS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC = DiagnosticFactory0.create(ERROR);
 
 
     @SuppressWarnings("UnusedDeclaration")

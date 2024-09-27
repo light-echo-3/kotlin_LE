@@ -5,12 +5,12 @@
 
 package org.jetbrains.sir.lightclasses
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.providers.SirSession
 
-internal interface SirFromKtSymbol {
-    val ktSymbol: KtDeclarationSymbol
-    val analysisApiSession: KtAnalysisSession
+internal interface SirFromKtSymbol<S : KaDeclarationSymbol> {
+    val ktSymbol: S
+    val ktModule: KaModule
     val sirSession: SirSession
 }

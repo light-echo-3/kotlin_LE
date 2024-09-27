@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -19,10 +20,10 @@ abstract class AbstractTypeReferenceTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeReference
 
         val actual = analyseForTest(expressionAtCaret) {
-            val ktType = expressionAtCaret.getKtType()
+            val ktType = expressionAtCaret.type
             buildString {
-                appendLine("expression: ${expressionAtCaret.text}")
-                appendLine("ktType: ${ktType.render(position = Variance.INVARIANT)}")
+                appendLine("${KtTypeReference::class.simpleName}: ${expressionAtCaret.text}")
+                appendLine("${KaType::class.simpleName}: ${ktType.render(position = Variance.INVARIANT)}")
             }
         }
 

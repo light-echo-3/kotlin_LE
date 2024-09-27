@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include "Common.h"
 #include "TypeInfo.h"
 #include "Memory.h"
 #include "Types.h"
@@ -11,13 +12,15 @@
 #include "MemorySharedRefs.hpp"
 #include "Natives.h"
 
-#define touchType(type) void touch##type(type*) {}
-#define touchFunction(function) void* touch##function() { return reinterpret_cast<void*>(&::function); }
+#define touchType(type) RUNTIME_EXPORT type touch##type;
+#define touchFunction(function) RUNTIME_EXPORT void* touch##function() { return reinterpret_cast<void*>(&::function); }
 
 // Types and functions used by the compiler (at Runtime.kt and ContextUtils.kt)
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+touchType(InitNode);
 
 touchType(TypeInfo)
 touchType(ExtendedTypeInfo)
@@ -48,11 +51,6 @@ touchFunction(LeaveFrame)
 touchFunction(SetCurrentFrame)
 touchFunction(CheckCurrentFrame)
 
-touchFunction(MutationCheck)
-touchFunction(CheckLifetimesConstraint)
-touchFunction(FreezeSubgraph)
-touchFunction(CheckGlobalsAccessible)
-
 touchFunction(LookupInterfaceTableRecord)
 touchFunction(IsSubtype)
 touchFunction(IsSubclassFast)
@@ -75,7 +73,9 @@ touchFunction(KRefSharedHolder_dispose)
 touchFunction(KRefSharedHolder_ref)
 
 touchFunction(Kotlin_mm_switchThreadStateNative)
+touchFunction(Kotlin_mm_switchThreadStateNative_debug)
 touchFunction(Kotlin_mm_switchThreadStateRunnable)
+touchFunction(Kotlin_mm_switchThreadStateRunnable_debug)
 touchFunction(Kotlin_mm_safePointFunctionPrologue)
 touchFunction(Kotlin_mm_safePointWhileLoopBody)
 

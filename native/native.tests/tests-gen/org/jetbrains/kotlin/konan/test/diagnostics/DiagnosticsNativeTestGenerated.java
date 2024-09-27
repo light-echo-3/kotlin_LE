@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "specialBackendChecks");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "specialBackendChecks");
   }
 
   @Test
@@ -34,6 +34,18 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   @TestMetadata("cloneableInNative.kt")
   public void testCloneableInNative() {
     runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
+  }
+
+  @Test
+  @TestMetadata("dynamic.kt")
+  public void testDynamic() {
+    runTest("compiler/testData/diagnostics/nativeTests/dynamic.kt");
+  }
+
+  @Test
+  @TestMetadata("externalNonFunctions.kt")
+  public void testExternalNonFunctions() {
+    runTest("compiler/testData/diagnostics/nativeTests/externalNonFunctions.kt");
   }
 
   @Test
@@ -64,6 +76,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
+  }
+
+  @Test
+  @TestMetadata("noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt")
+  public void testNoIncompatibleThrowsOnSubstitutionAndIntersectionOverrides() {
+    runTest("compiler/testData/diagnostics/nativeTests/noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt");
   }
 
   @Test
@@ -186,7 +204,13 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("objCAction_expectAnnotation.kt")
+    public void testObjCAction_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCAction_expectAnnotation.kt");
     }
 
     @Test
@@ -196,9 +220,21 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
+    @TestMetadata("objCOutlet_expectAnnotation.kt")
+    public void testObjCOutlet_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCOutlet_expectAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("objCRefinement_expectAnnotation.kt")
     public void testObjCRefinement_expectAnnotation() {
       runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCRefinement_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideInit_expectAnnotation.kt")
+    public void testOverrideInit_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/overrideInit_expectAnnotation.kt");
     }
 
     @Test

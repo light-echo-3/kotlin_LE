@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
+import org.jetbrains.kotlin.generators.tree.imports.Importable
+
 /**
  * A class representing a non-abstract implementation of an abstract class/interface of a tree node.
  */
@@ -14,10 +17,10 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     val name: String?,
 ) : FieldContainer<Field>, ImplementationKindOwner
         where Implementation : AbstractImplementation<Implementation, Element, Field>,
-              Element : AbstractElement<Element, *, Implementation>,
-              Field : AbstractField<*> {
+              Element : AbstractElement<Element, Field, Implementation>,
+              Field : AbstractField<Field> {
 
-    override val allParents: List<ImplementationKindOwner>
+    override val allParents: List<Element>
         get() = listOf(element)
 
     val namePrefix: String
@@ -26,9 +29,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     override val typeName: String
         get() = name ?: (element.typeName + "Impl")
 
-    context(ImportCollector)
-    override fun renderTo(appendable: Appendable) {
-        addImport(this)
+    override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
+        importCollector.addImport(this)
         appendable.append(this.typeName)
         if (element.params.isNotEmpty()) {
             element.params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
@@ -65,6 +67,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     override val hasTransformChildrenMethod: Boolean
         get() = true
     var isPublic = false
+    var isConstructorPublic = true
 
     var putImplementationOptInInConstructor = true
 
@@ -73,9 +76,9 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     private fun withDefault(field: Field) =
         !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
-    val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
+    val fieldsInConstructor by lazy { allFields.filter { !withDefault(it) || it.customSetter != null } }
 
-    val fieldsInBody by lazy { allFields.filter(::withDefault) }
+    val fieldsInBody by lazy { allFields.filter { withDefault(it) || it.customSetter != null } }
 
     var requiresOptIn = false
 
@@ -97,4 +100,6 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     open val doPrint: Boolean
         get() = true
+
+    override fun toString(): String = buildString { renderTo(this, ImportCollecting.Empty) }
 }

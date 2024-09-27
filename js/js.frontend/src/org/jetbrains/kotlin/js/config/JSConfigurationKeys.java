@@ -1,18 +1,17 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.config;
 
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
+
+    public static final CompilerConfigurationKey<Boolean> USE_DEBUGGER_CUSTOM_FORMATTERS =
+            CompilerConfigurationKey.create("add import of debugger custom formatters");
 
     public static final CompilerConfigurationKey<File> OUTPUT_DIR =
             CompilerConfigurationKey.create("output directory");
@@ -42,6 +44,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<SourceMapNamesPolicy> SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create(
             "a policy to generate a mapping from generated identifiers to their corresponding original names");
 
+    public static final CompilerConfigurationKey<Boolean> SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create(
+            "insert source mappings from libraries even if their sources are unavailable on the end-user machine");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 
@@ -50,9 +55,6 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<ModuleKind> MODULE_KIND =
             CompilerConfigurationKey.create("module kind");
-
-    public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
-            CompilerConfigurationKey.create("TypedArrays enabled");
 
     public static final CompilerConfigurationKey<IncrementalDataProvider> INCREMENTAL_DATA_PROVIDER =
             CompilerConfigurationKey.create("incremental data provider");
@@ -90,6 +92,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> COMPILE_SUSPEND_AS_JS_GENERATOR =
             CompilerConfigurationKey.create("force suspend functions compilation int JS generator functions");
 
+    public static final CompilerConfigurationKey<Boolean> COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS =
+            CompilerConfigurationKey.create("lower Kotlin lambdas into arrow functions instead of anonymous functions");
+
     public static final CompilerConfigurationKey<Boolean> GENERATE_REGION_COMMENTS =
             CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, " +
                                             "it allows to fold them and navigate to them in the IDEA");
@@ -107,9 +112,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> FAKE_OVERRIDE_VALIDATOR =
             CompilerConfigurationKey.create("IR fake override validator");
 
-    public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
-            CompilerConfigurationKey.create("set up policy to ignore compilation errors");
-
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");
 
@@ -118,24 +120,6 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_STRICT_IMPLICIT_EXPORT =
             CompilerConfigurationKey.create("enable strict implicitly exported entities types inside d.ts files");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ARRAY_RANGE_CHECKS =
-            CompilerConfigurationKey.create("enable array range checks");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ASSERTS =
-            CompilerConfigurationKey.create("enable asserts");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
-            CompilerConfigurationKey.create("generate wat file");
-
-    public static final CompilerConfigurationKey<WasmTarget> WASM_TARGET =
-            CompilerConfigurationKey.create("wasm target");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS =
-            CompilerConfigurationKey.create("use wasm traps instead of throwing exceptions");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_USE_NEW_EXCEPTION_PROPOSAL =
-            CompilerConfigurationKey.create("use wasm new exception proposal");
 
     public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
             CompilerConfigurationKey.create("zip file system accessor, used for klib reading");

@@ -17,7 +17,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirModifierChecker,
             FirConflictsDeclarationChecker,
-            FirProjectionRelationChecker,
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,
             FirUpperBoundViolatedDeclarationChecker,
@@ -25,10 +24,12 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExposedVisibilityDeclarationChecker,
             FirCyclicTypeBoundsChecker,
             FirExpectActualDeclarationChecker,
+            FirRequiresOptInOnExpectChecker,
             FirAmbiguousAnonymousTypeChecker,
             FirExplicitApiDeclarationChecker,
             FirAnnotationChecker,
             FirPublishedApiChecker,
+            FirContextReceiversDeprecatedDeclarationChecker,
             FirOptInMarkedDeclarationChecker,
             FirExpectConsistencyChecker,
             FirOptionalExpectationDeclarationChecker,
@@ -46,6 +47,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirKClassWithIncorrectTypeArgumentChecker,
             FirImplicitNothingReturnTypeChecker,
             FirDynamicReceiverChecker,
+            FirExtensionShadowedByMemberChecker.Regular,
+            FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>
@@ -149,11 +152,14 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFiniteBoundRestrictionChecker,
             FirNonExpansiveInheritanceRestrictionChecker,
             FirObjectConstructorChecker,
+            FirInlineClassDeclarationChecker,
+            FirEnumEntryInitializationChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>
         get() = setOf(
             FirConstructorAllowedChecker,
+            FirMissingConstructorKeywordSyntaxChecker,
         )
 
     override val fileCheckers: Set<FirFileChecker>
@@ -162,6 +168,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirOptInImportsChecker,
             FirUnresolvedInMiddleOfImportChecker,
             FirTopLevelPropertiesChecker,
+            FirPackageConflictsWithClassifierChecker,
         )
 
     override val scriptCheckers: Set<FirScriptChecker>

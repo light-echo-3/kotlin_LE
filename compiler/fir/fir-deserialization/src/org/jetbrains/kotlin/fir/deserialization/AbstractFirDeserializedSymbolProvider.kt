@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -45,15 +46,15 @@ class PackagePartsCacheData(
      */
     interface Extra
 
-    val topLevelFunctionNameIndex by lazy {
+    val topLevelFunctionNameIndex: Map<Name, List<Int>> by lazy {
         proto.functionList.withIndex()
             .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
     }
-    val topLevelPropertyNameIndex by lazy {
+    val topLevelPropertyNameIndex: Map<Name, List<Int>> by lazy {
         proto.propertyList.withIndex()
             .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
     }
-    val typeAliasNameIndex by lazy {
+    val typeAliasNameIndex: Map<Name, List<Int>> by lazy {
         proto.typeAliasList.withIndex()
             .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
     }
@@ -78,7 +79,7 @@ abstract class LibraryPathFilter {
             return libs.any {
                 when {
                     it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute -> path.startsWith(it.toRealPath())
+                    !it.isAbsolute && isPathAbsolute && it.exists() -> path.startsWith(it.toRealPath())
                     else -> path.startsWith(it)
                 }
             }

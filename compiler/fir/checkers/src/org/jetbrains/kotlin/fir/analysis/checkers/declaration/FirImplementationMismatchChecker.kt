@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getNonSubsumedOverriddenSymbols
+import org.jetbrains.kotlin.fir.declarations.isTrivialIntersection
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -25,12 +28,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
@@ -244,7 +249,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
             buildList {
-                addIfNotNull(function.resolvedReceiverTypeRef?.type)
+                addIfNotNull(function.resolvedReceiverTypeRef?.coneType)
                 function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
             }
         }.values
@@ -256,7 +261,8 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         }
 
         for (clash in clashes) {
-            val (first, second) = clash
+            val first = clash.first.unwrapSubstitutionOverrides()
+            val second = clash.second.unwrapSubstitutionOverrides()
 
             val firstClassLookupTag = first.containingClassLookupTag()
             val secondClassLookupTag = second.containingClassLookupTag()

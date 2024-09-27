@@ -128,6 +128,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("constValFromLib.kt")
+    public void testConstValFromLib() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/constValFromLib.kt");
+    }
+
+    @Test
     @TestMetadata("customName.kt")
     public void testCustomName() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");
@@ -137,6 +143,30 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     @TestMetadata("duplicateLibrary.kt")
     public void testDuplicateLibrary() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary2.kt")
+    public void testDuplicateLibrary2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary2.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary3.kt")
+    public void testDuplicateLibrary3() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary3.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary4.kt")
+    public void testDuplicateLibrary4() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary4.kt");
+    }
+
+    @Test
+    @TestMetadata("expectFunctionWithDefaultParam.kt")
+    public void testExpectFunctionWithDefaultParam() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/expectFunctionWithDefaultParam.kt");
     }
 
     @Test
@@ -164,6 +194,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("intersectionOverrideFromSourceSession.kt")
+    public void testIntersectionOverrideFromSourceSession() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/intersectionOverrideFromSourceSession.kt");
+    }
+
+    @Test
     @TestMetadata("local.kt")
     public void testLocal() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/local.kt");
@@ -188,6 +224,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @Test
       public void testAllFilesPresentInCapturing() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("classLiteral.kt")
+      public void testClassLiteral() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/classLiteral.kt");
       }
 
       @Test
@@ -239,6 +281,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       }
 
       @Test
+      @TestMetadata("extensionReceiverPropertyPrivate.kt")
+      public void testExtensionReceiverPropertyPrivate() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyPrivate.kt");
+      }
+
+      @Test
       @TestMetadata("extensionReceiverSmartCasted.kt")
       public void testExtensionReceiverSmartCasted() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
@@ -254,6 +302,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @TestMetadata("initializer.kt")
       public void testInitializer() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda1.kt")
+      public void testLambda1() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda1.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda2.kt")
+      public void testLambda2() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda2.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda3.kt")
+      public void testLambda3() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda3.kt");
       }
 
       @Test
@@ -323,6 +389,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       }
 
       @Test
+      @TestMetadata("localMutatedWithAugmentedAssignment.kt")
+      public void testLocalMutatedWithAugmentedAssignment() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithAugmentedAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("localMutatedWithSugar.kt")
+      public void testLocalMutatedWithSugar() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithSugar.kt");
+      }
+
+      @Test
       @TestMetadata("localVariable.kt")
       public void testLocalVariable() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localVariable.kt");
@@ -386,6 +464,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @TestMetadata("privateMemberCall.kt")
       public void testPrivateMemberCall() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateMemberCall.kt");
+      }
+
+      @Test
+      @TestMetadata("privateSealedClass.kt")
+      public void testPrivateSealedClass() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateSealedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyReference.kt")
+      public void testPropertyReference() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/propertyReference.kt");
       }
 
       @Test

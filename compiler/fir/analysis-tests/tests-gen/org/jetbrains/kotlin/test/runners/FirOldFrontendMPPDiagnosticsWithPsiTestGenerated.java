@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFirPsiWithActualizerDiagnosticsTest {
   @Test
+  @TestMetadata("abstractEnumInIr.kt")
+  public void testAbstractEnumInIr() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/abstractEnumInIr.kt");
+  }
+
+  @Test
   @TestMetadata("actualClassDelegationWithImplicitType.kt")
   public void testActualClassDelegationWithImplicitType() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassDelegationWithImplicitType.kt");
@@ -42,6 +48,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("actualTypealiasForNotExpectClass.kt")
   public void testActualTypealiasForNotExpectClass() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");
+  }
+
+  @Test
+  @TestMetadata("actualTypealiasToNonexistent.kt")
+  public void testActualTypealiasToNonexistent() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToNonexistent.kt");
   }
 
   @Test
@@ -76,7 +88,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
   @Test
   public void testAllFilesPresentInMultiplatform() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
   @Test
@@ -101,6 +113,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("annotationArgTypeAliasWithArray.kt")
   public void testAnnotationArgTypeAliasWithArray() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgTypeAliasWithArray.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayLimitationsInJvm.kt")
+  public void testArrayLimitationsInJvm() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/arrayLimitationsInJvm.kt");
   }
 
   @Test
@@ -140,6 +158,48 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("delegationToExpectInterfaceMixedWithInheritance.kt")
+  public void testDelegationToExpectInterfaceMixedWithInheritance() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfaceMixedWithInheritance.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationToExpectInterfacesWithClashingScopes.kt")
+  public void testDelegationToExpectInterfacesWithClashingScopes() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfacesWithClashingScopes.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationToTypeParameterWithBond.kt")
+  public void testDelegationToTypeParameterWithBond() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToTypeParameterWithBond.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationWithIntersectionAndTypeParameters.kt")
+  public void testDelegationWithIntersectionAndTypeParameters() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationWithIntersectionAndTypeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationWithTypeParametersAndInheritance.kt")
+  public void testDelegationWithTypeParametersAndInheritance() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationWithTypeParametersAndInheritance.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationWithTypeParametersAndJavaActualization.kt")
+  public void testDelegationWithTypeParametersAndJavaActualization() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationWithTypeParametersAndJavaActualization.kt");
+  }
+
+  @Test
+  @TestMetadata("dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt")
+  public void testDontDeprioritizeExpectFunIfShapeIsMoreSpecific() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt");
+  }
+
+  @Test
   @TestMetadata("expectAbstractToString.kt")
   public void testExpectAbstractToString() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
@@ -173,6 +233,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
   public void testExpectActualMainInTheSameModuleDifferentFiles() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");
+  }
+
+  @Test
+  @TestMetadata("expectConstructors.kt")
+  public void testExpectConstructors() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/expectConstructors.kt");
   }
 
   @Test
@@ -233,6 +299,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("expectTailrec_oldLanguageVersion.kt")
   public void testExpectTailrec_oldLanguageVersion() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec_oldLanguageVersion.kt");
+  }
+
+  @Test
+  @TestMetadata("expectsWithJsExport.kt")
+  public void testExpectsWithJsExport() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/expectsWithJsExport.kt");
   }
 
   @Test
@@ -332,6 +404,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("missingActual.kt")
+  public void testMissingActual() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/missingActual.kt");
+  }
+
+  @Test
   @TestMetadata("modifierApplicability.kt")
   public void testModifierApplicability() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
@@ -368,15 +446,45 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("noOverrideClashWithSignatureInMppCommon.kt")
+  public void testNoOverrideClashWithSignatureInMppCommon() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/noOverrideClashWithSignatureInMppCommon.kt");
+  }
+
+  @Test
   @TestMetadata("optionalExpectationDiagnostics.kt")
   public void testOptionalExpectationDiagnostics() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");
   }
 
   @Test
+  @TestMetadata("overloadsWithPotentialRecursion.kt")
+  public void testOverloadsWithPotentialRecursion() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/overloadsWithPotentialRecursion.kt");
+  }
+
+  @Test
+  @TestMetadata("packageConflictsWithClassifierInMultiplatform.kt")
+  public void testPackageConflictsWithClassifierInMultiplatform() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/packageConflictsWithClassifierInMultiplatform.kt");
+  }
+
+  @Test
   @TestMetadata("platformRedeclarationOfExpect.kt")
   public void testPlatformRedeclarationOfExpect() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
+  }
+
+  @Test
+  @TestMetadata("privateExpectFakeOverride.kt")
+  public void testPrivateExpectFakeOverride() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("privateExpectFakeOverride_incompatibleReturnType.kt")
+  public void testPrivateExpectFakeOverride_incompatibleReturnType() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride_incompatibleReturnType.kt");
   }
 
   @Test
@@ -434,6 +542,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("valueClassWithPrivateConstructor.kt")
+  public void testValueClassWithPrivateConstructor() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/valueClassWithPrivateConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("varSetterVisibility.kt")
   public void testVarSetterVisibility() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
@@ -486,8 +600,26 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("actualizeExpectProtectedToJavaProtected.kt")
+    public void testActualizeExpectProtectedToJavaProtected() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizeExpectProtectedToJavaProtected.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizePropertyByJavaField_supportedCase.kt")
+    public void testActualizePropertyByJavaField_supportedCase() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizePropertyByJavaField_supportedCase.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizePropertyByJavaField_unsupportedCase.kt")
+    public void testActualizePropertyByJavaField_unsupportedCase() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizePropertyByJavaField_unsupportedCase.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInActualAnnotationsNotMatchExpect() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -773,7 +905,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1155,7 +1287,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class ComplexMatchings {
     @Test
     public void testAllFilesPresentInComplexMatchings() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/complexMatchings"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/complexMatchings"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1177,7 +1309,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1259,6 +1391,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("genericArrayClassReference.kt")
+    public void testGenericArrayClassReference() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/genericArrayClassReference.kt");
+    }
+
+    @Test
     @TestMetadata("methodDefaultArgsViaActualTypealias.kt")
     public void testMethodDefaultArgsViaActualTypealias() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualTypealias.kt");
@@ -1288,7 +1426,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     public class MethodDefaultArgsViaActualFakeOverride {
       @Test
       public void testAllFilesPresentInMethodDefaultArgsViaActualFakeOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1354,34 +1492,160 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecated")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Deprecated {
-    @Test
-    public void testAllFilesPresentInDeprecated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecated"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
-
-    @Test
-    @TestMetadata("header.kt")
-    public void testHeader() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/deprecated/header.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation")
   @TestDataPath("$PROJECT_ROOT")
   public class DeprecatedAnnotation {
     @Test
     public void testAllFilesPresentInDeprecatedAnnotation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
     @TestMetadata("hidden.kt")
     public void testHidden() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation/hidden.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DirectJavaActualization {
+    @Test
+    public void testAllFilesPresentInDirectJavaActualization() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_actualClassWithoutExpect_sharedActual.kt")
+    public void testDirectJavaActualization_actualClassWithoutExpect_sharedActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualClassWithoutExpect_sharedActual.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_actualMemberWithoutExpect_sharedActual.kt")
+    public void testDirectJavaActualization_actualMemberWithoutExpect_sharedActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualMemberWithoutExpect_sharedActual.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_actualWithoutExpect.kt")
+    public void testDirectJavaActualization_actualWithoutExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualWithoutExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_annotation.kt")
+    public void testDirectJavaActualization_annotation() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotation.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_annotationOnlyOnExpect.kt")
+    public void testDirectJavaActualization_annotationOnlyOnExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationOnlyOnExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_annotationPropertyMissingKotlinActualAnnotation.kt")
+    public void testDirectJavaActualization_annotationPropertyMissingKotlinActualAnnotation() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationPropertyMissingKotlinActualAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_annotationPropertyTypeMismatch.kt")
+    public void testDirectJavaActualization_annotationPropertyTypeMismatch() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationPropertyTypeMismatch.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_clashWithActualTypealias.kt")
+    public void testDirectJavaActualization_clashWithActualTypealias() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_clashWithActualTypealias.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_classifierIncompatibilities.kt")
+    public void testDirectJavaActualization_classifierIncompatibilities() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_classifierIncompatibilities.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_companionObject.kt")
+    public void testDirectJavaActualization_companionObject() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_defaultParamsInActualFakeOverride.kt")
+    public void testDirectJavaActualization_defaultParamsInActualFakeOverride() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInActualFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization.kt")
+    public void testDirectJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_defaultParamsInExpect.kt")
+    public void testDirectJavaActualization_defaultParamsInExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_defaultParamsInExpectFakeOverride.kt")
+    public void testDirectJavaActualization_defaultParamsInExpectFakeOverride() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInExpectFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt")
+    public void testDirectJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_funInterface_fakeOverrideInJava.kt")
+    public void testDirectJavaActualization_funInterface_fakeOverrideInJava() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_funInterface_fakeOverrideInJava.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_javaInDifferentModule.kt")
+    public void testDirectJavaActualization_javaInDifferentModule() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_javaInDifferentModule.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_javaStatics.kt")
+    public void testDirectJavaActualization_javaStatics() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_javaStatics.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_missingAnnotationOnJava.kt")
+    public void testDirectJavaActualization_missingAnnotationOnJava() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_missingAnnotationOnJava.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_multipleActuals.kt")
+    public void testDirectJavaActualization_multipleActuals() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_multipleActuals.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_requiresOptIn.kt")
+    public void testDirectJavaActualization_requiresOptIn() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_requiresOptIn.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_simple.kt")
+    public void testDirectJavaActualization_simple() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_simple.kt");
     }
   }
 
@@ -1397,7 +1661,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/enum"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/enum"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1437,7 +1701,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class Exhaustiveness {
     @Test
     public void testAllFilesPresentInExhaustiveness() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1453,9 +1717,21 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("expectEnumIntersection.kt")
+    public void testExpectEnumIntersection() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectEnumIntersection.kt");
+    }
+
+    @Test
     @TestMetadata("expectSealedClass.kt")
     public void testExpectSealedClass() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("expectSealedClassIntersection.kt")
+    public void testExpectSealedClassIntersection() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassIntersection.kt");
     }
 
     @Test
@@ -1501,7 +1777,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class Generic {
     @Test
     public void testAllFilesPresentInGeneric() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/generic"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/generic"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1559,7 +1835,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInHeaderClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/headerClass"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/headerClass"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1772,6 +2048,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestDataPath("$PROJECT_ROOT")
   public class Hmpp {
     @Test
+    @TestMetadata("actualizationToExpectClass.kt")
+    public void testActualizationToExpectClass() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizationToExpectClass.kt");
+    }
+
+    @Test
     @TestMetadata("actualizeSubtypeBeforeSupertype.kt")
     public void testActualizeSubtypeBeforeSupertype() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizeSubtypeBeforeSupertype.kt");
@@ -1785,7 +2067,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInHmpp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1837,6 +2119,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("recursiveActualTypealiasExpansion_1.kt")
+    public void testRecursiveActualTypealiasExpansion_1() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/recursiveActualTypealiasExpansion_1.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveActualTypealiasExpansion_2.kt")
+    public void testRecursiveActualTypealiasExpansion_2() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/recursiveActualTypealiasExpansion_2.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/simple.kt");
@@ -1848,7 +2142,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     public class MultiplatformCompositeAnalysis {
       @Test
       public void testAllFilesPresentInMultiplatformCompositeAnalysis() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1899,7 +2193,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
       public class AnnotationMatching {
         @Test
         public void testAllFilesPresentInAnnotationMatching() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -1935,7 +2229,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/inlineClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/inlineClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1968,8 +2262,14 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestDataPath("$PROJECT_ROOT")
   public class Java {
     @Test
+    @TestMetadata("actualJavaSealedClass.kt")
+    public void testActualJavaSealedClass() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/java/actualJavaSealedClass.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInJava() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/java"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/java"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2123,7 +2423,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInScopes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/scopes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/scopes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2241,7 +2541,19 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class SmartCasts {
     @Test
     public void testAllFilesPresentInSmartCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("classNoDefaultConstructor.kt")
+    public void testClassNoDefaultConstructor() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunction.kt")
+    public void testInlineFunction() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction.kt");
     }
 
     @Test
@@ -2263,7 +2575,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class TopLevelFun {
     @Test
     public void testAllFilesPresentInTopLevelFun() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelFun"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelFun"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2351,7 +2663,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   public class TopLevelProperty {
     @Test
     public void testAllFilesPresentInTopLevelProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2415,7 +2727,7 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
 
     @Test
     public void testAllFilesPresentInTypealias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/typealias"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/typealias"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
   }
 }

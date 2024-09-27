@@ -48,14 +48,17 @@ internal class ExpectActualCollector(
     private val typeSystemContext: IrTypeSystemContext,
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
+    private val extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
 ) {
     fun collectClassActualizationInfo(): ClassActualizationInfo {
-        val expectTopLevelClasses = ExpectTopLevelClassesCollector.collect(dependentFragments)
+        val expectTopLevelDeclarations = ExpectTopLevelDeclarationCollector.collect(dependentFragments)
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
-        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals, expectTopLevelClasses)
+        return ActualDeclarationsCollector.collectActuals(
+            fragmentsWithActuals, expectTopLevelDeclarations, extraActualDeclarationExtractors
+        )
     }
 
-    fun matchAllExpectDeclarations(classActualizationInfo: ClassActualizationInfo): MutableMap<IrSymbol, IrSymbol> {
+    fun matchAllExpectDeclarations(classActualizationInfo: ClassActualizationInfo): IrExpectActualMap {
         val linkCollector = ExpectActualLinkCollector()
         val linkCollectorContext = ExpectActualLinkCollector.MatchingContext(
             typeSystemContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, null
@@ -65,13 +68,13 @@ internal class ExpectActualCollector(
         // Thus relevant actuals are always missing for the last module
         // But the collector should be run anyway to detect and report "hanging" expect declarations
         linkCollector.collectAndCheckMapping(mainFragment, linkCollectorContext)
-        return linkCollectorContext.destination
+        return linkCollectorContext.expectActualMap
     }
 }
 
-internal data class ClassActualizationInfo(
+data class ClassActualizationInfo(
     // mapping from classId of actual class/typealias to itself/typealias expansion
-    val actualClasses: Map<ClassId, IrClassSymbol>,
+    val actualClasses: ActualClassMapping,
     // mapping from classId to actual typealias
     val actualTypeAliases: Map<ClassId, IrTypeAliasSymbol>,
     val actualTopLevels: Map<CallableId, List<IrSymbol>>,
@@ -80,25 +83,51 @@ internal data class ClassActualizationInfo(
     fun getActualWithoutExpansion(classId: ClassId): IrSymbol? {
         return actualTypeAliases[classId] ?: actualClasses[classId]
     }
+
+    class ActualClassMapping(private val actualClasses: Map<ClassId, IrClassSymbol>) {
+        /*
+         * expect class may be actualized to another expect class via actual typealias, so
+         *   we need to actualize them recursively until there will be a non-expect class
+         */
+        operator fun get(classId: ClassId?): IrClassSymbol? {
+            val actualized = actualClasses[classId] ?: return null
+            if (actualized.owner.isExpect) {
+                return get(actualized.owner.classIdOrFail)
+            }
+            return actualized
+        }
+    }
 }
 
-private class ExpectTopLevelClassesCollector {
+private class ExpectTopLevelDeclarations(val classes: Map<ClassId, IrClassSymbol>, val callables: Map<CallableId, List<IrSymbol>>)
+
+private class ExpectTopLevelDeclarationCollector {
     companion object {
-        fun collect(fragments: List<IrModuleFragment>): Map<ClassId, IrClassSymbol> {
-            val collector = ExpectTopLevelClassesCollector()
+        fun collect(fragments: List<IrModuleFragment>): ExpectTopLevelDeclarations {
+            val collector = ExpectTopLevelDeclarationCollector()
             collector.collect(fragments)
-            return collector.expectTopLevelClasses
+            return ExpectTopLevelDeclarations(collector.expectTopLevelClasses, collector.expectTopLevelCallables)
         }
     }
 
     private val expectTopLevelClasses = mutableMapOf<ClassId, IrClassSymbol>()
+    private val expectTopLevelCallables = mutableMapOf<CallableId, MutableList<IrSymbol>>()
 
     fun collect(fragments: List<IrModuleFragment>) {
         for (fragment in fragments) {
             for (file in fragment.files) {
                 for (declaration in file.declarations) {
-                    if (declaration is IrClass && declaration.isExpect && declaration.isTopLevel) {
-                        expectTopLevelClasses[declaration.classIdOrFail] = declaration.symbol
+                    if (declaration.isExpect && declaration.isTopLevel) {
+                        fun addCallable(callableId: CallableId) {
+                            val list = expectTopLevelCallables.getOrPut(callableId) { mutableListOf() }
+                            list.add(declaration.symbol)
+                        }
+
+                        when (declaration) {
+                            is IrClass -> expectTopLevelClasses[declaration.classIdOrFail] = declaration.symbol
+                            is IrProperty -> addCallable(declaration.callableId)
+                            is IrFunction -> addCallable(declaration.callableId)
+                        }
                     }
                 }
             }
@@ -106,17 +135,22 @@ private class ExpectTopLevelClassesCollector {
     }
 }
 
-private class ActualDeclarationsCollector(
-    private val expectTopLevelClasses: Map<ClassId, IrClassSymbol>,
-) {
+private class ActualDeclarationsCollector(private val expectTopLevelDeclarations: ExpectTopLevelDeclarations) {
     companion object {
-        fun collectActualsFromFragments(fragments: List<IrModuleFragment>, expectTopLevelClasses: Map<ClassId, IrClassSymbol>): ClassActualizationInfo {
-            val collector = ActualDeclarationsCollector(expectTopLevelClasses)
+        fun collectActuals(
+            fragments: List<IrModuleFragment>,
+            expectTopLevelDeclarations: ExpectTopLevelDeclarations,
+            extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
+        ): ClassActualizationInfo {
+            val collector = ActualDeclarationsCollector(expectTopLevelDeclarations)
             for (fragment in fragments) {
                 collector.collect(fragment)
             }
+            for (extractor in extraActualDeclarationExtractors) {
+                collector.collectExtraActualDeclarations(extractor)
+            }
             return ClassActualizationInfo(
-                collector.actualClasses,
+                ClassActualizationInfo.ActualClassMapping(collector.actualClasses),
                 collector.actualTypeAliasesWithoutExpansion,
                 collector.actualTopLevels,
                 collector.actualSymbolsToFile
@@ -187,6 +221,46 @@ private class ActualDeclarationsCollector(
         }
     }
 
+    private fun collectExtraActualDeclarations(extraActualDeclarationExtractor: IrExtraActualDeclarationExtractor) {
+        for (classSymbol in expectTopLevelDeclarations.classes.values) {
+            collectExtraActualClasses(extraActualDeclarationExtractor, classSymbol.owner)
+        }
+        for ((callableId, callableSymbols) in expectTopLevelDeclarations.callables) {
+            val expectTopLevelCallables = callableSymbols.mapNotNull {
+                when (val owner = it.owner) {
+                    is IrProperty -> owner
+                    is IrFunction -> owner
+                    else -> null
+                }
+            }
+            collectExtraActualCallables(extraActualDeclarationExtractor, expectTopLevelCallables, callableId)
+        }
+    }
+
+    private fun collectExtraActualClasses(extraActualDeclarationExtractor: IrExtraActualDeclarationExtractor, expectClass: IrClass) {
+        val actualClassSymbol = extraActualDeclarationExtractor.extract(expectClass) ?: return
+        val classId = expectClass.classIdOrFail
+        if (actualClasses.containsKey(classId)) return // TODO: report actual classes collision, KT-67740
+
+        actualClasses[classId] = actualClassSymbol
+
+        for (declaration in expectClass.declarations) {
+            if (declaration is IrClass) {
+                collectExtraActualClasses(extraActualDeclarationExtractor, declaration)
+            }
+        }
+    }
+
+    private fun collectExtraActualCallables(
+        extraActualDeclarationExtractor: IrExtraActualDeclarationExtractor,
+        expectTopLevelCallables: List<IrDeclarationWithName>,
+        callableId: CallableId
+    ) {
+        for (actualCallableSymbol in extraActualDeclarationExtractor.extract(expectTopLevelCallables, callableId)) {
+            recordActualCallable(actualCallableSymbol.owner as IrDeclarationWithName, callableId, writeActualSymbolToFile = false)
+        }
+    }
+
     /**
      * For given actual typealias goes through all nested classes in expect class to record their mappings in [actualClasses].
      *
@@ -205,16 +279,22 @@ private class ActualDeclarationsCollector(
             }
         }
 
-        val expectClassSymbol = expectTopLevelClasses[typealiasClassId] ?: return
+        val expectClassSymbol = expectTopLevelDeclarations.classes[typealiasClassId] ?: return
         recordRecursively(expectClassSymbol.owner, actualClassSymbol.owner)
     }
 
-    private fun recordActualCallable(callableDeclaration: IrDeclarationWithName, callableId: CallableId) {
+    private fun recordActualCallable(
+        callableDeclaration: IrDeclarationWithName,
+        callableId: CallableId,
+        writeActualSymbolToFile: Boolean = true,
+    ) {
         if (callableId.classId == null) {
             actualTopLevels
                 .getOrPut(callableId) { mutableListOf() }
                 .add(callableDeclaration.symbol)
-            actualSymbolsToFile[callableDeclaration.symbol] = currentFile
+            if (writeActualSymbolToFile) {
+                actualSymbolsToFile[callableDeclaration.symbol] = currentFile
+            }
         }
     }
 }
@@ -231,18 +311,20 @@ private class ExpectActualLinkCollector {
 
         override fun visitFunction(declaration: IrFunction, data: MatchingContext) {
             if (declaration.isExpect) {
-                matchExpectCallable(declaration, declaration.callableId, data)
+                // The function is top level because the visitor doesn't visit function/class children recursively
+                matchExpectTopLevelCallable(declaration, declaration.callableId, data)
             }
         }
 
         override fun visitProperty(declaration: IrProperty, data: MatchingContext) {
             if (declaration.isExpect) {
-                matchExpectCallable(declaration, declaration.callableId, data)
+                // The property is top level because the visitor doesn't visit function/class children recursively
+                matchExpectTopLevelCallable(declaration, declaration.callableId, data)
             }
         }
 
-        private fun matchExpectCallable(declaration: IrDeclarationWithName, callableId: CallableId, context: MatchingContext) {
-            matchAndCheckExpectDeclaration(
+        private fun matchExpectTopLevelCallable(declaration: IrDeclarationWithName, callableId: CallableId, context: MatchingContext) {
+            matchAndCheckExpectTopLevelDeclaration(
                 declaration.symbol,
                 context.classActualizationInfo.actualTopLevels[callableId].orEmpty(),
                 context,
@@ -254,10 +336,10 @@ private class ExpectActualLinkCollector {
             val classId = declaration.classIdOrFail
             val expectClassSymbol = declaration.symbol
             val actualClassLikeSymbol = data.classActualizationInfo.getActualWithoutExpansion(classId)
-            matchAndCheckExpectDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
+            matchAndCheckExpectTopLevelDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
         }
 
-        private fun matchAndCheckExpectDeclaration(
+        private fun matchAndCheckExpectTopLevelDeclaration(
             expectSymbol: IrSymbol,
             actualSymbols: List<IrSymbol>,
             context: MatchingContext,
@@ -288,7 +370,7 @@ private class ExpectActualLinkCollector {
         private val expectActualTracker: ExpectActualTracker?,
         internal val classActualizationInfo: ClassActualizationInfo,
         private val currentExpectFile: IrFile?,
-        val destination: MutableMap<IrSymbol, IrSymbol> = mutableMapOf(),
+        val expectActualMap: IrExpectActualMap = IrExpectActualMap(),
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
@@ -297,18 +379,12 @@ private class ExpectActualLinkCollector {
 
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(
-                typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, destination
+                typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, expectActualMap
             )
 
-        override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
-            destination[expectClassSymbol] = actualClassSymbol
-            expectActualTracker?.reportWithCurrentFile(actualClassSymbol)
-            recordActualForExpectDeclaration(expectClassSymbol, actualClassSymbol, destination, diagnosticsReporter)
-        }
-
-        override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)
-            recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination, diagnosticsReporter)
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter)
         }
 
         override fun onIncompatibleMembersFromClassScope(

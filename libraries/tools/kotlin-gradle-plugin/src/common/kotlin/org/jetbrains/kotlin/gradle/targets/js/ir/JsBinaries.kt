@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -54,7 +56,7 @@ sealed class JsIrBinary(
 
     var generateTs: Boolean = false
 
-    val linkTask: TaskProvider<KotlinJsIrLink> = project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project))
+    val linkTask: TaskProvider<KotlinJsIrLink> = project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
 
     private val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
@@ -64,6 +66,8 @@ sealed class JsIrBinary(
                 linkSyncTaskName
             ) { task ->
                 syncInputConfigure(task)
+
+                task.duplicatesStrategy = DuplicatesStrategy.WARN
 
                 task.from.from(project.tasks.named(compilation.processResourcesTaskName))
 
@@ -185,6 +189,7 @@ open class Executable(
         )
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 open class ExecutableWasm(
     compilation: KotlinJsIrCompilation,
     name: String,
@@ -236,11 +241,7 @@ open class ExecutableWasm(
             fs.copy {
                 it.from(compileWasmDestDir)
                 it.into(outputDirectory)
-                it.eachFile {
-                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
-                        it.exclude()
-                    }
-                }
+                it.exclude(outputFileName.get())
             }
         }
     }.also { binaryenExec ->
@@ -249,6 +250,10 @@ open class ExecutableWasm(
                 project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
             }
         }
+    }
+
+    val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
+        it.outputDirectory.file(mainFileName.get())
     }
 
     private fun optimizeTaskName(): String =

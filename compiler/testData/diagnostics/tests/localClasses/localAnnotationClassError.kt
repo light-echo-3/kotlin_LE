@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ProhibitLocalAnnotations
+// LANGUAGE: +ProhibitLocalAnnotations
 
 fun f() {
     <!LOCAL_ANNOTATION_CLASS_ERROR!>annotation class Anno<!>

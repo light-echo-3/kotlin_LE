@@ -41,8 +41,8 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
                 is FirEqualityOperatorCall -> {
                     val arguments = condition.arguments
                     if (arguments.size == 2 && arguments[0].unwrapSmartcastExpression() is FirWhenSubjectExpression) {
-                        val value = when (val targetExpression = arguments[1]) {
-                            is FirLiteralExpression<*> -> targetExpression.value
+                        val value = when (val targetExpression = arguments[1].unwrapSmartcastExpression()) {
+                            is FirLiteralExpression -> targetExpression.value
                             is FirQualifiedAccessExpression -> targetExpression.calleeReference.toResolvedCallableSymbol() as? FirEnumEntrySymbol
                                 ?: continue
                             is FirResolvedQualifier -> {

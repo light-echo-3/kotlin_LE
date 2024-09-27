@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -177,7 +178,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         // A bit of a hack. Inliner tends to insert null casts from nothing to any. It's hard to express in wasm, so we simply replace
         // them with single const null.
-        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst<*> && value.kind == IrConstKind.Null) {
+        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst && value.kind == IrConstKind.Null) {
             return builder.irNull(builtIns.nothingNType)
         }
 
@@ -279,7 +280,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             val argument = cacheValue(expression.argument)
             val narrowArg = narrowType(fromType, expression.type, argument())
             val check = generateTypeCheck(argument, toType)
-            if (check is IrConst<*>) {
+            if (check is IrConst) {
                 val value = check.value as Boolean
                 if (value) {
                     +narrowArg

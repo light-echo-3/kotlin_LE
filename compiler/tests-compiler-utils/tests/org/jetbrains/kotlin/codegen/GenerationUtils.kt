@@ -12,6 +12,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
@@ -32,8 +33,8 @@ import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -99,6 +100,10 @@ object GenerationUtils {
     ): GenerationState {
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
+        if (FirAnalysisHandlerExtension.analyze(project, configuration) == false) {
+            throw CompilationErrorException()
+        }
+
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -118,10 +123,11 @@ object GenerationUtils {
             FirParser.Psi,
         )
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         firAnalyzerFacade.runResolution()
-        val (moduleFragment, components, pluginContext) = firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
+        val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,
             diagnosticReporter,
@@ -148,7 +154,7 @@ object GenerationUtils {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, components.symbolTable, components.irProviders,
+            generationState, moduleFragment, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
         ) {}
 

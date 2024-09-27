@@ -89,7 +89,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val reportMetricsList = arrayOf(
             "Task 'kotlinProject' finished in",
             "Task info:",
-            "Kotlin language version: 2.0",
+            "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
             "Time metrics:",
             "Jps iteration:",
             "Compiler code analysis:",
@@ -257,7 +257,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
 
-        setVersion(LanguageVersion.KOTLIN_1_5.versionString)
+        setVersion(LanguageVersion.KOTLIN_1_6.versionString)
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }

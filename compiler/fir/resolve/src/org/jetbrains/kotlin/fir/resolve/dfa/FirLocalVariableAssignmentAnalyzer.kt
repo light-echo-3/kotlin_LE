@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -25,13 +24,13 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 /**
  *  Helper that checks if an access to a local variable access is stable.
  *
- *  To determine the stability of an access, call [isAccessToUnstableLocalVariable]. Note that the class contains mutable states. So
- *  [isAccessToUnstableLocalVariable] only works for an access during the natural FIR tree traversal. This class will not work if one
+ *  To determine the stability of an access, call [isUnstableInCurrentScope]. Note that the class contains mutable states. So
+ *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
 internal class FirLocalVariableAssignmentAnalyzer {
     private var rootFunction: FirFunctionSymbol<*>? = null
-    private var assignedLocalVariablesByDeclaration: Map<FirBasedSymbol<*>, Fork>? = null
+    private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>? = null
     private var variableAssignments: Map<FirProperty, List<Assignment>>? = null
 
     private val scopes: Stack<Pair<Fork?, VariableAssignments>> = stackOf()
@@ -58,38 +57,35 @@ internal class FirLocalVariableAssignmentAnalyzer {
     }
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
-    @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirElement, targetType: ConeKotlinType?, session: FirSession): Boolean {
+    fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
+        // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
         if (assignedLocalVariablesByDeclaration == null) return false
-
-        val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
-        val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
-        // Have data => have a root function => `scopes` is not empty.
-        return !isStableType(scopes.top().second[property], targetType, session) || postponedLambdas.all().any { lambdas ->
+        if (declaration !is FirProperty || !declaration.isLocal || !declaration.isVar) return false
+        return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
-            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && property in lambda.assignedInside }
+            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
         }
     }
 
-    private fun isStableType(assignments: Collection<Assignment>?, targetType: ConeKotlinType?, session: FirSession): Boolean {
-        if (assignments == null) return true // No assignments => always stable.
-        if (targetType == null) return false // No target type => always unstable.
-        if (assignments.any { it.type == null }) return false // At least 1 unknown assignment type => always unstable.
+    // Variables are only stable for smart casting if there are no assignments that could make the smart
+    // cast incorrect by assigning a value that is not of the smart casted type. This includes assignments
+    // that are not resolved yet, as their type is unknown. For aliasing, variables are always unstable
+    // if there are any assignments; in that case, `types` is null.
+    private fun allAssignmentsPreserveType(assignments: Set<Assignment>?, types: Set<ConeKotlinType>?, session: FirSession): Boolean =
+        assignments.isNullOrEmpty() || (types != null &&
+                assignments.all { it.type != null } &&
+                assignments.all { assignment -> types.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, assignment.type!!, it) } })
 
-        // Stability is determined by assignments. All assignments must be a subtype of the target type.
-        return assignments.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, it.type!!, targetType) }
-    }
-
-    private fun getInfoForDeclaration(symbol: FirBasedSymbol<*>): Fork? {
+    private fun getInfoForDeclaration(symbol: Any): Fork? {
         val root = rootFunction ?: return null
         if (root == symbol) return null
         val cachedMap = buildInfoForRoot(root)
         return cachedMap[symbol]
     }
 
-    private fun buildInfoForRoot(root: FirFunctionSymbol<*>): Map<FirBasedSymbol<*>, Fork> {
+    private fun buildInfoForRoot(root: FirFunctionSymbol<*>): Map<Any, Fork> {
         assignedLocalVariablesByDeclaration?.let { return it }
 
         val data = MiniCfgBuilder.MiniCfgData()
@@ -102,7 +98,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
     }
 
     private fun enterScope(
-        symbol: FirBasedSymbol<*>,
+        symbol: Any,
         evaluatedInPlace: Boolean,
     ): Pair<Fork?, VariableAssignments> {
         val currentInfo = getInfoForDeclaration(symbol)
@@ -134,11 +130,15 @@ internal class FirLocalVariableAssignmentAnalyzer {
         return scopes.top()
     }
 
-    fun enterFunction(function: FirFunction) {
+    /**
+     * Enters an [FirFunction] and returns all [FirPropertySymbol]s which are defined before the function that will be modified within the
+     * function.
+     */
+    fun enterFunction(function: FirFunction): Set<FirPropertySymbol> {
         if (rootFunction == null) {
             rootFunction = function.symbol
             scopes.push(null to VariableAssignments())
-            return
+            return emptySet()
         }
         val (info, prohibitSmartCasts) =
             enterScope(function.symbol, function is FirAnonymousFunction && function.invocationKind.isInPlace)
@@ -149,6 +149,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 }
             }
         }
+        return scopes.top().first?.assignedInside?.getAssignedProperties().orEmpty()
     }
 
     fun exitFunction() {
@@ -200,6 +201,24 @@ internal class FirLocalVariableAssignmentAnalyzer {
             //  apparently the compiler attempts to continue somewhere...
             lambdasInCall.keys.associateWithTo(postponedLambdas.topOrNull() ?: return) { true }
         }
+    }
+
+    /**
+     * Enters an [FirLoop] and returns all [FirPropertySymbol]s which are defined before the loop that will be modified within the loop.
+     */
+    fun enterLoop(loop: FirLoop): Set<FirPropertySymbol> {
+        if (rootFunction == null) return emptySet()
+        val (info, _) = enterScope(loop, evaluatedInPlace = true)
+        return info?.assignedInside?.getAssignedProperties().orEmpty()
+    }
+
+    /**
+     * Exits an [FirLoop] and returns all [FirPropertySymbol]s which were defined before the loop that were modified within the loop.
+     */
+    fun exitLoop(): Set<FirPropertySymbol> {
+        if (rootFunction == null) return emptySet()
+        val (info, _) = scopes.pop()
+        return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
 
     fun visitAssignment(property: FirProperty, type: ConeKotlinType) {
@@ -293,6 +312,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         )
 
         private class Assignment(
+            val operatorAssignment: Boolean,
             var type: ConeKotlinType? = null,
         )
 
@@ -307,8 +327,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 return property in assignments
             }
 
-            fun add(property: FirProperty, assignment: Assignment) {
-                assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            fun add(property: FirProperty, assignment: Assignment): Boolean {
+                return assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
             }
 
             fun copy(): VariableAssignments {
@@ -317,18 +337,26 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 return copy
             }
 
-            fun merge(other: VariableAssignments?) {
-                if (other == null) return
+            fun merge(other: VariableAssignments?): Boolean {
+                if (other == null || other.assignments.isEmpty()) return false
+
+                var modified = false
                 for ((property, values) in other.assignments) {
-                    assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
+                    modified = modified or assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
                 }
+                return modified
             }
 
             fun retain(properties: Set<FirProperty>) {
                 assignments.keys.retainAll(properties)
             }
 
-            fun isEmpty(): Boolean = assignments.isEmpty()
+            fun getAssignedProperties(): Set<FirPropertySymbol> {
+                return assignments.entries
+                    // TODO(KT-57563): Operator assignments should be treated just like any other assignment.
+                    .filter { (_, v) -> v.any { !it.operatorAssignment } }
+                    .mapTo(mutableSetOf()) { (k, _) -> k.symbol }
+            }
         }
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
@@ -412,8 +440,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 // All forks in the loop should have the same set of variables assigned later, equal to the set
                 // at the start of the loop.
                 data.flow.recordAssignments(assignedInside)
-                // The loop flows are detached from the entry flow, so we need to re-join them.
-                data.flow = setOf(entry, data.flow).join()
+                data.flow = entry.fork()
+                data.forks[loop] = Fork(data.flow.assignedLater, assignedInside)
             }
 
             override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) =
@@ -457,34 +485,35 @@ internal class FirLocalVariableAssignmentAnalyzer {
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
                 visitElement(variableAssignment, data)
                 if (variableAssignment.explicitReceiver != null) return
-                variableAssignment.calleeReference?.let { data.recordAssignment(it) }
+                variableAssignment.calleeReference?.let {
+                    val operatorAssignment = variableAssignment.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+                    data.recordAssignment(it, operatorAssignment)
+                }
             }
 
             override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: MiniCfgData) {
                 visitElement(augmentedAssignment, data)
                 val lhs = augmentedAssignment.leftArgument as? FirQualifiedAccessExpression ?: return
                 if (lhs.explicitReceiver != null) return
-                data.recordAssignment(lhs.calleeReference)
+                data.recordAssignment(lhs.calleeReference, operatorAssignment = true)
             }
 
-            private fun MiniCfgData.recordAssignment(reference: FirReference) {
+            private fun MiniCfgData.recordAssignment(reference: FirReference, operatorAssignment: Boolean) {
                 val name = (reference as? FirNamedReference)?.name ?: return
                 val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
 
-                val assignment = Assignment()
+                val assignment = Assignment(operatorAssignment)
                 assignments.getOrPut(property) { mutableListOf() }.add(assignment)
                 flow.recordAssignment(property, assignment)
             }
 
             private fun MiniFlow.recordAssignment(property: FirProperty, assignment: Assignment) {
-                assignedLater.add(property, assignment)
+                if (!assignedLater.add(property, assignment)) return // Parents do not need to be updated if this flow is not updated.
                 parents.forEach { it.recordAssignment(property, assignment) }
             }
 
             private fun MiniFlow.recordAssignments(properties: VariableAssignments) {
-                if (properties.isEmpty()) return
-
-                assignedLater.merge(properties)
+                if (!assignedLater.merge(properties)) return // Parents do not need to be updated if this flow is not updated.
                 parents.forEach { it.recordAssignments(properties) }
             }
 
@@ -492,7 +521,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 var flow: MiniFlow = MiniFlow.start()
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
                 val assignments: MutableMap<FirProperty, MutableList<Assignment>> = mutableMapOf()
-                val forks: MutableMap<FirBasedSymbol<*>, Fork> = mutableMapOf()
+                val forks: MutableMap<Any /* FirBasedSymbol<*> | FirLoop */, Fork> = mutableMapOf()
             }
         }
     }

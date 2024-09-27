@@ -68,9 +68,33 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
     }
 
     @Test
+    @TestMetadata("annotatedType.kt")
+    public void testAnnotatedType() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/annotatedType.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayType.kt")
+    public void testArrayType() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/arrayType.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayType2.kt")
+    public void testArrayType2() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/arrayType2.kt");
+    }
+
+    @Test
     @TestMetadata("emptyJavaSpreadParameter.kt")
     public void testEmptyJavaSpreadParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/emptyJavaSpreadParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("listType.kt")
+    public void testListType() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/listType.kt");
     }
 
     @Test
@@ -92,6 +116,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
     }
 
     @Test
+    @TestMetadata("onLocalFunction.kt")
+    public void testOnLocalFunction() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onLocalFunction.kt");
+    }
+
+    @Test
     @TestMetadata("onProperty.kt")
     public void testOnProperty() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty.kt");
@@ -107,6 +137,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
     @TestMetadata("onTypeAlias.kt")
     public void testOnTypeAlias() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveArrayType.kt")
+    public void testPrimitiveArrayType() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/primitiveArrayType.kt");
     }
 
     @Test

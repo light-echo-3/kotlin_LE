@@ -36,6 +36,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_RETURN_TYPE
     )
 
+    val CONTEXT_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONTEXT_KEYWORD,
+        PositioningStrategies.CONTEXT_KEYWORD
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
@@ -49,6 +54,11 @@ object SourceElementPositioningStrategies {
     val DECLARATION_SIGNATURE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE,
         PositioningStrategies.DECLARATION_SIGNATURE
+    )
+
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
+        PositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS
     )
 
     val DECLARATION_SIGNATURE_OR_DEFAULT = SourceElementPositioningStrategy(
@@ -201,6 +211,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.WHEN_EXPRESSION
     )
 
+    val WHEN_GUARD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_GUARD,
+        PositioningStrategies.WHEN_GUARD
+    )
+
     val IF_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.IF_EXPRESSION,
         PositioningStrategies.IF_EXPRESSION
@@ -320,9 +335,6 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.LABEL
     )
 
-    // TODO
-    val INCOMPATIBLE_DECLARATION = DEFAULT
-
     val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT,
         PositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT
@@ -393,6 +405,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DELEGATED_SUPERTYPE_BY_KEYWORD
     )
 
+    val PROPERTY_DELEGATE_BY_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD,
+        PositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD
+    )
+
     val CALL_ELEMENT_WITH_DOT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.CALL_ELEMENT_WITH_DOT,
         PositioningStrategies.CALL_ELEMENT_WITH_DOT
@@ -411,5 +428,10 @@ object SourceElementPositioningStrategies {
     val TYPE_ARGUMENT_LIST_OR_SELF = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
         PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+    )
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+        PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
     )
 }

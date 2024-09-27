@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
@@ -142,8 +141,12 @@ class LightTreeRawFirExpressionBuilder(
 
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
             FUN -> declarationBuilder.convertFunctionDeclaration(expression)
-            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression).toFirDestructingDeclaration(this, baseModuleData)
-            else -> buildErrorExpression(expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
+                .toFirDestructingDeclaration(this, baseModuleData)
+            else -> buildErrorExpression(
+                expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
+                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+            )
         }
     }
 
@@ -159,7 +162,11 @@ class LightTreeRawFirExpressionBuilder(
         val functionSymbol = FirAnonymousFunctionSymbol()
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(
+                    valueParameters = it,
+                    functionSymbol,
+                    ValueParameterDeclaration.LAMBDA
+                )
                 BLOCK -> block = it
                 ARROW -> hasArrow = true
             }
@@ -219,39 +226,32 @@ class LightTreeRawFirExpressionBuilder(
             body = withForcedLocalContext {
                 if (block != null) {
                     val kind = runIf(destructuringStatements.isNotEmpty()) {
-                    KtFakeSourceElementKind.LambdaDestructuringBlock
-                }
-                val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
-                        statements.firstOrNull()?.let {
-                            if (it.isContractBlockFirCheck()) {
-                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
-                                statements[0] = FirContractCallBlock(it)
-                            }
-                        }
-
+                        KtFakeSourceElementKind.LambdaDestructuringBlock
+                    }
+                    val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
                                     source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
                                     }
                                 }
                             )
                         }
                     }.build()
 
-                if (destructuringStatements.isNotEmpty()) {
-                    // Destructured variables must be in a separate block so that they can be shadowed.
-                    buildBlock {
-                        source = bodyBlock.source?.realElement()
-                        statements.addAll(destructuringStatements)
-                        statements.add(bodyBlock)
+                    if (destructuringStatements.isNotEmpty()) {
+                        // Destructured variables must be in a separate block so that they can be shadowed.
+                        buildBlock {
+                            source = bodyBlock.source?.realElement()
+                            statements.addAll(destructuringStatements)
+                            statements.add(bodyBlock)
+                        }
+                    } else {
+                        bodyBlock
                     }
-                } else {
-                    bodyBlock
-                }
                 } else {
                     buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
                 }
@@ -369,7 +369,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertBinaryWithTypeRHSExpression(
         binaryExpression: LighterASTNode,
-        toFirOperation: String.() -> FirOperation
+        toFirOperation: String.() -> FirOperation,
     ): FirTypeOperatorCall {
         lateinit var operationTokenName: String
         var leftArgAsFir: FirExpression? = null
@@ -497,7 +497,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer("???"))
+        val result = firExpression ?: buildErrorExpression(annotatedExpression.toFirSourceElement(), ConeNotAnnotationContainer("???"))
         require(result is FirAnnotationContainer)
         result.replaceAnnotations(result.annotations.smartPlus(firAnnotationList))
         return result
@@ -674,7 +674,7 @@ class LightTreeRawFirExpressionBuilder(
 
         val source = callSuffix.toFirSourceElement()
 
-        val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
+        val (calleeReference, receiverForInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
@@ -698,7 +698,6 @@ class LightTreeRawFirExpressionBuilder(
                         this.name = OperatorNameConventions.INVOKE
                     },
                     additionalArgument!!,
-                    isImplicitInvoke = true
                 )
             }
 
@@ -711,7 +710,7 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
-            val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+            val builder = if (receiverForInvoke != null) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
             builder.apply {
                 this.source = source
                 this.calleeReference = calleeReference
@@ -727,24 +726,29 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
         return builder.apply {
-            this.explicitReceiver = explicitReceiver
+            this.explicitReceiver = receiverForInvoke
             typeArguments += firTypeArguments
-        }.build()
+        }.build().pullUpSafeCallIfNecessary()
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseStringTemplate
      */
     private fun convertStringTemplate(stringTemplate: LighterASTNode): FirExpression {
-        return stringTemplate.getChildrenAsArray().toInterpolatingCall(stringTemplate) { convertShortOrLongStringTemplate(it) }
+        val children = stringTemplate.getChildrenAsArray()
+        return children.toInterpolatingCall(
+            stringTemplate,
+            convertTemplateEntry = { convertShortOrLongStringTemplate(it) },
+            prefix = { children.firstOrNull { it?.tokenType == INTERPOLATION_PREFIX }?.asText ?: "" }
+        )
     }
 
-    private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): FirExpression {
-        var firExpression: FirExpression? = null
-        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END) {
-            firExpression = getAsFirExpression(it, errorReason)
+    private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
+        val firExpressions = mutableListOf<FirExpression>()
+        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START) {
+            firExpressions.add(getAsFirExpression(it, errorReason))
         }
-        return firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic(errorReason))
+        return firExpressions
     }
 
     /**
@@ -808,23 +812,23 @@ class LightTreeRawFirExpressionBuilder(
                 branches += if (!entry.isElse) {
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
-                        buildWhenBranch {
+                        buildWhenBranch(hasGuard = entry.guard != null) {
                             source = entrySource
-                            condition = firCondition
+                            condition = firCondition.guardedBy(entry.guard)
                             result = branch
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
-                        buildWhenBranch {
+                        buildWhenBranch(hasGuard = entry.guard != null) {
                             source = entrySource
-                            condition = firCondition
+                            condition = firCondition.guardedBy(entry.guard)
                             result = branch
                         }
                     }
                 } else {
-                    buildWhenBranch {
+                    buildWhenBranch(hasGuard = entry.guard != null) {
                         source = entrySource
-                        condition = buildElseIfTrueCondition()
+                        condition = entry.guard ?: buildElseIfTrueCondition()
                         result = branch
                     }
                 }
@@ -848,6 +852,7 @@ class LightTreeRawFirExpressionBuilder(
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
+        var guard: FirExpression? = null
         var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.tokenType) {
@@ -862,18 +867,19 @@ class LightTreeRawFirExpressionBuilder(
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
+                WHEN_ENTRY_GUARD -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard")
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
 
-        return WhenEntry(conditions, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
     ): FirExpression {
         var firExpression: FirExpression? = null
         whenCondition.forEachChildren {
@@ -1081,7 +1087,7 @@ class LightTreeRawFirExpressionBuilder(
 
     private fun createSimpleNamedReference(
         sourceElement: KtSourceElement,
-        referenceExpression: LighterASTNode
+        referenceExpression: LighterASTNode,
     ): FirNamedReference {
         return buildSimpleNamedReference {
             source = sourceElement
@@ -1309,8 +1315,13 @@ class LightTreeRawFirExpressionBuilder(
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(it, FirAnonymousFunctionSymbol()/*TODO*/, ValueParameterDeclaration.CATCH)
-                    .firstOrNull() ?: return null
+                VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(
+                    valueParameters = it,
+                    FirAnonymousFunctionSymbol(),
+                    ValueParameterDeclaration.CATCH
+                ).firstOrNull()
+                    ?: return null
+
                 BLOCK -> blockNode = it
             }
         }
@@ -1341,7 +1352,7 @@ class LightTreeRawFirExpressionBuilder(
             source = ifExpression.toFirSourceElement()
             with(parseIfExpression(ifExpression)) {
                 val trueBranch = convertLoopBody(thenBlock)
-                branches += buildWhenBranch {
+                branches += buildRegularWhenBranch {
                     source = firCondition?.source
                     condition = firCondition ?: buildErrorExpression(
                         null,
@@ -1353,7 +1364,7 @@ class LightTreeRawFirExpressionBuilder(
                 if (elseBlock != null) {
                     val elseBranch = convertLoopOrIfBody(elseBlock)
                     if (elseBranch != null) {
-                        branches += buildWhenBranch {
+                        branches += buildRegularWhenBranch {
                             source = elseBlock.toFirSourceElement()
                             condition = buildElseIfTrueCondition()
                             result = elseBranch

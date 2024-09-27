@@ -460,6 +460,12 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                 maxLines: Int = Int.MAX_VALUE,
                 minLines: Int = 1,
             ) {}
-        """.trimIndent()
+        """.trimIndent(),
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationTextJar(),
+            Classpath.composeFoundationLayoutJar(),
+        )
     )
 }

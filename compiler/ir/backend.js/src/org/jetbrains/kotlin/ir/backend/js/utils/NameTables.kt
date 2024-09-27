@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -106,8 +105,14 @@ private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
 
 private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
     if (JsLoweredDeclarationOrigin.isBridgeDeclarationOrigin(origin)) {
-        val thisSimpleFunction = this as? IrSimpleFunction ?: error("Bridge must be IrSimpleFunction")
-        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull() ?: error("Couldn't find the overridden function for the bridge")
+        val thisSimpleFunction = this as? IrSimpleFunction
+            ?: irError("Bridge must be IrSimpleFunction") {
+                withIrEntry("this", this@findOriginallyContainingModule)
+            }
+        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull()
+            ?: irError("Couldn't find the overridden function for the bridge") {
+                withIrEntry("thisSimpleFunction", thisSimpleFunction)
+            }
         return bridgeFrom.owner.findOriginallyContainingModule()
     }
     return (getPackageFragment() as? IrFile)?.module
@@ -156,7 +161,7 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
 
     // TODO: Use better hashCode
     val sanitizedName = sanitizeName(declarationName, withHash = false)
-    return context.globalInternationService.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
+    return context.globalIrInterner.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
 }
 
 fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
@@ -283,7 +288,9 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
                 val prefix = when (this) {
                     property.getter -> "get_"
                     property.setter -> "set_"
-                    else -> error("")
+                    else -> irError("") {
+                        withIrEntry("this", this@nameIfPropertyAccessor)
+                    }
                 }
                 prefix + name
             }

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
+// LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
 
 private inline fun foo1(crossinline f: () -> Int) = object {
     fun bar(): Int = f()
@@ -11,7 +11,7 @@ private inline fun foo2(crossinline f: () -> Int) = object : I1 {
     fun bar(): Int = f()
 }
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo3(crossinline f: () -> Int)<!> = object : I1, I2 {
+private inline fun <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>foo3<!>(crossinline f: () -> Int) = object : I1, I2 {
     fun bar(): Int = f()
 }
 

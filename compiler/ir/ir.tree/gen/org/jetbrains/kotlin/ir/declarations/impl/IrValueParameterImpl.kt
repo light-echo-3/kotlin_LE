@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -32,15 +31,12 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
     override var type: IrType,
     override val isAssignable: Boolean,
     override val symbol: IrValueParameterSymbol,
-    override var index: Int,
     override var varargElementType: IrType?,
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
 ) : IrValueParameter() {
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor

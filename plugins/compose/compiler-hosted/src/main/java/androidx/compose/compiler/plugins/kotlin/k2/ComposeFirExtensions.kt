@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 class ComposeFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -41,7 +40,7 @@ class ComposeFirExtensionRegistrar : FirExtensionRegistrar() {
 }
 
 class ComposableFunctionTypeKindExtension(
-    session: FirSession
+    session: FirSession,
 ) : FirFunctionTypeKindExtension(session) {
     override fun FunctionTypeKindRegistrar.registerKinds() {
         registerKind(ComposableFunction, KComposableFunction)
@@ -66,7 +65,7 @@ private val useLegacyCustomFunctionTypeSerializationUntil: String
     }
 
 object ComposableFunction : FunctionTypeKind(
-    FqName.topLevel(Name.identifier("androidx.compose.runtime.internal")),
+    FqName("androidx.compose.runtime.internal"),
     "ComposableFunction",
     ComposeClassIds.Composable,
     isReflectType = false
@@ -81,7 +80,7 @@ object ComposableFunction : FunctionTypeKind(
 }
 
 object KComposableFunction : FunctionTypeKind(
-    FqName.topLevel(Name.identifier("androidx.compose.runtime.internal")),
+    FqName("androidx.compose.runtime.internal"),
     "KComposableFunction",
     ComposeClassIds.Composable,
     isReflectType = true

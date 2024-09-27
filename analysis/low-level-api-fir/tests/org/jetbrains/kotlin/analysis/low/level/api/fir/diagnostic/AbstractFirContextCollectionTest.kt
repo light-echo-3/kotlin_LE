@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -57,7 +57,7 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::declaration)
             handler.firFile = mainFile.getOrBuildFirFile(firResolveSession)
 
-            mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
         }
     }
 

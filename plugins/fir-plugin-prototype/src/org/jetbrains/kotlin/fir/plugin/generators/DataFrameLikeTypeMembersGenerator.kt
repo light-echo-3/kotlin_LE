@@ -71,7 +71,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             scopeSymbol,
             DataFrameLikeCallsRefinementExtension.Companion.KEY,
             propName,
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         ) {
             visibility = Visibilities.Local
             extensionReceiverType {
@@ -81,10 +81,10 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
                         ConeClassLikeTypeImpl(
                             ConeClassLookupTagWithFixedSymbol(tokenSymbol.classId, tokenSymbol),
                             emptyArray(),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     ),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
         }
@@ -98,7 +98,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             tokenSymbol,
             DataFrameLikeCallsRefinementExtension.Companion.KEY,
             propName,
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         ) {
             visibility = Visibilities.Local
         }
@@ -116,7 +116,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             ConeClassLikeTypeImpl(
                 ConeClassLookupTagWithFixedSymbol(scope, scopeSymbol),
                 emptyArray(),
-                isNullable = false
+                isMarkedNullable = false
             )
         ) {
             visibility = Visibilities.Local

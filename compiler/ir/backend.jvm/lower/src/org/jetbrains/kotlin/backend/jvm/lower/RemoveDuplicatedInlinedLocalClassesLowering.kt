@@ -1,26 +1,23 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.NameUtils
@@ -56,7 +53,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
-        irClass.parents.first { it !is IrFunction || it.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA }
+        irClass.parents.first { it !is IrFunction || it.origin != LoweredDeclarationOrigins.INLINE_LAMBDA }
             .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
     }
 
@@ -65,16 +62,15 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
         return super.visitCall(expression, data)
     }
 
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data): IrExpression {
+        val newData = data.copy(insideInlineBlock = true, classDeclaredOnCallSiteOrIsDefaultLambda = true)
+        inlinedBlock.transformChildren(this, newData)
+        return inlinedBlock
+    }
+
     override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
-        if (expression is IrInlinedFunctionBlock) {
-            val newData = data.copy(insideInlineBlock = true)
-            expression.getNonDefaultAdditionalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false)) }
-            expression.getDefaultAdditionalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
-            expression.getOriginalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
-            return expression
+        if (expression.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) {
+            return super.visitBlock(expression, data.copy(insideInlineBlock = true, classDeclaredOnCallSiteOrIsDefaultLambda = false))
         }
 
         val anonymousClass = expression.statements.firstOrNull()

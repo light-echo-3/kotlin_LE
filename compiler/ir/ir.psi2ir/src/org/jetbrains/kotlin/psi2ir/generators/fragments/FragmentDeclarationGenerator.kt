@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
@@ -68,7 +70,7 @@ open class FragmentDeclarationGenerator(
             isInline = false,
             isExpect = false,
             returnType = irClass.defaultType,
-            symbol = IrConstructorPublicSymbolImpl(context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
+            symbol = IrConstructorSymbolImpl(signature = context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
             isPrimary = true,
             isExternal = false
         )

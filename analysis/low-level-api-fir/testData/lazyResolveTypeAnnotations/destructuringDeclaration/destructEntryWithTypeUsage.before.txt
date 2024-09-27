@@ -35,11 +35,11 @@
   anchor -> [FirPropertySymbol util/left]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructEntryWithTypeUsage.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: List<List<Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -83,3 +83,4 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/left]] val property: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+

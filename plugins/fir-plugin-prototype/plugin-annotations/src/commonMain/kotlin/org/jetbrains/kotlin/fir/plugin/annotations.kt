@@ -57,3 +57,9 @@ annotation class AnnotationToAdd(
     val shortValue: Short,
     val stringValue: String
 )
+
+annotation class AddNestedClassesBasedOnArgument(val kClass: KClass<*>)
+
+annotation class AddNestedGeneratedClass
+
+annotation class GeneratedEntityType

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -465,7 +464,8 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
     ) = when {
-        annotations.isNotEmpty() || newVisibility != baseProperty.visibility -> buildCopy(
+        annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
+                origin == FirDeclarationOrigin.Delegated || origin is FirDeclarationOrigin.SubstitutionOverride -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,
@@ -500,6 +500,8 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -513,6 +515,9 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            parameterSource = valueParameters.first().source,
+            isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -526,6 +531,7 @@ object FirFakeOverrideGenerator {
             this.body = null
             resolvePhase = origin.resolvePhaseForCopy
             this.status = status.copy(visibility = newVisibility)
+            this.attributes = this@buildCopy.attributes.copy()
         }.also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()
@@ -638,7 +644,7 @@ object FirFakeOverrideGenerator {
         }
 
         val copiedContextReceiverTypes = newContextReceiverTypes?.map {
-            it?.type?.let(substitutor::substituteOrNull)
+            it?.let(substitutor::substituteOrNull)
         } ?: baseCallable.contextReceivers.map {
             substitutor.substituteOrNull(it.typeRef.coneType)
         }
@@ -701,7 +707,8 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseField: FirField,
         derivedClassLookupTag: ConeClassLikeLookupTag,
-        newReturnType: ConeKotlinType?,
+        newReturnType: ConeKotlinType? = null,
+        newDispatchReceiverType: ConeSimpleKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
     ): FirFieldSymbol = buildField {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
@@ -717,7 +724,7 @@ object FirFakeOverrideGenerator {
         resolvePhase = origin.resolvePhaseForCopy
         annotations += baseField.annotations
         attributes = baseField.attributes.copy()
-        dispatchReceiverType = baseField.dispatchReceiverType
+        dispatchReceiverType = newDispatchReceiverType
     }.apply {
         originalForSubstitutionOverrideAttr = baseField
         containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
@@ -750,7 +757,7 @@ object FirFakeOverrideGenerator {
         }
 
         val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).associate { (original, new) ->
-            Pair(original.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isNullable = false))
+            Pair(original.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
         }
 
         val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters, useSiteSession)
@@ -767,7 +774,7 @@ object FirFakeOverrideGenerator {
                 newTypeParameter.bounds +=
                     buildResolvedTypeRef {
                         source = boundTypeRef.source
-                        type = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
+                        coneType = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
                     }
             }
         }

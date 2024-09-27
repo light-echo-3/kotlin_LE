@@ -23,7 +23,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
   public class Tests {
     @Test
     public void testAllFilesPresentInTests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "externalAnnotations");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "externalAnnotations");
     }
 
     @Test
@@ -48,6 +48,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     @TestMetadata("androidx.kt")
     public void testAndroidx() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidx.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedConflictsWithPurelyImplemented.kt")
+    public void testAnnotatedConflictsWithPurelyImplemented() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/annotatedConflictsWithPurelyImplemented.kt");
     }
 
     @Test
@@ -164,7 +170,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Jsr305 {
       @Test
       public void testAllFilesPresentInJsr305() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -203,7 +209,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class Ignore {
         @Test
         public void testAllFilesPresentInIgnore() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -219,7 +225,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class NullabilityWarnings {
         @Test
         public void testAllFilesPresentInNullabilityWarnings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -288,7 +294,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class FromPlatformTypes {
           @Test
           public void testAllFilesPresentInFromPlatformTypes() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -418,7 +424,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class TypeQualifierDefault {
           @Test
           public void testAllFilesPresentInTypeQualifierDefault() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -477,7 +483,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class TypeQualifierDefault {
         @Test
         public void testAllFilesPresentInTypeQualifierDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -542,7 +548,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Jsr305NullabilityWarnings {
       @Test
       public void testAllFilesPresentInJsr305NullabilityWarnings() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -551,7 +557,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class Migration {
         @Test
         public void testAllFilesPresentInMigration() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -616,7 +622,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class TypeQualifierDefault {
       @Test
       public void testAllFilesPresentInTypeQualifierDefault() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -633,7 +639,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
   public class Java8Tests {
     @Test
     public void testAllFilesPresentInJava8Tests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -672,7 +678,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Jspecify {
       @Test
       public void testAllFilesPresentInJspecify() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -687,7 +693,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class StrictMode {
         @Test
         public void testAllFilesPresentInStrictMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -760,6 +766,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
+        public void testNotNullTypeAgainstNullableWildcard() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/notNullTypeAgainstNullableWildcard.kt");
         }
 
         @Test
@@ -877,6 +889,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("nullableArray.kt")
+        public void testNullableArray() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/nullableArray.kt");
+        }
+
+        @Test
         @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
         public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
@@ -943,7 +961,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class WarnMode {
         @Test
         public void testAllFilesPresentInWarnMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -995,9 +1013,21 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("kt68110.kt")
+        public void testKt68110() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt68110.kt");
+        }
+
+        @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
+        public void testNotNullTypeAgainstNullableWildcard() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/notNullTypeAgainstNullableWildcard.kt");
         }
 
         @Test
@@ -1115,6 +1145,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("nullableArray.kt")
+        public void testNullableArray() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/nullableArray.kt");
+        }
+
+        @Test
         @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
         public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
@@ -1200,7 +1236,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class JspecifyOld {
       @Test
       public void testAllFilesPresentInJspecifyOld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1215,7 +1251,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class StrictMode {
         @Test
         public void testAllFilesPresentInStrictMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -1321,7 +1357,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class WarnMode {
         @Test
         public void testAllFilesPresentInWarnMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -1416,7 +1452,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Jsr305 {
       @Test
       public void testAllFilesPresentInJsr305() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1468,7 +1504,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Misc {
       @Test
       public void testAllFilesPresentInMisc() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1505,6 +1541,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       @TestMetadata("enhancedRecursiveStarProjection.kt")
       public void testEnhancedRecursiveStarProjection() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
+      }
+
+      @Test
+      @TestMetadata("errorsBasedOnEnhancedBasedType.kt")
+      public void testErrorsBasedOnEnhancedBasedType() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/errorsBasedOnEnhancedBasedType.kt");
       }
 
       @Test
@@ -1556,12 +1598,6 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       }
 
       @Test
-      @TestMetadata("returnTypeWithWarnings.kt")
-      public void testReturnTypeWithWarnings() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.kt");
-      }
-
-      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
@@ -1578,18 +1614,6 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public void testValueParameter() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
       }
-
-      @Test
-      @TestMetadata("valueParameterWithWarnings.kt")
-      public void testValueParameterWithWarnings() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.kt");
-      }
-
-      @Test
-      @TestMetadata("warningsBasedOnEnhancedBasedType.kt")
-      public void testWarningsBasedOnEnhancedBasedType() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/warningsBasedOnEnhancedBasedType.kt");
-      }
     }
   }
 
@@ -1599,7 +1623,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
   public class Java11Tests {
     @Test
     public void testAllFilesPresentInJava11Tests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Nested
@@ -1608,7 +1632,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class Jspecify {
       @Test
       public void testAllFilesPresentInJspecify() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -1617,7 +1641,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class ModuleAnnotations {
         @Test
         public void testAllFilesPresentInModuleAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -1626,7 +1650,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class Strict {
           @Test
           public void testAllFilesPresentInStrict() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -1720,7 +1744,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class Warn {
           @Test
           public void testAllFilesPresentInWarn() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -1816,7 +1840,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     public class JspecifyOld {
       @Test
       public void testAllFilesPresentInJspecifyOld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -1825,7 +1849,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       public class ModuleAnnotations {
         @Test
         public void testAllFilesPresentInModuleAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -1834,7 +1858,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class Strict {
           @Test
           public void testAllFilesPresentInStrict() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -1910,7 +1934,7 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         public class Warn {
           @Test
           public void testAllFilesPresentInWarn() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
 object LoweredStatementOrigins {
@@ -13,7 +14,10 @@ object LoweredStatementOrigins {
     val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
 
     val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
-    val INLINED_FUNCTION_ARGUMENTS by IrStatementOriginImpl
-    val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
+    val INLINE_LAMBDA by IrStatementOriginImpl
+    val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
+}
 
+object LoweredDeclarationOrigins {
+    val INLINE_LAMBDA by IrDeclarationOriginImpl
 }

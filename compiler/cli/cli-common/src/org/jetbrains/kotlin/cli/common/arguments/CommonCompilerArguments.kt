@@ -163,6 +163,16 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
+    @Argument(
+        value = "-Xstdlib-compilation",
+        description = "Enables special features which are relevant only for stdlib compilation.",
+    )
+    var stdlibCompilation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
     var reportOutputFiles = false
         set(value) {
@@ -186,7 +196,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xcompiler-plugin",
-        valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
+        valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]",
         description = "Register a compiler plugin.",
         delimiter = Argument.Delimiters.none
     )
@@ -422,6 +432,41 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)."
+    )
+    var verifyIr: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility",
+        description = "Check for visibility violations in IR when validating it before running any lowerings. " +
+                "Only has effect if '-Xverify-ir' is not 'none'.",
+    )
+    var verifyIrVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility-after-inlining",
+        description = """Check for visibility violations in IR when validating it after the function inlining phase.
+Only has effect if '-Xverify-ir' is not 'none'.
+This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+""",
+    )
+    var verifyIrVisibilityAfterInlining: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile-phases",
         description = "Profile backend phases."
     )
@@ -453,7 +498,7 @@ They should be a subset of sources passed as free arguments."""
 
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        level = DeprecationLevel.ERROR,
         removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @GradleOption(
@@ -473,10 +518,10 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xuse-fir-extended-checkers",
-        description = "Use extended analysis mode based on the frontend IR.\nWarning: This feature is not yet production-ready."
+        value = "-Xuse-fir-experimental-checkers",
+        description = "Enable experimental frontend IR checkers that are not yet ready for production."
     )
-    var useFirExtendedCheckers = false
+    var useFirExperimentalCheckers = false
         set(value) {
             checkFrozen()
             field = value
@@ -497,16 +542,6 @@ They should be a subset of sources passed as free arguments."""
         description = "Compile using the LightTree parser with the frontend IR."
     )
     var useFirLT = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-fir-fake-override-builder",
-        description = "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
-    )
-    var useFirFakeOverrideBuilder = false
         set(value) {
             checkFrozen()
             field = value
@@ -537,6 +572,19 @@ They should be a subset of sources passed as free arguments."""
 Use the 'warning' level to issue warnings instead of errors."""
     )
     var explicitApi: String = ExplicitApiMode.DISABLED.state
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-XXexplicit-return-types",
+        valueDescription = "{strict|warning|disable}",
+        description = """Force the compiler to report errors on all public API declarations without an explicit return type.
+Use the 'warning' level to issue warnings instead of errors.
+This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether"""
+    )
+    var explicitReturnTypes: String = ExplicitApiMode.DISABLED.state
         set(value) {
             checkFrozen()
             field = value
@@ -649,30 +697,30 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
-        value = "-Xklib-relative-path-base",
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
+        value = "-Xnon-local-break-continue",
+        description = "Enable experimental non-local break and continue."
     )
-    var relativePathBases: Array<String>? = null
+    var nonLocalBreakContinue = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xklib-normalize-absolute-path",
-        description = "Normalize absolute paths in klibs."
+        value = "-Xdirect-java-actualization",
+        description = "Enable experimental direct Java actualization support."
     )
-    var normalizeAbsolutePath = false
+    var directJavaActualization = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xklib-enable-signature-clash-checks",
-        description = "Enable signature uniqueness checks."
+        value = "-Xmulti-dollar-interpolation",
+        description = "Enable experimental multi-dollar interpolation."
     )
-    var enableSignatureClashChecks = true
+    var multiDollarInterpolation = false
         set(value) {
             checkFrozen()
             field = value
@@ -755,6 +803,27 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xwhen-guards",
+        description = "Enable experimental language support for when guards."
+    )
+    var whenGuards = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xsuppress-warning",
+        valueDescription = "<WARNING_NAME>",
+        description = "Suppress specified warning module-wide."
+    )
+    var suppressedDiagnostics: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -774,12 +843,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
+            ExplicitApiMode.fromString(explicitReturnTypes)?.also { put(AnalysisFlags.explicitReturnTypes, it) } ?: collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
+            )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
+            put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
-            put(AnalysisFlags.consistentDataClassCopyVisibility, consistentDataClassCopyVisibility)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
+            put(AnalysisFlags.globallySuppressedDiagnostics, suppressedDiagnostics?.toList().orEmpty())
         }
     }
 
@@ -787,6 +861,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             if (multiPlatform) {
                 put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
+            }
+
+            if (consistentDataClassCopyVisibility) {
+                put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
             }
 
             if (unrestrictedBuilderInference) {
@@ -812,6 +890,14 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
                 put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
             }
 
+            if (nonLocalBreakContinue) {
+                put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
+            }
+
+            if (directJavaActualization) {
+                put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
+            }
+
             if (inlineClasses) {
                 put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
             }
@@ -824,6 +910,14 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
             }
 
+            if (whenGuards) {
+                put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+            }
+
+            if (multiDollarInterpolation) {
+                put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
+            }
+
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular
@@ -832,10 +926,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
                 }
             }
 
-            if (useK2) {
-                // TODO: remove when K2 compilation will mean LV 2.0
-                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.ENABLED)
-            } else if (allowAnyScriptsInSourceRoots) {
+            if (allowAnyScriptsInSourceRoots) {
                 put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 
@@ -932,6 +1023,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         checkIrSupport(languageVersionSettings, collector)
 
         checkPlatformSpecificSettings(languageVersionSettings, collector)
+        checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
     }
@@ -1018,28 +1110,37 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         // backend-specific
     }
 
+    private fun checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
+        if (explicitApi == ExplicitApiMode.DISABLED.state || explicitReturnTypes == ExplicitApiMode.DISABLED.state) return
+        if (explicitApi != explicitReturnTypes) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                """
+                    '-Xexplicit-api' and '-XXexplicit-return-types' flags cannot have different values at the same time.
+                    Consider use only one of those flags
+                    Passed:
+                      '-Xexplicit-api=${explicitApi}'
+                      '-XXexplicit-return-types=${explicitReturnTypes}'
+                    """.trimIndent()
+            )
+        }
+    }
+
     private enum class VersionKind(val text: String) {
         LANGUAGE("Language"), API("API")
     }
 
     private fun parseOrConfigureLanguageVersion(collector: MessageCollector): LanguageVersion {
-        // If only "-api-version" is specified, language version is assumed to be the latest stable (or 2.0 with -Xuse-k2)
-        val explicitVersion = parseVersion(collector, languageVersion, "language")
-        val explicitOrDefaultVersion = explicitVersion ?: defaultLanguageVersion(collector)
         if (useK2) {
-            val message = when (explicitVersion?.usesK2) {
-                true ->
-                    "Deprecated compiler flag -Xuse-k2 is redundant because of \"-language-version $explicitVersion\" and should be removed"
-                false ->
-                    "Deprecated compiler flag -Xuse-k2 overrides \"-language-version $explicitVersion\" to 2.0;" +
-                            " please remove -Xuse-k2 and use -language-version to select either $explicitVersion or 2.0"
-                null ->
-                    "Compiler flag -Xuse-k2 is deprecated; please use \"-language-version 2.0\" instead"
-            }
-            collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Compiler flag -Xuse-k2 is no more supported. " +
+                        "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier"
+            )
         }
-        return if (useK2 && !explicitOrDefaultVersion.usesK2) LanguageVersion.KOTLIN_2_0
-        else explicitOrDefaultVersion
+
+        // If only "-api-version" is specified, language version is assumed to be the latest stable
+        return parseVersion(collector, languageVersion, "language") ?: defaultLanguageVersion(collector)
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =

@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -28,28 +27,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
@@ -57,18 +49,16 @@ import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 class FirAnalysisResult(
     val firResult: FirResult,
     override val files: List<KtFile>,
-    val reporter: BaseDiagnosticsCollector
+    val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
         get() = reporter.diagnostics.groupBy(
@@ -92,7 +82,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     private fun createSourceSession(
         moduleData: FirModuleData,
         projectSessionProvider: FirProjectSessionProvider,
-        projectEnvironment: AbstractProjectEnvironment
+        projectEnvironment: AbstractProjectEnvironment,
     ): FirSession {
         return FirJvmSessionFactory.createModuleBasedSession(
             moduleData,
@@ -106,15 +96,19 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             { null },
             FirExtensionRegistrar.getInstances(project),
             configuration.languageVersionSettings,
+            configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: error("JVM_TARGET is not specified in compiler configuration"),
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
+            configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
+            init = {}
         )
     }
 
     override fun analyze(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): FirAnalysisResult {
         val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
 
@@ -122,7 +116,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val binaryModuleData = BinaryModuleData.initialize(
             Name.identifier(rootModuleName),
             CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
         )
         val dependencyList = DependencyListForCliModule.build(binaryModuleData)
         val projectEnvironment = VfsBasedProjectEnvironment(
@@ -141,7 +134,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             librariesScope,
             projectEnvironment.getPackagePartProvider(librariesScope),
             configuration.languageVersionSettings,
-            registerExtraComponents = {}
+            predefinedJavaComponents = null,
         )
 
         val commonModuleData = FirModuleDataImpl(
@@ -150,7 +143,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
             CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
         )
 
         val platformModuleData = FirModuleDataImpl(
@@ -159,7 +151,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies + commonModuleData,
             dependencyList.friendsDependencies,
             JvmPlatforms.jvm8,
-            JvmPlatformAnalyzerServices
         )
 
         val commonSession = createSourceSession(
@@ -176,7 +167,8 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val commonKtFiles = commonFiles.map { it.toKtFile(project) }
         val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
-        val reporter = DiagnosticReporterFactory.createReporter()
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val reporter = DiagnosticReporterFactory.createReporter(messageCollector)
         val commonAnalysis =
             buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
         val platformAnalysis =
@@ -191,7 +183,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     private fun frontend(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): FirFrontendResult {
         val analysisResult = analyze(platformFiles, commonFiles)
 
@@ -203,7 +195,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val fir2IrExtensions = JvmFir2IrExtensions(
             configuration,
             JvmIrDeserializerImpl(),
-            JvmIrMangler
         )
 
         val fir2IrResult = analysisResult.firResult.convertToIrAndActualizeForJvm(
@@ -221,7 +212,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     override fun compile(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): GenerationState {
         val frontendResult = frontend(platformFiles, commonFiles)
         val irModuleFragment = frontendResult.firResult.irModuleFragment
@@ -231,7 +222,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             project,
             ClassBuilderFactories.TEST,
             irModuleFragment.descriptor,
-            NoScopeRecordCliBindingTrace().bindingContext,
+            NoScopeRecordCliBindingTrace(project).bindingContext,
             configuration
         ).isIrBackend(
             true
@@ -245,7 +236,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
         )
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, irModuleFragment, components.symbolTable, components.irProviders,
+            generationState,
+            irModuleFragment,
+            frontendResult.firResult.symbolTable,
+            components.irProviders,
             frontendResult.generatorExtensions,
             FirJvmBackendExtension(
                 components,

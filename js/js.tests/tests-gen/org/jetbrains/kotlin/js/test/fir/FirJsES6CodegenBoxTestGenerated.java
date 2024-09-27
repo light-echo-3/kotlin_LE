@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("es6")
 public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
@@ -29,6 +31,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/annotations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Annotations {
     @Test
     public void testAllFilesPresentInAnnotations() {
@@ -104,6 +107,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class AnnotatedLambda {
       @Test
       public void testAllFilesPresentInAnnotatedLambda() {
@@ -114,6 +118,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/instances")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Instances {
       @Test
       public void testAllFilesPresentInInstances() {
@@ -208,6 +213,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class KClassMapping {
       @Test
       public void testAllFilesPresentInKClassMapping() {
@@ -218,6 +224,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Repeatable {
       @Test
       public void testAllFilesPresentInRepeatable() {
@@ -228,6 +235,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TypeAnnotations {
       @Test
       public void testAllFilesPresentInTypeAnnotations() {
@@ -239,12 +247,19 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       public void testCheckingNotincorporatedInputTypes() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/checkingNotincorporatedInputTypes.kt");
       }
+
+      @Test
+      @TestMetadata("unsafeVarianceInDependency.kt")
+      public void testUnsafeVarianceInDependency() {
+        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/unsafeVarianceInDependency.kt");
+      }
     }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/argumentOrder")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ArgumentOrder {
     @Test
     public void testAllFilesPresentInArgumentOrder() {
@@ -345,6 +360,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/arithmetic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Arithmetic {
     @Test
     public void testAllFilesPresentInArithmetic() {
@@ -421,6 +437,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/arrays")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Arrays {
     @Test
     public void testAllFilesPresentInArrays() {
@@ -796,6 +813,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/arraysOfInlineClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ArraysOfInlineClass {
       @Test
       @TestMetadata("accessArrayOfInlineClass.kt")
@@ -824,6 +842,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
@@ -858,6 +877,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInUnsignedArray {
       @Test
       public void testAllFilesPresentInForInUnsignedArray() {
@@ -916,6 +936,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MultiDecl {
       @Test
       public void testAllFilesPresentInMultiDecl() {
@@ -973,6 +994,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
@@ -1007,6 +1029,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
@@ -1043,6 +1066,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/assert")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Assert {
     @Test
     public void testAllFilesPresentInAssert() {
@@ -1064,6 +1088,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/assert/jvm")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Jvm {
       @Test
       public void testAllFilesPresentInJvm() {
@@ -1075,6 +1100,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/basics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Basics {
     @Test
     public void testAllFilesPresentInBasics() {
@@ -1148,6 +1174,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt7972.kt")
+    public void testKt7972() {
+      runTest("compiler/testData/codegen/box/basics/kt7972.kt");
+    }
+
+    @Test
     @TestMetadata("local_variable.kt")
     public void testLocal_variable() {
       runTest("compiler/testData/codegen/box/basics/local_variable.kt");
@@ -1208,6 +1240,30 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("unchecked_cast10.kt")
+    public void testUnchecked_cast10() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast10.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast11.kt")
+    public void testUnchecked_cast11() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast11.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast12.kt")
+    public void testUnchecked_cast12() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast12.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast13.kt")
+    public void testUnchecked_cast13() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast13.kt");
+    }
+
+    @Test
     @TestMetadata("unchecked_cast2.kt")
     public void testUnchecked_cast2() {
       runTest("compiler/testData/codegen/box/basics/unchecked_cast2.kt");
@@ -1223,6 +1279,42 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("unchecked_cast4.kt")
     public void testUnchecked_cast4() {
       runTest("compiler/testData/codegen/box/basics/unchecked_cast4.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast5.kt")
+    public void testUnchecked_cast5() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast5.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast6.kt")
+    public void testUnchecked_cast6() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast6.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast6x.kt")
+    public void testUnchecked_cast6x() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast6x.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast7.kt")
+    public void testUnchecked_cast7() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast7.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast8.kt")
+    public void testUnchecked_cast8() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast8.kt");
+    }
+
+    @Test
+    @TestMetadata("unchecked_cast9.kt")
+    public void testUnchecked_cast9() {
+      runTest("compiler/testData/codegen/box/basics/unchecked_cast9.kt");
     }
 
     @Test
@@ -1253,6 +1345,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/bce")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Bce {
     @Test
     public void testAllFilesPresentInBce() {
@@ -1371,6 +1464,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/binaryOp")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class BinaryOp {
     @Test
     public void testAllFilesPresentInBinaryOp() {
@@ -1537,6 +1631,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/boxing")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Boxing {
     @Test
     public void testAllFilesPresentInBoxing() {
@@ -1650,11 +1745,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testKt53100_casts() {
       runTest("compiler/testData/codegen/box/boxing/kt53100_casts.kt");
     }
+
+    @Test
+    @TestMetadata("missingValueClassUnboxing.kt")
+    public void testMissingValueClassUnboxing() {
+      runTest("compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");
+    }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class BoxingOptimization {
     @Test
     public void testAllFilesPresentInBoxingOptimization() {
@@ -1905,6 +2007,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/branching")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Branching {
     @Test
     @TestMetadata("advanced_when2.kt")
@@ -1987,6 +2090,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/bridges")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Bridges {
     @Test
     @TestMetadata("abstractOverrideBridge.kt")
@@ -2111,6 +2215,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("innerClassTypeParameters.kt")
     public void testInnerClassTypeParameters() {
       runTest("compiler/testData/codegen/box/bridges/innerClassTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("internalMethodFakeOverrideInFriendModule.kt")
+    public void testInternalMethodFakeOverrideInFriendModule() {
+      runTest("compiler/testData/codegen/box/bridges/internalMethodFakeOverrideInFriendModule.kt");
     }
 
     @Test
@@ -2444,9 +2554,51 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("test19.kt")
+    public void testTest19() {
+      runTest("compiler/testData/codegen/box/bridges/test19.kt");
+    }
+
+    @Test
     @TestMetadata("test2.kt")
     public void testTest2() {
       runTest("compiler/testData/codegen/box/bridges/test2.kt");
+    }
+
+    @Test
+    @TestMetadata("test20.kt")
+    public void testTest20() {
+      runTest("compiler/testData/codegen/box/bridges/test20.kt");
+    }
+
+    @Test
+    @TestMetadata("test21.kt")
+    public void testTest21() {
+      runTest("compiler/testData/codegen/box/bridges/test21.kt");
+    }
+
+    @Test
+    @TestMetadata("test22.kt")
+    public void testTest22() {
+      runTest("compiler/testData/codegen/box/bridges/test22.kt");
+    }
+
+    @Test
+    @TestMetadata("test23.kt")
+    public void testTest23() {
+      runTest("compiler/testData/codegen/box/bridges/test23.kt");
+    }
+
+    @Test
+    @TestMetadata("test24.kt")
+    public void testTest24() {
+      runTest("compiler/testData/codegen/box/bridges/test24.kt");
+    }
+
+    @Test
+    @TestMetadata("test25.kt")
+    public void testTest25() {
+      runTest("compiler/testData/codegen/box/bridges/test25.kt");
     }
 
     @Test
@@ -2524,6 +2676,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SubstitutionInSuperClass {
       @Test
       @TestMetadata("abstractFun.kt")
@@ -2599,908 +2752,9 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   }
 
   @Nested
-  @TestMetadata("compiler/testData/codegen/box/builderInference")
-  @TestDataPath("$PROJECT_ROOT")
-  public class BuilderInference {
-    @Test
-    public void testAllFilesPresentInBuilderInference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-    }
-
-    @Test
-    @TestMetadata("lambdaParameterHasTVType.kt")
-    public void testLambdaParameterHasTVType() {
-      runTest("compiler/testData/codegen/box/builderInference/lambdaParameterHasTVType.kt");
-    }
-
-    @Test
-    @TestMetadata("pcaRootIsDelegatedConstructorCall.kt")
-    public void testPcaRootIsDelegatedConstructorCall() {
-      runTest("compiler/testData/codegen/box/builderInference/pcaRootIsDelegatedConstructorCall.kt");
-    }
-
-    @Test
-    @TestMetadata("pclaRootIsElvisSynthetic.kt")
-    public void testPclaRootIsElvisSynthetic() {
-      runTest("compiler/testData/codegen/box/builderInference/pclaRootIsElvisSynthetic.kt");
-    }
-
-    @Test
-    @TestMetadata("pclaRootIsIfWhenSyntheticCall.kt")
-    public void testPclaRootIsIfWhenSyntheticCall() {
-      runTest("compiler/testData/codegen/box/builderInference/pclaRootIsIfWhenSyntheticCall.kt");
-    }
-
-    @Test
-    @TestMetadata("pclaRootIsTrySyntheticCall.kt")
-    public void testPclaRootIsTrySyntheticCall() {
-      runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
-    }
-
-    @Test
-    @TestMetadata("pclaRootIsTrySyntheticCallWithDelegate.kt")
-    public void testPclaRootIsTrySyntheticCallWithDelegate() {
-      runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCallWithDelegate.kt");
-    }
-
-    @Test
-    @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
-    public void testPosptonedPCLACallInsideStringInterpolation() {
-      runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInvokeInsidePCLALambda.kt")
-    public void testPropertyInvokeInsidePCLALambda() {
-      runTest("compiler/testData/codegen/box/builderInference/propertyInvokeInsidePCLALambda.kt");
-    }
-
-    @Test
-    @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
-    public void testReceiverUsesOuterTVButReturnTypeIsProper() {
-      runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Issues {
-      @Test
-      public void testAllFilesPresentInIssues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-      }
-
-      @Test
-      @TestMetadata("kt43710.kt")
-      public void testKt43710() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt43710.kt");
-      }
-
-      @Test
-      @TestMetadata("kt47989a.kt")
-      public void testKt47989a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt47989a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt47989b.kt")
-      public void testKt47989b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt47989b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49160a.kt")
-      public void testKt49160a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49160a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49160b.kt")
-      public void testKt49160b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49160b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49160c.kt")
-      public void testKt49160c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49160c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49160d.kt")
-      public void testKt49160d() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49160d.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49160e.kt")
-      public void testKt49160e() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49160e.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49263.kt")
-      public void testKt49263() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt49263.kt");
-      }
-
-      @Test
-      @TestMetadata("kt50453.kt")
-      public void testKt50453() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt50453.kt");
-      }
-
-      @Test
-      @TestMetadata("kt50827a.kt")
-      public void testKt50827a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt50827a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt50827b.kt")
-      public void testKt50827b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt50827b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt52757.kt")
-      public void testKt52757() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt52757.kt");
-      }
-
-      @Test
-      @TestMetadata("kt52838a.kt")
-      public void testKt52838a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt52838a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt52838b.kt")
-      public void testKt52838b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt52838b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt52838c.kt")
-      public void testKt52838c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt52838c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53109.kt")
-      public void testKt53109() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53109.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53422a.kt")
-      public void testKt53422a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53422a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53422b.kt")
-      public void testKt53422b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53422b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53478.kt")
-      public void testKt53478() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53478.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53553.kt")
-      public void testKt53553() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53553.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53639.kt")
-      public void testKt53639() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53639.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53740a.kt")
-      public void testKt53740a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53740a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53740b.kt")
-      public void testKt53740b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt53740b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54400a.kt")
-      public void testKt54400a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54400a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54400b.kt")
-      public void testKt54400b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54400b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54400c.kt")
-      public void testKt54400c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54400c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54664.kt")
-      public void testKt54664() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54664.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54767a.kt")
-      public void testKt54767a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54767a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt54767b.kt")
-      public void testKt54767b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt54767b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt55056.kt")
-      public void testKt55056() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt55056.kt");
-      }
-
-      @Test
-      @TestMetadata("kt55252.kt")
-      public void testKt55252() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt55252.kt");
-      }
-
-      @Test
-      @TestMetadata("kt55281.kt")
-      public void testKt55281() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt55281.kt");
-      }
-
-      @Test
-      @TestMetadata("kt56949.kt")
-      public void testKt56949() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt56949.kt");
-      }
-
-      @Test
-      @TestMetadata("kt57707.kt")
-      public void testKt57707() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt57707.kt");
-      }
-
-      @Test
-      @TestMetadata("kt57834.kt")
-      public void testKt57834() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt57834.kt");
-      }
-
-      @Test
-      @TestMetadata("kt59426.kt")
-      public void testKt59426() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt59426.kt");
-      }
-
-      @Test
-      @TestMetadata("kt59798.kt")
-      public void testKt59798() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt59798.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60291a.kt")
-      public void testKt60291a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt60291a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60291b.kt")
-      public void testKt60291b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt60291b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60291c.kt")
-      public void testKt60291c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt60291c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60447a.kt")
-      public void testKt60447a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt60447a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt60447b.kt")
-      public void testKt60447b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt60447b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt61310.kt")
-      public void testKt61310() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt61310.kt");
-      }
-
-      @Test
-      @TestMetadata("kt63733.kt")
-      public void testKt63733() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt63733.kt");
-      }
-
-      @Test
-      @TestMetadata("kt63840a.kt")
-      public void testKt63840a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt63840a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt63840b.kt")
-      public void testKt63840b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt63840b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt63840c.kt")
-      public void testKt63840c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt63840c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt64066.kt")
-      public void testKt64066() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt64066.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300a.kt")
-      public void testKt65300a() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300a.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300b.kt")
-      public void testKt65300b() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300b.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300c.kt")
-      public void testKt65300c() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300c.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300d.kt")
-      public void testKt65300d() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300d.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300e.kt")
-      public void testKt65300e() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300e.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300f.kt")
-      public void testKt65300f() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300f.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300g.kt")
-      public void testKt65300g() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300g.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300h.kt")
-      public void testKt65300h() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300h.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300i.kt")
-      public void testKt65300i() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300i.kt");
-      }
-
-      @Test
-      @TestMetadata("kt65300j.kt")
-      public void testKt65300j() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt65300j.kt");
-      }
-
-      @Test
-      @TestMetadata("kt66229.kt")
-      public void testKt66229() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt66229.kt");
-      }
-
-      @Test
-      @TestMetadata("kt66243.kt")
-      public void testKt66243() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt66243.kt");
-      }
-
-      @Test
-      @TestMetadata("kt66272.kt")
-      public void testKt66272() {
-        runTest("compiler/testData/codegen/box/builderInference/issues/kt66272.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
-    @TestDataPath("$PROJECT_ROOT")
-    public class OneParameter {
-      @Test
-      public void testAllFilesPresentInOneParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable")
-      @TestDataPath("$PROJECT_ROOT")
-      public class OneTypeVariable {
-        @Test
-        public void testAllFilesPresentInOneTypeVariable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
-        @TestDataPath("$PROJECT_ROOT")
-        public class OneTypeInfoOrigin {
-          @Test
-          public void testAllFilesPresentInOneTypeInfoOrigin() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-          }
-
-          @Test
-          @TestMetadata("AnonymousFunctionArgumentAndBuildeeParameter.kt")
-          public void testAnonymousFunctionArgumentAndBuildeeParameter() {
-            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeParameter.kt");
-          }
-
-          @Test
-          @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
-          public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
-            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
-          }
-
-          @Test
-          @TestMetadata("LambdaArgumentAndBuildeeParameter.kt")
-          public void testLambdaArgumentAndBuildeeParameter() {
-            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeParameter.kt");
-          }
-
-          @Test
-          @TestMetadata("LambdaArgumentAndBuildeeReceiver.kt")
-          public void testLambdaArgumentAndBuildeeReceiver() {
-            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeReceiver.kt");
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
-          @TestDataPath("$PROJECT_ROOT")
-          public class SourceSinkFeedContexts {
-            @Test
-            public void testAllFilesPresentInSourceSinkFeedContexts() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-            }
-
-            @Test
-            @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
-            public void testByAssignmentToALocalVariableMaterializeCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
-            }
-
-            @Test
-            @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
-            public void testByAssignmentToALocalVariableYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("InsideAnonymousObject.kt")
-            public void testInsideAnonymousObject() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
-            }
-
-            @Test
-            @TestMetadata("InsideLocalClass.kt")
-            public void testInsideLocalClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
-            }
-
-            @Test
-            @TestMetadata("InsideNestedLambda.kt")
-            public void testInsideNestedLambda() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedLambda.kt");
-            }
-
-            @Test
-            @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
-            public void testThroughDelegatedLocalVariableMaterializeCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
-            }
-
-            @Test
-            @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
-            public void testThroughDelegatedLocalVariableYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("ThroughGenericFunctionCall.kt")
-            public void testThroughGenericFunctionCall() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
-            }
-
-            @Test
-            @TestMetadata("ThroughLocalVariable.kt")
-            public void testThroughLocalVariable() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughLocalVariable.kt");
-            }
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
-          @TestDataPath("$PROJECT_ROOT")
-          public class TargetTypes {
-            @Test
-            public void testAllFilesPresentInTargetTypes() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-            }
-
-            @Test
-            @TestMetadata("AnonymousObject.kt")
-            public void testAnonymousObject() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/AnonymousObject.kt");
-            }
-
-            @Test
-            @TestMetadata("DefinitelyNonNullableTypeParameter.kt")
-            public void testDefinitelyNonNullableTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/DefinitelyNonNullableTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingClass.kt")
-            public void testEnclosingClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingClass.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingEnumerationEntryType.kt")
-            public void testEnclosingEnumerationEntryType() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingEnumerationEntryType.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingEnumerationType.kt")
-            public void testEnclosingEnumerationType() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingEnumerationType.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingExplicitlyGenericInnerClass.kt")
-            public void testEnclosingExplicitlyGenericInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingExplicitlyGenericInnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingGenericClass.kt")
-            public void testEnclosingGenericClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingGenericClass.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingImplicitlyGenericInnerClass.kt")
-            public void testEnclosingImplicitlyGenericInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingImplicitlyGenericInnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("EnclosingInnerClass.kt")
-            public void testEnclosingInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingInnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("EnumerationType.kt")
-            public void testEnumerationType() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnumerationType.kt");
-            }
-
-            @Test
-            @TestMetadata("ExplicitlyGenericInnerClass.kt")
-            public void testExplicitlyGenericInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/ExplicitlyGenericInnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("FunctionWithParameterToUnit.kt")
-            public void testFunctionWithParameterToUnit() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnit.kt");
-            }
-
-            @Test
-            @TestMetadata("FunctionWithReceiverToUnit.kt")
-            public void testFunctionWithReceiverToUnit() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnit.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericLocalClass.kt")
-            public void testGenericLocalClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericLocalClass.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericLocalClassWithLeakingTypeParameter.kt")
-            public void testGenericLocalClassWithLeakingTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericLocalClassWithLeakingTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithContravariantTypeParameter.kt")
-            public void testGenericWithContravariantTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithContravariantTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithCovariantTypeParameter.kt")
-            public void testGenericWithCovariantTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithCovariantTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithInProjectedTypeArgument.kt")
-            public void testGenericWithInProjectedTypeArgument() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithInProjectedTypeArgument.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithInvariantTypeParameter.kt")
-            public void testGenericWithInvariantTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithInvariantTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithOutProjectedTypeArgument.kt")
-            public void testGenericWithOutProjectedTypeArgument() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithOutProjectedTypeArgument.kt");
-            }
-
-            @Test
-            @TestMetadata("GenericWithStarProjectedTypeArgument.kt")
-            public void testGenericWithStarProjectedTypeArgument() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithStarProjectedTypeArgument.kt");
-            }
-
-            @Test
-            @TestMetadata("ImplicitlyGenericInnerClass.kt")
-            public void testImplicitlyGenericInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/ImplicitlyGenericInnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("InnerClass.kt")
-            public void testInnerClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/InnerClass.kt");
-            }
-
-            @Test
-            @TestMetadata("Int.kt")
-            public void testInt() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/Int.kt");
-            }
-
-            @Test
-            @TestMetadata("IntersectionType.kt")
-            public void testIntersectionType() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/IntersectionType.kt");
-            }
-
-            @Test
-            @TestMetadata("LocalClass.kt")
-            public void testLocalClass() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/LocalClass.kt");
-            }
-
-            @Test
-            @TestMetadata("NothingYieldCase.kt")
-            public void testNothingYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("NullableNothing.kt")
-            public void testNullableNothing() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothing.kt");
-            }
-
-            @Test
-            @TestMetadata("NullableNothingNullLiteralYieldCase.kt")
-            public void testNullableNothingNullLiteralYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("NullableType.kt")
-            public void testNullableType() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableType.kt");
-            }
-
-            @Test
-            @TestMetadata("NullableTypeParameter.kt")
-            public void testNullableTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableTypeParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("NullaryFunctionToUnit.kt")
-            public void testNullaryFunctionToUnit() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullaryFunctionToUnit.kt");
-            }
-
-            @Test
-            @TestMetadata("NullaryFunctionWithReturnValue.kt")
-            public void testNullaryFunctionWithReturnValue() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullaryFunctionWithReturnValue.kt");
-            }
-
-            @Test
-            @TestMetadata("String.kt")
-            public void testString() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/String.kt");
-            }
-
-            @Test
-            @TestMetadata("SuspendingFunction.kt")
-            public void testSuspendingFunction() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/SuspendingFunction.kt");
-            }
-
-            @Test
-            @TestMetadata("TypeParameter.kt")
-            public void testTypeParameter() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/TypeParameter.kt");
-            }
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
-          @TestDataPath("$PROJECT_ROOT")
-          public class TypeInfoSinks {
-            @Test
-            public void testAllFilesPresentInTypeInfoSinks() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-            }
-
-            @Test
-            @TestMetadata("ExtensionFunctions.kt")
-            public void testExtensionFunctions() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
-            }
-
-            @Test
-            @TestMetadata("ImmutableExtensionProperties.kt")
-            public void testImmutableExtensionProperties() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
-            }
-
-            @Test
-            @TestMetadata("ImmutableProperties.kt")
-            public void testImmutableProperties() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
-            }
-
-            @Test
-            @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
-            public void testMutableExtensionPropertiesMaterializeCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
-            }
-
-            @Test
-            @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
-            public void testMutableExtensionPropertiesYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("MutablePropertiesMaterializeCase.kt")
-            public void testMutablePropertiesMaterializeCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
-            }
-
-            @Test
-            @TestMetadata("MutablePropertiesYieldCase.kt")
-            public void testMutablePropertiesYieldCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
-            }
-
-            @Test
-            @TestMetadata("ParametersOfBuilderArguments.kt")
-            public void testParametersOfBuilderArguments() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
-            }
-
-            @Test
-            @TestMetadata("ReceiversOfBuilderArguments.kt")
-            public void testReceiversOfBuilderArguments() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
-            }
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
-          @TestDataPath("$PROJECT_ROOT")
-          public class TypeInfoSources {
-            @Test
-            public void testAllFilesPresentInTypeInfoSources() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-            }
-
-            @Test
-            @TestMetadata("ExtensionFunctions.kt")
-            public void testExtensionFunctions() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
-            }
-
-            @Test
-            @TestMetadata("ExtensionProperties.kt")
-            public void testExtensionProperties() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
-            }
-
-            @Test
-            @TestMetadata("ParametersOfBuilderArguments.kt")
-            public void testParametersOfBuilderArguments() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
-            }
-
-            @Test
-            @TestMetadata("ReceiversOfBuilderArguments.kt")
-            public void testReceiversOfBuilderArguments() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
-            }
-
-            @Test
-            @TestMetadata("ReturnTypesOfBuilderParameters.kt")
-            public void testReturnTypesOfBuilderParameters() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
-            }
-
-            @Test
-            @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
-            public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
-              runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class BuiltinStubMethods {
     @Test
     public void testAllFilesPresentInBuiltinStubMethods() {
@@ -3516,6 +2770,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BridgesForStubs {
       @Test
       public void testAllFilesPresentInBridgesForStubs() {
@@ -3526,6 +2781,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ExtendJavaClasses {
       @Test
       @TestMetadata("abstractSet.kt")
@@ -3572,6 +2828,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MapGetOrDefault {
       @Test
       public void testAllFilesPresentInMapGetOrDefault() {
@@ -3582,6 +2839,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapRemove")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MapRemove {
       @Test
       public void testAllFilesPresentInMapRemove() {
@@ -3593,6 +2851,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/callableReference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
@@ -3773,9 +3032,16 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       runTest("compiler/testData/codegen/box/callableReference/nested.kt");
     }
 
+    @Test
+    @TestMetadata("starProjectionCallableReference.kt")
+    public void testStarProjectionCallableReference() {
+      runTest("compiler/testData/codegen/box/callableReference/starProjectionCallableReference.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class AdaptedReferences {
       @Test
       @TestMetadata("adaptedArrayOf.kt")
@@ -3965,6 +3231,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class SuspendConversion {
         @Test
         @TestMetadata("adaptedWithCoercionToUnit.kt")
@@ -4072,6 +3339,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Bound {
       @Test
       @TestMetadata("adapted.kt")
@@ -4249,6 +3517,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Equals {
         @Test
         public void testAllFilesPresentInEquals() {
@@ -4272,6 +3541,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
@@ -4321,6 +3591,24 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("kproperty.kt")
+      public void testKproperty() {
+        runTest("compiler/testData/codegen/box/callableReference/equality/kproperty.kt");
+      }
+
+      @Test
+      @TestMetadata("kpropertyWithCapturingEquality.kt")
+      public void testKpropertyWithCapturingEquality() {
+        runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingEquality.kt");
+      }
+
+      @Test
+      @TestMetadata("kpropertyWithCapturingInequality.kt")
+      public void testKpropertyWithCapturingInequality() {
+        runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingInequality.kt");
+      }
+
+      @Test
       @TestMetadata("noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt")
       public void testNoCoercionToUnitIfFunctionAlreadyReturnsUnit() {
         runTest("compiler/testData/codegen/box/callableReference/equality/noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt");
@@ -4360,6 +3648,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FunInterfaceConstructor {
       @Test
       public void testAllFilesPresentInFunInterfaceConstructor() {
@@ -4400,6 +3689,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Function {
       @Test
       @TestMetadata("abstractClassMember.kt")
@@ -4739,6 +4029,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
@@ -4864,12 +4155,19 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         public void testUnitWithSideEffect() {
           runTest("compiler/testData/codegen/box/callableReference/function/local/unitWithSideEffect.kt");
         }
+
+        @Test
+        @TestMetadata("withValueArguments.kt")
+        public void testWithValueArguments() {
+          runTest("compiler/testData/codegen/box/callableReference/function/local/withValueArguments.kt");
+        }
       }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/property")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Property {
       @Test
       @TestMetadata("accessViaSubclass.kt")
@@ -5060,6 +4358,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Serializability {
       @Test
       public void testAllFilesPresentInSerializability() {
@@ -5077,6 +4376,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/casts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Casts {
     @Test
     public void testAllFilesPresentInCasts() {
@@ -5228,6 +4528,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt68509.kt")
+    public void testKt68509() {
+      runTest("compiler/testData/codegen/box/casts/kt68509.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaToUnitCast.kt")
     public void testLambdaToUnitCast() {
       runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
@@ -5266,6 +4572,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
@@ -5354,6 +4661,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -5364,6 +4672,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class LiteralExpressionAsGenericArgument {
       @Test
       public void testAllFilesPresentInLiteralExpressionAsGenericArgument() {
@@ -5410,6 +4719,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MutableCollections {
       @Test
       public void testAllFilesPresentInMutableCollections() {
@@ -5462,6 +4772,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class NativeCCEMessage {
       @Test
       public void testAllFilesPresentInNativeCCEMessage() {
@@ -5473,6 +4784,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class CheckcastOptimization {
     @Test
     public void testAllFilesPresentInCheckcastOptimization() {
@@ -5507,6 +4819,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classDelegation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ClassDelegation {
     @Test
     public void testAllFilesPresentInClassDelegation() {
@@ -5514,9 +4827,45 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("delegationToInOutTypeParameters.kt")
+    public void testDelegationToInOutTypeParameters() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToInTypeParameter.kt")
+    public void testDelegationToInTypeParameter() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToInTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToOutTypeParameter.kt")
+    public void testDelegationToOutTypeParameter() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToOutTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToTypeParameter.kt")
+    public void testDelegationToTypeParameter() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToTypeParameterWithRecursiveBond.kt")
+    public void testDelegationToTypeParameterWithRecursiveBond() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameterWithRecursiveBond.kt");
+    }
+
+    @Test
     @TestMetadata("generic.kt")
     public void testGeneric() {
       runTest("compiler/testData/codegen/box/classDelegation/generic.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenDelegateAndLateinitVar.kt")
+    public void testHiddenDelegateAndLateinitVar() {
+      runTest("compiler/testData/codegen/box/classDelegation/hiddenDelegateAndLateinitVar.kt");
     }
 
     @Test
@@ -5547,6 +4896,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classLiteral")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ClassLiteral {
     @Test
     public void testAllFilesPresentInClassLiteral() {
@@ -5574,6 +4924,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Bound {
       @Test
       public void testAllFilesPresentInBound() {
@@ -5608,6 +4959,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Java {
       @Test
       public void testAllFilesPresentInJava() {
@@ -5619,6 +4971,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Classes {
     @Test
     public void testAllFilesPresentInClasses() {
@@ -6294,6 +5647,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classes/inner")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Inner {
       @Test
       public void testAllFilesPresentInInner() {
@@ -6347,6 +5701,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/closures")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Closures {
     @Test
     public void testAllFilesPresentInClosures() {
@@ -6638,6 +5993,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CaptureInSuperConstructorCall {
       @Test
       public void testAllFilesPresentInCaptureInSuperConstructorCall() {
@@ -6840,6 +6196,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CaptureOuterProperty {
       @Test
       public void testAllFilesPresentInCaptureOuterProperty() {
@@ -6898,6 +6255,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CapturedVarsOptimization {
       @Test
       public void testAllFilesPresentInCapturedVarsOptimization() {
@@ -6986,6 +6344,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ClosureInsideClosure {
       @Test
       public void testAllFilesPresentInClosureInsideClosure() {
@@ -7033,6 +6392,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class CollectionLiterals {
     @Test
     public void testAllFilesPresentInCollectionLiterals() {
@@ -7043,6 +6403,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/collections")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Collections {
     @Test
     @TestMetadata("addCollectionStubWithCovariantOverride.kt")
@@ -7095,6 +6456,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/companion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Companion {
     @Test
     public void testAllFilesPresentInCompanion() {
@@ -7118,11 +6480,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testInlineFunctionCompanionPropertyAccess() {
       runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
     }
+
+    @Test
+    @TestMetadata("protectedConstValFromSuperCompanion.kt")
+    public void testProtectedConstValFromSuperCompanion() {
+      runTest("compiler/testData/codegen/box/companion/protectedConstValFromSuperCompanion.kt");
+    }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/compatibility")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Compatibility {
     @Test
     public void testAllFilesPresentInCompatibility() {
@@ -7139,6 +6508,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constants")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Constants {
     @Test
     public void testAllFilesPresentInConstants() {
@@ -7227,6 +6597,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constructor")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Constructor {
     @Test
     public void testAllFilesPresentInConstructor() {
@@ -7237,6 +6608,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/constructorCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ConstructorCall {
     @Test
     public void testAllFilesPresentInConstructorCall() {
@@ -7247,6 +6619,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/contracts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Contracts {
     @Test
     public void testAllFilesPresentInContracts() {
@@ -7383,6 +6756,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/controlStructures")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ControlStructures {
     @Test
     public void testAllFilesPresentInControlStructures() {
@@ -7878,6 +7252,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BreakContinueInExpressions {
       @Test
       public void testAllFilesPresentInBreakContinueInExpressions() {
@@ -8007,6 +7382,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class InlinedBreakContinue {
         @Test
         public void testAllFilesPresentInInlinedBreakContinue() {
@@ -8014,9 +7390,21 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("continueInTryBlock.kt")
+        public void testContinueInTryBlock() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/continueInTryBlock.kt");
+        }
+
+        @Test
         @TestMetadata("initializerBlock.kt")
         public void testInitializerBlock() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/initializerBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineConstructor.kt")
+        public void testInlineConstructor() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineConstructor.kt");
         }
 
         @Test
@@ -8044,6 +7432,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("simpleDoWhile.kt")
+        public void testSimpleDoWhile() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simpleDoWhile.kt");
+        }
+
+        @Test
         @TestMetadata("stdlibFunctions.kt")
         public void testStdlibFunctions() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
@@ -8054,12 +7448,25 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         public void testWithReturnValue() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
         }
+
+        @Test
+        @TestMetadata("withReturnValueDoWhileContinue.kt")
+        public void testWithReturnValueDoWhileContinue() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueDoWhileContinue.kt");
+        }
+
+        @Test
+        @TestMetadata("withReturnValueNested.kt")
+        public void testWithReturnValueNested() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueNested.kt");
+        }
       }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInArray {
       @Test
       public void testAllFilesPresentInForInArray() {
@@ -8130,6 +7537,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInArrayWithIndex {
       @Test
       public void testAllFilesPresentInForInArrayWithIndex() {
@@ -8260,6 +7668,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInCharSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInCharSequenceWithIndex() {
@@ -8354,6 +7763,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInIterableWithIndex {
       @Test
       public void testAllFilesPresentInForInIterableWithIndex() {
@@ -8436,6 +7846,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInIterator {
       @Test
       public void testAllFilesPresentInForInIterator() {
@@ -8446,6 +7857,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInSequenceWithIndex() {
@@ -8516,6 +7928,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ReturnsNothing {
       @Test
       public void testAllFilesPresentInReturnsNothing() {
@@ -8556,6 +7969,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SlowDsl {
       @Test
       public void testAllFilesPresentInSlowDsl() {
@@ -8566,6 +7980,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TryCatchInExpressions {
       @Test
       public void testAllFilesPresentInTryCatchInExpressions() {
@@ -8757,6 +8172,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/controlflow")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Controlflow {
     @Test
     public void testAllFilesPresentInControlflow() {
@@ -8872,6 +8288,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("smartcastOnThisInInitializationSection.kt")
+    public void testSmartcastOnThisInInitializationSection() {
+      runTest("compiler/testData/codegen/box/controlflow/smartcastOnThisInInitializationSection.kt");
+    }
+
+    @Test
     @TestMetadata("unreachable1.kt")
     public void testUnreachable1() {
       runTest("compiler/testData/codegen/box/controlflow/unreachable1.kt");
@@ -8881,6 +8303,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/coroutines")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Coroutines {
     @Test
     @TestMetadata("32defaultParametersInSuspend.kt")
@@ -9898,6 +9321,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Bridges {
       @Test
       public void testAllFilesPresentInBridges() {
@@ -9944,6 +9368,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/controlFlow")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ControlFlow {
       @Test
       public void testAllFilesPresentInControlFlow() {
@@ -10092,6 +9517,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/debug")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Debug {
       @Test
       public void testAllFilesPresentInDebug() {
@@ -10102,6 +9528,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FeatureIntersection {
       @Test
       public void testAllFilesPresentInFeatureIntersection() {
@@ -10225,6 +9652,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
@@ -10252,6 +9680,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Bound {
           @Test
           public void testAllFilesPresentInBound() {
@@ -10268,6 +9697,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Function {
           @Test
           @TestMetadata("adapted.kt")
@@ -10289,6 +9719,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Local {
             @Test
             public void testAllFilesPresentInLocal() {
@@ -10307,6 +9738,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
@@ -10341,6 +9773,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class JvmDefault {
         @Test
         public void testAllFilesPresentInJvmDefault() {
@@ -10350,6 +9783,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Kt46007 {
           @Test
           public void testAllFilesPresentInKt46007() {
@@ -10361,6 +9795,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Tailrec {
         @Test
         public void testAllFilesPresentInTailrec() {
@@ -10456,6 +9891,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
@@ -10483,6 +9919,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/direct")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Direct {
         @Test
         public void testAllFilesPresentInDirect() {
@@ -10775,6 +10212,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resume")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Resume {
         @Test
         public void testAllFilesPresentInResume() {
@@ -11067,6 +10505,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ResumeWithException {
         @Test
         public void testAllFilesPresentInResumeWithException() {
@@ -11330,6 +10769,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class IntLikeVarSpilling {
       @Test
       public void testAllFilesPresentInIntLikeVarSpilling() {
@@ -11400,6 +10840,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class IntrinsicSemantics {
       @Test
       public void testAllFilesPresentInIntrinsicSemantics() {
@@ -11470,6 +10911,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -11480,6 +10922,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
@@ -11489,6 +10932,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Named {
         @Test
         public void testAllFilesPresentInNamed() {
@@ -11572,6 +11016,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
@@ -11636,6 +11081,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class RedundantLocalsElimination {
       @Test
       public void testAllFilesPresentInRedundantLocalsElimination() {
@@ -11652,6 +11098,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Reflect {
       @Test
       public void testAllFilesPresentInReflect() {
@@ -11662,6 +11109,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class StackUnwinding {
       @Test
       public void testAllFilesPresentInStackUnwinding() {
@@ -11708,6 +11156,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendConversion")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SuspendConversion {
       @Test
       public void testAllFilesPresentInSuspendConversion() {
@@ -11737,11 +11186,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       public void testSubtypeOfFunctionalTypeToSuspendConversion() {
         runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
       }
+
+      @Test
+      @TestMetadata("suspendConversionBetweenFunInterfaces.kt")
+      public void testSuspendConversionBetweenFunInterfaces() {
+        runTest("compiler/testData/codegen/box/coroutines/suspendConversion/suspendConversionBetweenFunInterfaces.kt");
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SuspendFunctionAsCoroutine {
       @Test
       public void testAllFilesPresentInSuspendFunctionAsCoroutine() {
@@ -11854,6 +11310,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SuspendFunctionTypeCall {
       @Test
       public void testAllFilesPresentInSuspendFunctionTypeCall() {
@@ -11894,6 +11351,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TailCallOptimizations {
       @Test
       public void testAllFilesPresentInTailCallOptimizations() {
@@ -11927,6 +11385,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Unit {
         @Test
         public void testAllFilesPresentInUnit() {
@@ -11938,6 +11397,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TailOperations {
       @Test
       public void testAllFilesPresentInTailOperations() {
@@ -11972,6 +11432,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class UnitTypeReturn {
       @Test
       public void testAllFilesPresentInUnitTypeReturn() {
@@ -12024,6 +11485,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class VarSpilling {
       @Test
       public void testAllFilesPresentInVarSpilling() {
@@ -12087,6 +11549,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Cleanup {
         @Test
         public void testAllFilesPresentInCleanup() {
@@ -12097,6 +11560,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class DebugMode {
         @Test
         public void testAllFilesPresentInDebugMode() {
@@ -12109,6 +11573,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class CorrectFrontendCode {
     @Test
     public void testAllFilesPresentInCorrectFrontendCode() {
@@ -12125,6 +11590,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/cycles")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Cycles {
     @Test
     public void testAllFilesPresentInCycles() {
@@ -12153,6 +11619,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DataClasses {
     @Test
     public void testAllFilesPresentInDataClasses() {
@@ -12256,6 +11723,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("propertyOfDnnType.kt")
+    public void testPropertyOfDnnType() {
+      runTest("compiler/testData/codegen/box/dataClasses/propertyOfDnnType.kt");
+    }
+
+    @Test
     @TestMetadata("twoValParams.kt")
     public void testTwoValParams() {
       runTest("compiler/testData/codegen/box/dataClasses/twoValParams.kt");
@@ -12276,6 +11749,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Components {
       @Test
       public void testAllFilesPresentInComponents() {
@@ -12298,6 +11772,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Copy {
       @Test
       public void testAllFilesPresentInCopy() {
@@ -12356,6 +11831,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
@@ -12402,6 +11878,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class HashCode {
       @Test
       public void testAllFilesPresentInHashCode() {
@@ -12478,6 +11955,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ToString {
       @Test
       public void testAllFilesPresentInToString() {
@@ -12531,6 +12009,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataObjects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DataObjects {
     @Test
     public void testAllFilesPresentInDataObjects() {
@@ -12559,6 +12038,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/dataflow")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Dataflow {
     @Test
     public void testAllFilesPresentInDataflow() {
@@ -12581,6 +12061,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DeadCodeElimination {
     @Test
     public void testAllFilesPresentInDeadCodeElimination() {
@@ -12615,6 +12096,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
@@ -12768,6 +12250,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Constructor {
       @Test
       public void testAllFilesPresentInConstructor() {
@@ -12868,6 +12351,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Convention {
       @Test
       public void testAllFilesPresentInConvention() {
@@ -12914,6 +12398,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Function {
       @Test
       @TestMetadata("abstractClass.kt")
@@ -13092,6 +12577,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Private {
       @Test
       public void testAllFilesPresentInPrivate() {
@@ -13124,8 +12610,20 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class Reflection {
+      @Test
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Signature {
       @Test
       public void testAllFilesPresentInSignature() {
@@ -13155,6 +12653,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DelegatedProperty {
     @Test
     @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -13530,6 +13029,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegateToAnother {
       @Test
       public void testAllFilesPresentInDelegateToAnother() {
@@ -13558,12 +13058,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @TestMetadata("kt49793_object.kt")
       public void testKt49793_object() {
         runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_object.kt");
-      }
-
-      @Test
-      @TestMetadata("kt50019_noOptimizedCallableReferences.kt")
-      public void testKt50019_noOptimizedCallableReferences() {
-        runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt50019_noOptimizedCallableReferences.kt");
       }
 
       @Test
@@ -13600,6 +13094,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegateToConst {
       @Test
       public void testAllFilesPresentInDelegateToConst() {
@@ -13628,6 +13123,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegateToFinalProperty {
       @Test
       public void testAllFilesPresentInDelegateToFinalProperty() {
@@ -13686,6 +13182,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegateToSingleton {
       @Test
       public void testAllFilesPresentInDelegateToSingleton() {
@@ -13738,6 +13235,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegateToThis {
       @Test
       public void testAllFilesPresentInDelegateToThis() {
@@ -13766,6 +13264,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Local {
       @Test
       public void testAllFilesPresentInLocal() {
@@ -13872,6 +13371,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class OptimizedDelegatedProperties {
       @Test
       public void testAllFilesPresentInOptimizedDelegatedProperties() {
@@ -13948,6 +13448,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProvideDelegate {
       @Test
       public void testAllFilesPresentInProvideDelegate() {
@@ -14109,10 +13610,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/delegation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("delegatedAnonymousObject_noParametersOnDelegate.kt")
+    public void testDelegatedAnonymousObject_noParametersOnDelegate() {
+      runTest("compiler/testData/codegen/box/delegation/delegatedAnonymousObject_noParametersOnDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedAnonymousObject_someParametersOnDelegate.kt")
+    public void testDelegatedAnonymousObject_someParametersOnDelegate() {
+      runTest("compiler/testData/codegen/box/delegation/delegatedAnonymousObject_someParametersOnDelegate.kt");
     }
 
     @Test
@@ -14233,6 +13747,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/deprecated")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Deprecated {
     @Test
     public void testAllFilesPresentInDeprecated() {
@@ -14243,6 +13758,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DestructuringDeclInLambdaParam {
     @Test
     public void testAllFilesPresentInDestructuringDeclInLambdaParam() {
@@ -14307,6 +13823,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/devirtualization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Devirtualization {
     @Test
     public void testAllFilesPresentInDevirtualization() {
@@ -14332,6 +13849,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt67218c.kt")
+    public void testKt67218c() {
+      runTest("compiler/testData/codegen/box/devirtualization/kt67218c.kt");
+    }
+
+    @Test
+    @TestMetadata("kt67218i.kt")
+    public void testKt67218i() {
+      runTest("compiler/testData/codegen/box/devirtualization/kt67218i.kt");
+    }
+
+    @Test
     @TestMetadata("lateinitInterface.kt")
     public void testLateinitInterface() {
       runTest("compiler/testData/codegen/box/devirtualization/lateinitInterface.kt");
@@ -14341,6 +13870,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/diagnostics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Diagnostics {
     @Test
     public void testAllFilesPresentInDiagnostics() {
@@ -14350,6 +13880,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
@@ -14359,6 +13890,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
@@ -14375,6 +13907,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
@@ -14384,6 +13917,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class OnObjects {
           @Test
           public void testAllFilesPresentInOnObjects() {
@@ -14455,6 +13989,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class TailRecursion {
         @Test
         public void testAllFilesPresentInTailRecursion() {
@@ -14736,6 +14271,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
@@ -14753,6 +14289,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DifferentDependencyVersion {
     @Test
     public void testAllFilesPresentInDifferentDependencyVersion() {
@@ -14763,6 +14300,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class DirectInvokeOptimization {
     @Test
     public void testAllFilesPresentInDirectInvokeOptimization() {
@@ -14857,6 +14395,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/elvis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Elvis {
     @Test
     public void testAllFilesPresentInElvis() {
@@ -14921,6 +14460,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/enum")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Enum {
     @Test
     @TestMetadata("abstractMethodInEnum.kt")
@@ -15015,6 +14555,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("enumEntriesCompatibilityCheck.kt")
     public void testEnumEntriesCompatibilityCheck() {
       runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheck.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt")
+    public void testEnumEntriesCompatibilityCheckNoPrioritizedEnumEntries() {
+      runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt");
     }
 
     @Test
@@ -15500,6 +15046,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DefaultCtor {
       @Test
       public void testAllFilesPresentInDefaultCtor() {
@@ -15553,6 +15100,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class EquivalentCalls {
     @Test
     public void testAllFilesPresentInEquivalentCalls() {
@@ -15569,6 +15117,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/escapeAnalysis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class EscapeAnalysis {
     @Test
     public void testAllFilesPresentInEscapeAnalysis() {
@@ -15675,6 +15224,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/evaluate")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Evaluate {
     @Test
     public void testAllFilesPresentInEvaluate() {
@@ -15691,6 +15241,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/exceptions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Exceptions {
     @Test
     public void testAllFilesPresentInExceptions() {
@@ -15722,6 +15273,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt69534.kt")
+    public void testKt69534() {
+      runTest("compiler/testData/codegen/box/exceptions/kt69534.kt");
+    }
+
+    @Test
     @TestMetadata("rethrow.kt")
     public void testRethrow() {
       runTest("compiler/testData/codegen/box/exceptions/rethrow.kt");
@@ -15743,6 +15300,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/exclExcl")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ExclExcl {
     @Test
     public void testAllFilesPresentInExclExcl() {
@@ -15777,6 +15335,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ExtensionClasses {
     @Test
     public void testAllFilesPresentInExtensionClasses() {
@@ -15787,6 +15346,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ExtensionFunctions {
     @Test
     public void testAllFilesPresentInExtensionFunctions() {
@@ -15958,15 +15518,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
       }
 
+      @Test
+      @TestMetadata("contextAndNoContextOverloads.kt")
+      public void testContextAndNoContextOverloads() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextAndNoContextOverloads.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
@@ -15979,6 +15547,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/extensionProperties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ExtensionProperties {
     @Test
     @TestMetadata("accessorForPrivateSetter.kt")
@@ -16085,6 +15654,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/external")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class External {
     @Test
     public void testAllFilesPresentInExternal() {
@@ -16095,6 +15665,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fakeOverride")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class FakeOverride {
     @Test
     public void testAllFilesPresentInFakeOverride() {
@@ -16111,6 +15682,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("fakeOverrideOfPrivateSetter.kt")
     public void testFakeOverrideOfPrivateSetter() {
       runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideOfPrivateSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("fakeOverrideWithMissingClassInSignature.kt")
+    public void testFakeOverrideWithMissingClassInSignature() {
+      runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideWithMissingClassInSignature.kt");
     }
 
     @Test
@@ -16189,6 +15766,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fieldRename")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class FieldRename {
     @Test
     public void testAllFilesPresentInFieldRename() {
@@ -16217,6 +15795,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/finally")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Finally {
     @Test
     public void testAllFilesPresentInFinally() {
@@ -16371,6 +15950,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fir")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Fir {
     @Test
     public void testAllFilesPresentInFir() {
@@ -16393,6 +15973,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("classCanNotBeCastedToVoid.kt")
     public void testClassCanNotBeCastedToVoid() {
       runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
+    }
+
+    @Test
+    @TestMetadata("copyOnObject.kt")
+    public void testCopyOnObject() {
+      runTest("compiler/testData/codegen/box/fir/copyOnObject.kt");
     }
 
     @Test
@@ -16426,6 +16012,24 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("inferenceWithTypeAliasFromOtherModule.kt")
+    public void testInferenceWithTypeAliasFromOtherModule() {
+      runTest("compiler/testData/codegen/box/fir/inferenceWithTypeAliasFromOtherModule.kt");
+    }
+
+    @Test
+    @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
+    public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
+      runTest("compiler/testData/codegen/box/fir/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("kt68806.kt")
+    public void testKt68806() {
+      runTest("compiler/testData/codegen/box/fir/kt68806.kt");
+    }
+
+    @Test
     @TestMetadata("listAssignmentInWhen.kt")
     public void testListAssignmentInWhen() {
       runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");
@@ -16456,9 +16060,21 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("multipleDefaultsFalsePositiveDelegation.kt")
+    public void testMultipleDefaultsFalsePositiveDelegation() {
+      runTest("compiler/testData/codegen/box/fir/multipleDefaultsFalsePositiveDelegation.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassTypeParameterDeserialization.kt")
     public void testNestedClassTypeParameterDeserialization() {
       runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
+    }
+
+    @Test
+    @TestMetadata("noRecursiveProblemWithProjection.kt")
+    public void testNoRecursiveProblemWithProjection() {
+      runTest("compiler/testData/codegen/box/fir/noRecursiveProblemWithProjection.kt");
     }
 
     @Test
@@ -16500,6 +16116,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class PrimitivesInJava {
       @Test
       public void testAllFilesPresentInPrimitivesInJava() {
@@ -16511,6 +16128,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/fullJdk")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class FullJdk {
     @Test
     public void testAllFilesPresentInFullJdk() {
@@ -16520,6 +16138,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
@@ -16530,6 +16149,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Regressions {
       @Test
       public void testAllFilesPresentInRegressions() {
@@ -16541,6 +16161,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/funInterface")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class FunInterface {
     @Test
     public void testAllFilesPresentInFunInterface() {
@@ -16620,6 +16241,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("funInterfaceWithSuspendMethod.kt")
+    public void testFunInterfaceWithSuspendMethod() {
+      runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithSuspendMethod.kt");
+    }
+
+    @Test
     @TestMetadata("implIsNotFunction.kt")
     public void testImplIsNotFunction() {
       runTest("compiler/testData/codegen/box/funInterface/implIsNotFunction.kt");
@@ -16686,12 +16313,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
-    @TestMetadata("noOptimizedCallableReferences.kt")
-    public void testNoOptimizedCallableReferences() {
-      runTest("compiler/testData/codegen/box/funInterface/noOptimizedCallableReferences.kt");
-    }
-
-    @Test
     @TestMetadata("nonAbstractMethod.kt")
     public void testNonAbstractMethod() {
       runTest("compiler/testData/codegen/box/funInterface/nonAbstractMethod.kt");
@@ -16754,6 +16375,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
@@ -16795,6 +16417,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/function")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Function {
     @Test
     public void testAllFilesPresentInFunction() {
@@ -17021,6 +16644,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/functions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Functions {
     @Test
     public void testAllFilesPresentInFunctions() {
@@ -17318,6 +16942,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BigArity {
       @Test
       public void testAllFilesPresentInBigArity() {
@@ -17370,6 +16995,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FunctionExpression {
       @Test
       public void testAllFilesPresentInFunctionExpression() {
@@ -17410,6 +17036,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/invoke")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Invoke {
       @Test
       public void testAllFilesPresentInInvoke() {
@@ -17504,6 +17131,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
@@ -17689,6 +17317,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ieee754")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Ieee754 {
     @Test
     public void testAllFilesPresentInIeee754() {
@@ -17933,6 +17562,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/increment")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Increment {
     @Test
     public void testAllFilesPresentInIncrement() {
@@ -18099,6 +17729,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Inference {
     @Test
     public void testAllFilesPresentInInference() {
@@ -18220,6 +17851,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt67609.kt")
+    public void testKt67609() {
+      runTest("compiler/testData/codegen/box/inference/kt67609.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithStarReturn.kt")
     public void testLambdaWithStarReturn() {
       runTest("compiler/testData/codegen/box/inference/lambdaWithStarReturn.kt");
@@ -18298,12 +17935,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
-    @TestMetadata("specialCallsWithCallableReferences.kt")
-    public void testSpecialCallsWithCallableReferences() {
-      runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
-    }
-
-    @Test
     @TestMetadata("sumOfOverloads.kt")
     public void testSumOfOverloads() {
       runTest("compiler/testData/codegen/box/inference/sumOfOverloads.kt");
@@ -18322,210 +17953,1121 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/inference/builderInference")
+    @TestMetadata("compiler/testData/codegen/box/inference/pcla")
     @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
+    @Tag("es6")
+    public class Pcla {
       @Test
-      public void testAllFilesPresentInBuilderInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      public void testAllFilesPresentInPcla() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
       }
 
       @Test
       @TestMetadata("builderCallAsReturnTypeInLocalClass.kt")
       public void testBuilderCallAsReturnTypeInLocalClass() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/builderCallAsReturnTypeInLocalClass.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/builderCallAsReturnTypeInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("callableReferenceAndCoercionToUnit.kt")
       public void testCallableReferenceAndCoercionToUnit() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/callableReferenceAndCoercionToUnit.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/callableReferenceAndCoercionToUnit.kt");
       }
 
       @Test
       @TestMetadata("callableReferencesProperCompletion.kt")
       public void testCallableReferencesProperCompletion() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/callableReferencesProperCompletion.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/callableReferencesProperCompletion.kt");
       }
 
       @Test
       @TestMetadata("capturedTypes.kt")
       public void testCapturedTypes() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/capturedTypes.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/capturedTypes.kt");
       }
 
       @Test
       @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
       public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
       }
 
       @Test
       @TestMetadata("constraintsBetweenTwoStubVariables.kt")
       public void testConstraintsBetweenTwoStubVariables() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/constraintsBetweenTwoStubVariables.kt");
-      }
-
-      @Test
-      @TestMetadata("kt41164.kt")
-      public void testKt41164() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt41164.kt");
-      }
-
-      @Test
-      @TestMetadata("kt42139.kt")
-      public void testKt42139() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt42139.kt");
-      }
-
-      @Test
-      @TestMetadata("kt44241.kt")
-      public void testKt44241() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt44241.kt");
-      }
-
-      @Test
-      @TestMetadata("kt45083.kt")
-      public void testKt45083() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt45083.kt");
-      }
-
-      @Test
-      @TestMetadata("kt47052.kt")
-      public void testKt47052() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt47052.kt");
-      }
-
-      @Test
-      @TestMetadata("kt47744.kt")
-      public void testKt47744() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt47744.kt");
-      }
-
-      @Test
-      @TestMetadata("kt48633.kt")
-      public void testKt48633() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt48633.kt");
-      }
-
-      @Test
-      @TestMetadata("kt49887.kt")
-      public void testKt49887() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt49887.kt");
-      }
-
-      @Test
-      @TestMetadata("kt51988.kt")
-      public void testKt51988() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/kt51988.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/constraintsBetweenTwoStubVariables.kt");
       }
 
       @Test
       @TestMetadata("labaledCall.kt")
       public void testLabaledCall() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/labaledCall.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/labaledCall.kt");
       }
 
       @Test
       @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
       public void testLackOfNullCheckOnNullableInsideBuild() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/lackOfNullCheckOnNullableInsideBuild.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaParameterHasTVType.kt")
+      public void testLambdaParameterHasTVType() {
+        runTest("compiler/testData/codegen/box/inference/pcla/lambdaParameterHasTVType.kt");
       }
 
       @Test
       @TestMetadata("memberScope.kt")
       public void testMemberScope() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/memberScope.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/memberScope.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedNonExhaustiveIf.kt")
+      public void testNestedNonExhaustiveIf() {
+        runTest("compiler/testData/codegen/box/inference/pcla/nestedNonExhaustiveIf.kt");
       }
 
       @Test
       @TestMetadata("nullability.kt")
       public void testNullability() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/nullability.kt");
+      }
+
+      @Test
+      @TestMetadata("pcaRootIsDelegatedConstructorCall.kt")
+      public void testPcaRootIsDelegatedConstructorCall() {
+        runTest("compiler/testData/codegen/box/inference/pcla/pcaRootIsDelegatedConstructorCall.kt");
+      }
+
+      @Test
+      @TestMetadata("pclaRootIsElvisSynthetic.kt")
+      public void testPclaRootIsElvisSynthetic() {
+        runTest("compiler/testData/codegen/box/inference/pcla/pclaRootIsElvisSynthetic.kt");
+      }
+
+      @Test
+      @TestMetadata("pclaRootIsIfWhenSyntheticCall.kt")
+      public void testPclaRootIsIfWhenSyntheticCall() {
+        runTest("compiler/testData/codegen/box/inference/pcla/pclaRootIsIfWhenSyntheticCall.kt");
+      }
+
+      @Test
+      @TestMetadata("pclaRootIsTrySyntheticCall.kt")
+      public void testPclaRootIsTrySyntheticCall() {
+        runTest("compiler/testData/codegen/box/inference/pcla/pclaRootIsTrySyntheticCall.kt");
+      }
+
+      @Test
+      @TestMetadata("pclaRootIsTrySyntheticCallWithDelegate.kt")
+      public void testPclaRootIsTrySyntheticCallWithDelegate() {
+        runTest("compiler/testData/codegen/box/inference/pcla/pclaRootIsTrySyntheticCallWithDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+      public void testPosptonedPCLACallInsideStringInterpolation() {
+        runTest("compiler/testData/codegen/box/inference/pcla/posptonedPCLACallInsideStringInterpolation.kt");
       }
 
       @Test
       @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
       public void testPropagateInferenceSessionIntoDeclarationAnalyzers() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
       }
 
       @Test
-      @TestMetadata("specialCallsWithCallableReferences.kt")
-      public void testSpecialCallsWithCallableReferences() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferences.kt");
+      @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+      public void testPropertyInvokeInsidePCLALambda() {
+        runTest("compiler/testData/codegen/box/inference/pcla/propertyInvokeInsidePCLALambda.kt");
+      }
+
+      @Test
+      @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
+      public void testReceiverUsesOuterTVButReturnTypeIsProper() {
+        runTest("compiler/testData/codegen/box/inference/pcla/receiverUsesOuterTVButReturnTypeIsProper.kt");
       }
 
       @Test
       @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
       public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
-      }
-
-      @Test
-      @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-      public void testSpecialCallsWithCallableReferencesErrorType() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
       }
 
       @Test
       @TestMetadata("specialCallsWithLambdas.kt")
       public void testSpecialCallsWithLambdas() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithLambdas.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithLambdas.kt");
       }
 
       @Test
       @TestMetadata("substituteStubTypeIntoCR.kt")
       public void testSubstituteStubTypeIntoCR() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntoCR.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/substituteStubTypeIntoCR.kt");
       }
 
       @Test
       @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
       public void testSubstituteStubTypeIntolambdaParameterDescriptor() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/substituteStubTypeIntolambdaParameterDescriptor.kt");
       }
 
       @Test
       @TestMetadata("substitutelambdaExtensionReceiverType.kt")
       public void testSubstitutelambdaExtensionReceiverType() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/substitutelambdaExtensionReceiverType.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/substitutelambdaExtensionReceiverType.kt");
       }
 
       @Test
       @TestMetadata("topDownCompletionBreakedByNonBuilderInferenceSession.kt")
       public void testTopDownCompletionBreakedByNonBuilderInferenceSession() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionBreakedByNonBuilderInferenceSession.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/topDownCompletionBreakedByNonBuilderInferenceSession.kt");
       }
 
       @Test
       @TestMetadata("topDownCompletionWithThreeBuilderInferenceCalls.kt")
       public void testTopDownCompletionWithThreeBuilderInferenceCalls() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCalls.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/topDownCompletionWithThreeBuilderInferenceCalls.kt");
       }
 
       @Test
       @TestMetadata("topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt")
       public void testTopDownCompletionWithThreeBuilderInferenceCallsSameLevel() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt");
       }
 
       @Test
       @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
       public void testTopDownCompletionWithTwoBuilderInferenceCalls() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/topDownCompletionWithTwoBuilderInferenceCalls.kt");
       }
 
       @Test
       @TestMetadata("withExpectedType.kt")
       public void testWithExpectedType() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/withExpectedType.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/withExpectedType.kt");
       }
 
       @Test
       @TestMetadata("withoutAnnotation.kt")
       public void testWithoutAnnotation() {
-        runTest("compiler/testData/codegen/box/inference/builderInference/withoutAnnotation.kt");
+        runTest("compiler/testData/codegen/box/inference/pcla/withoutAnnotation.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inference/pcla/issues")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
+      public class Issues {
+        @Test
+        public void testAllFilesPresentInIssues() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @Test
+        @TestMetadata("kt41164.kt")
+        public void testKt41164() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt41164.kt");
+        }
+
+        @Test
+        @TestMetadata("kt42139.kt")
+        public void testKt42139() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt42139.kt");
+        }
+
+        @Test
+        @TestMetadata("kt43710.kt")
+        public void testKt43710() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt43710.kt");
+        }
+
+        @Test
+        @TestMetadata("kt43710b.kt")
+        public void testKt43710b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt43710b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt44241.kt")
+        public void testKt44241() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt44241.kt");
+        }
+
+        @Test
+        @TestMetadata("kt45083.kt")
+        public void testKt45083() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt45083.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47052.kt")
+        public void testKt47052() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt47052.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47744.kt")
+        public void testKt47744() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt47744.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47989a.kt")
+        public void testKt47989a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt47989a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47989b.kt")
+        public void testKt47989b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt47989b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt48633.kt")
+        public void testKt48633() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt48633.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49160a.kt")
+        public void testKt49160a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49160a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49160b.kt")
+        public void testKt49160b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49160b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49160c.kt")
+        public void testKt49160c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49160c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49160d.kt")
+        public void testKt49160d() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49160d.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49160e.kt")
+        public void testKt49160e() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49160e.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49263.kt")
+        public void testKt49263() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49263.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49887.kt")
+        public void testKt49887() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt49887.kt");
+        }
+
+        @Test
+        @TestMetadata("kt50453.kt")
+        public void testKt50453() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt50453.kt");
+        }
+
+        @Test
+        @TestMetadata("kt50827a.kt")
+        public void testKt50827a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt50827a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt50827b.kt")
+        public void testKt50827b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt50827b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt51988.kt")
+        public void testKt51988() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt51988.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52757.kt")
+        public void testKt52757() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt52757.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52838a.kt")
+        public void testKt52838a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt52838a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52838b.kt")
+        public void testKt52838b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt52838b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52838c.kt")
+        public void testKt52838c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt52838c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53109.kt")
+        public void testKt53109() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53109.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53422a.kt")
+        public void testKt53422a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53422a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53422b.kt")
+        public void testKt53422b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53422b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53478.kt")
+        public void testKt53478() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53478.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53553.kt")
+        public void testKt53553() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53553.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53639.kt")
+        public void testKt53639() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53639.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53740a.kt")
+        public void testKt53740a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53740a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53740b.kt")
+        public void testKt53740b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt53740b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54400a.kt")
+        public void testKt54400a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54400a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54400b.kt")
+        public void testKt54400b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54400b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54400c.kt")
+        public void testKt54400c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54400c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54664.kt")
+        public void testKt54664() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54664.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54767a.kt")
+        public void testKt54767a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54767a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54767b.kt")
+        public void testKt54767b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt54767b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55056.kt")
+        public void testKt55056() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt55056.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55252.kt")
+        public void testKt55252() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt55252.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55281.kt")
+        public void testKt55281() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt55281.kt");
+        }
+
+        @Test
+        @TestMetadata("kt56949.kt")
+        public void testKt56949() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt56949.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57707.kt")
+        public void testKt57707() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt57707.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57834.kt")
+        public void testKt57834() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt57834.kt");
+        }
+
+        @Test
+        @TestMetadata("kt59426.kt")
+        public void testKt59426() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt59426.kt");
+        }
+
+        @Test
+        @TestMetadata("kt59798.kt")
+        public void testKt59798() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt59798.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60291a.kt")
+        public void testKt60291a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt60291a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60291b.kt")
+        public void testKt60291b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt60291b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60291c.kt")
+        public void testKt60291c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt60291c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60447a.kt")
+        public void testKt60447a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt60447a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60447b.kt")
+        public void testKt60447b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt60447b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt61310.kt")
+        public void testKt61310() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt61310.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63733.kt")
+        public void testKt63733() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt63733.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63840a.kt")
+        public void testKt63840a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt63840a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63840b.kt")
+        public void testKt63840b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt63840b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63840c.kt")
+        public void testKt63840c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt63840c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt64066.kt")
+        public void testKt64066() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt64066.kt");
+        }
+
+        @Test
+        @TestMetadata("kt64069.kt")
+        public void testKt64069() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt64069.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300a.kt")
+        public void testKt65300a() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300b.kt")
+        public void testKt65300b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300c.kt")
+        public void testKt65300c() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300d.kt")
+        public void testKt65300d() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300d.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300e.kt")
+        public void testKt65300e() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300e.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300f.kt")
+        public void testKt65300f() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300f.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300g.kt")
+        public void testKt65300g() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300g.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300h.kt")
+        public void testKt65300h() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300h.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300i.kt")
+        public void testKt65300i() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300i.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65300j.kt")
+        public void testKt65300j() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt65300j.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66229.kt")
+        public void testKt66229() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66229.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66243.kt")
+        public void testKt66243() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66243.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66272.kt")
+        public void testKt66272() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66272.kt");
+        }
+
+        @Test
+        @TestMetadata("kt67993.kt")
+        public void testKt67993() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt67993.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
+      public class OneParameter {
+        @Test
+        public void testAllFilesPresentInOneParameter() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
+        public class OneTypeVariable {
+          @Test
+          public void testAllFilesPresentInOneTypeVariable() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
+          public class OneTypeInfoOrigin {
+            @Test
+            public void testAllFilesPresentInOneTypeInfoOrigin() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @Test
+            @TestMetadata("AnonymousFunctionArgumentAndBuildeeParameter.kt")
+            public void testAnonymousFunctionArgumentAndBuildeeParameter() {
+              runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
+            public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
+              runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("LambdaArgumentAndBuildeeParameter.kt")
+            public void testLambdaArgumentAndBuildeeParameter() {
+              runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("LambdaArgumentAndBuildeeReceiver.kt")
+            public void testLambdaArgumentAndBuildeeReceiver() {
+              runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeReceiver.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
+            public class SourceSinkFeedContexts {
+              @Test
+              public void testAllFilesPresentInSourceSinkFeedContexts() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+              }
+
+              @Test
+              @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+              public void testByAssignmentToALocalVariableMaterializeCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+              }
+
+              @Test
+              @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+              public void testByAssignmentToALocalVariableYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("InsideAnonymousObject.kt")
+              public void testInsideAnonymousObject() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
+              }
+
+              @Test
+              @TestMetadata("InsideLocalClass.kt")
+              public void testInsideLocalClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
+              }
+
+              @Test
+              @TestMetadata("InsideNestedLambda.kt")
+              public void testInsideNestedLambda() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedLambda.kt");
+              }
+
+              @Test
+              @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+              public void testThroughDelegatedLocalVariableMaterializeCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+              }
+
+              @Test
+              @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
+              public void testThroughDelegatedLocalVariableYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("ThroughGenericFunctionCall.kt")
+              public void testThroughGenericFunctionCall() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
+              }
+
+              @Test
+              @TestMetadata("ThroughLocalVariable.kt")
+              public void testThroughLocalVariable() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughLocalVariable.kt");
+              }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
+            public class TargetTypes {
+              @Test
+              public void testAllFilesPresentInTargetTypes() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+              }
+
+              @Test
+              @TestMetadata("AnonymousObject.kt")
+              public void testAnonymousObject() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/AnonymousObject.kt");
+              }
+
+              @Test
+              @TestMetadata("DefinitelyNonNullableTypeParameter.kt")
+              public void testDefinitelyNonNullableTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/DefinitelyNonNullableTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingClass.kt")
+              public void testEnclosingClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingClass.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingEnumerationEntryType.kt")
+              public void testEnclosingEnumerationEntryType() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingEnumerationEntryType.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingEnumerationType.kt")
+              public void testEnclosingEnumerationType() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingEnumerationType.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingExplicitlyGenericInnerClass.kt")
+              public void testEnclosingExplicitlyGenericInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingExplicitlyGenericInnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingGenericClass.kt")
+              public void testEnclosingGenericClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingGenericClass.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingImplicitlyGenericInnerClass.kt")
+              public void testEnclosingImplicitlyGenericInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingImplicitlyGenericInnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("EnclosingInnerClass.kt")
+              public void testEnclosingInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnclosingInnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("EnumerationType.kt")
+              public void testEnumerationType() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/EnumerationType.kt");
+              }
+
+              @Test
+              @TestMetadata("ExplicitlyGenericInnerClass.kt")
+              public void testExplicitlyGenericInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/ExplicitlyGenericInnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("FunctionWithParameterToUnit.kt")
+              public void testFunctionWithParameterToUnit() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnit.kt");
+              }
+
+              @Test
+              @TestMetadata("FunctionWithReceiverToUnit.kt")
+              public void testFunctionWithReceiverToUnit() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnit.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericLocalClass.kt")
+              public void testGenericLocalClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericLocalClass.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericLocalClassWithLeakingTypeParameter.kt")
+              public void testGenericLocalClassWithLeakingTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericLocalClassWithLeakingTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithContravariantTypeParameter.kt")
+              public void testGenericWithContravariantTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithContravariantTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithCovariantTypeParameter.kt")
+              public void testGenericWithCovariantTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithCovariantTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithInProjectedTypeArgument.kt")
+              public void testGenericWithInProjectedTypeArgument() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithInProjectedTypeArgument.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithInvariantTypeParameter.kt")
+              public void testGenericWithInvariantTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithInvariantTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithOutProjectedTypeArgument.kt")
+              public void testGenericWithOutProjectedTypeArgument() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithOutProjectedTypeArgument.kt");
+              }
+
+              @Test
+              @TestMetadata("GenericWithStarProjectedTypeArgument.kt")
+              public void testGenericWithStarProjectedTypeArgument() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/GenericWithStarProjectedTypeArgument.kt");
+              }
+
+              @Test
+              @TestMetadata("ImplicitlyGenericInnerClass.kt")
+              public void testImplicitlyGenericInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/ImplicitlyGenericInnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("InnerClass.kt")
+              public void testInnerClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/InnerClass.kt");
+              }
+
+              @Test
+              @TestMetadata("Int.kt")
+              public void testInt() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/Int.kt");
+              }
+
+              @Test
+              @TestMetadata("IntersectionType.kt")
+              public void testIntersectionType() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/IntersectionType.kt");
+              }
+
+              @Test
+              @TestMetadata("LocalClass.kt")
+              public void testLocalClass() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/LocalClass.kt");
+              }
+
+              @Test
+              @TestMetadata("NothingYieldCase.kt")
+              public void testNothingYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("NullableNothing.kt")
+              public void testNullableNothing() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothing.kt");
+              }
+
+              @Test
+              @TestMetadata("NullableNothingNullLiteralYieldCase.kt")
+              public void testNullableNothingNullLiteralYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("NullableType.kt")
+              public void testNullableType() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableType.kt");
+              }
+
+              @Test
+              @TestMetadata("NullableTypeParameter.kt")
+              public void testNullableTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableTypeParameter.kt");
+              }
+
+              @Test
+              @TestMetadata("NullaryFunctionToUnit.kt")
+              public void testNullaryFunctionToUnit() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullaryFunctionToUnit.kt");
+              }
+
+              @Test
+              @TestMetadata("NullaryFunctionWithReturnValue.kt")
+              public void testNullaryFunctionWithReturnValue() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullaryFunctionWithReturnValue.kt");
+              }
+
+              @Test
+              @TestMetadata("String.kt")
+              public void testString() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/String.kt");
+              }
+
+              @Test
+              @TestMetadata("SuspendingFunction.kt")
+              public void testSuspendingFunction() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/SuspendingFunction.kt");
+              }
+
+              @Test
+              @TestMetadata("TypeParameter.kt")
+              public void testTypeParameter() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/TypeParameter.kt");
+              }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
+            public class TypeInfoSinks {
+              @Test
+              public void testAllFilesPresentInTypeInfoSinks() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+              }
+
+              @Test
+              @TestMetadata("ExtensionFunctions.kt")
+              public void testExtensionFunctions() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
+              }
+
+              @Test
+              @TestMetadata("ImmutableExtensionProperties.kt")
+              public void testImmutableExtensionProperties() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
+              }
+
+              @Test
+              @TestMetadata("ImmutableProperties.kt")
+              public void testImmutableProperties() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
+              }
+
+              @Test
+              @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
+              public void testMutableExtensionPropertiesMaterializeCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
+              }
+
+              @Test
+              @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
+              public void testMutableExtensionPropertiesYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("MutablePropertiesMaterializeCase.kt")
+              public void testMutablePropertiesMaterializeCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
+              }
+
+              @Test
+              @TestMetadata("MutablePropertiesYieldCase.kt")
+              public void testMutablePropertiesYieldCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
+              }
+
+              @Test
+              @TestMetadata("ParametersOfBuilderArguments.kt")
+              public void testParametersOfBuilderArguments() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
+              }
+
+              @Test
+              @TestMetadata("ReceiversOfBuilderArguments.kt")
+              public void testReceiversOfBuilderArguments() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
+              }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
+            public class TypeInfoSources {
+              @Test
+              public void testAllFilesPresentInTypeInfoSources() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+              }
+
+              @Test
+              @TestMetadata("ExtensionFunctions.kt")
+              public void testExtensionFunctions() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
+              }
+
+              @Test
+              @TestMetadata("ExtensionProperties.kt")
+              public void testExtensionProperties() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
+              }
+
+              @Test
+              @TestMetadata("ParametersOfBuilderArguments.kt")
+              public void testParametersOfBuilderArguments() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
+              }
+
+              @Test
+              @TestMetadata("ReceiversOfBuilderArguments.kt")
+              public void testReceiversOfBuilderArguments() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
+              }
+
+              @Test
+              @TestMetadata("ReturnTypesOfBuilderParameters.kt")
+              public void testReturnTypesOfBuilderParameters() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
+              }
+
+              @Test
+              @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
+              public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
+                runTest("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -18533,6 +19075,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/initializers")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Initializers {
     @Test
     public void testAllFilesPresentInInitializers() {
@@ -18662,6 +19205,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/initializers/files")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Files {
       @Test
       public void testAllFilesPresentInFiles() {
@@ -18697,6 +19241,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
@@ -18956,6 +19501,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("LocalEntitiesInAnonymousObjectInInlineCallables.kt")
+    public void testLocalEntitiesInAnonymousObjectInInlineCallables() {
+      runTest("compiler/testData/codegen/box/inline/LocalEntitiesInAnonymousObjectInInlineCallables.kt");
+    }
+
+    @Test
     @TestMetadata("localFunctionInInitializerBlock.kt")
     public void testLocalFunctionInInitializerBlock() {
       runTest("compiler/testData/codegen/box/inline/localFunctionInInitializerBlock.kt");
@@ -19025,6 +19576,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineArgsInPlace")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InlineArgsInPlace {
     @Test
     public void testAllFilesPresentInInlineArgsInPlace() {
@@ -19101,6 +19653,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InlineClass {
     @Test
     public void testAllFilesPresentInInlineClass() {
@@ -19135,6 +19688,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/inlineClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
@@ -19664,6 +20218,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("dnnInValue.kt")
+    public void testDnnInValue() {
+      runTest("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
     @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
     public void testElvisWithInlineClassAndNullConstant() {
       runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19823,6 +20383,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt")
     public void testEqualityForBoxesOfNullableValuesOfInlineClassGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
+    @TestMetadata("equalityForIndyLambdaParameter.kt")
+    public void testEqualityForIndyLambdaParameter() {
+      runTest("compiler/testData/codegen/box/inlineClasses/equalityForIndyLambdaParameter.kt");
     }
 
     @Test
@@ -20672,6 +21238,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt70461.kt")
+    public void testKt70461() {
+      runTest("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
     @TestMetadata("lateinitInlineClasses.kt")
     public void testLateinitInlineClasses() {
       runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20729,18 +21301,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt")
     public void testNoAssertionsOnInlineClassBasedOnNullableTypeGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-    }
-
-    @Test
-    @TestMetadata("noReturnTypeMangling.kt")
-    public void testNoReturnTypeMangling() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeMangling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-    }
-
-    @Test
-    @TestMetadata("noReturnTypeManglingGeneric.kt")
-    public void testNoReturnTypeManglingGeneric() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
     }
 
     @Test
@@ -20879,12 +21439,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("removeInInlineCollectionOfInlineClassAsInt.kt")
     public void testRemoveInInlineCollectionOfInlineClassAsInt() {
       runTest("compiler/testData/codegen/box/inlineClasses/removeInInlineCollectionOfInlineClassAsInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-    }
-
-    @Test
-    @TestMetadata("result.kt")
-    public void testResult() {
-      runTest("compiler/testData/codegen/box/inlineClasses/result.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
     }
 
     @Test
@@ -21247,9 +21801,22 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
     }
 
+    @Test
+    @TestMetadata("withReturnTypeMangling.kt")
+    public void testWithReturnTypeMangling() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeManglingGeneric.kt")
+    public void testWithReturnTypeManglingGeneric() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BoxReturnValueInLambda {
       @Test
       public void testAllFilesPresentInBoxReturnValueInLambda() {
@@ -21428,6 +21995,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BoxReturnValueOnOverride {
       @Test
       public void testAllFilesPresentInBoxReturnValueOnOverride() {
@@ -21804,6 +22372,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
@@ -22059,6 +22628,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Let {
         @Test
         public void testAllFilesPresentInLet() {
@@ -22178,6 +22748,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ContextsAndAccessors {
       @Test
       @TestMetadata("accessPrivateInlineClassCompanionMethod.kt")
@@ -22440,6 +23011,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DefaultParameterValues {
       @Test
       public void testAllFilesPresentInDefaultParameterValues() {
@@ -22587,6 +23159,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class DefaultWithDefaultParameter {
         @Test
         public void testAllFilesPresentInDefaultWithDefaultParameter() {
@@ -22597,6 +23170,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class OverrideFunctionWithDefaultParameter {
         @Test
         public void testAllFilesPresentInOverrideFunctionWithDefaultParameter() {
@@ -22608,6 +23182,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DelegationByUnderlyingType {
       @Test
       public void testAllFilesPresentInDelegationByUnderlyingType() {
@@ -22654,6 +23229,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/funInterface")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
@@ -22736,6 +23312,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FunctionNameMangling {
       @Test
       public void testAllFilesPresentInFunctionNameMangling() {
@@ -22824,18 +23401,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @TestMetadata("mangledFunctionsDoNotClashGeneric.kt")
       public void testMangledFunctionsDoNotClashGeneric() {
         runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
-      @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
-      public void testMangledFunctionsPresentInStackTrace() {
-        runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
-      @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
-      public void testMangledFunctionsPresentInStackTraceGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22938,6 +23503,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class GenericUnderlyingValue {
       @Test
       public void testAllFilesPresentInGenericUnderlyingValue() {
@@ -22990,6 +23556,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class HiddenConstructor {
       @Test
       public void testAllFilesPresentInHiddenConstructor() {
@@ -23150,6 +23717,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassCollection")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class InlineClassCollection {
       @Test
       public void testAllFilesPresentInInlineClassCollection() {
@@ -23202,6 +23770,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceDelegation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class InterfaceDelegation {
       @Test
       public void testAllFilesPresentInInterfaceDelegation() {
@@ -23302,6 +23871,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class InterfaceMethodCalls {
       @Test
       public void testAllFilesPresentInInterfaceMethodCalls() {
@@ -23444,6 +24014,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -23454,6 +24025,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Jvm8DefaultInterfaceMethods {
       @Test
       public void testAllFilesPresentInJvm8DefaultInterfaceMethods() {
@@ -23464,6 +24036,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class PropertyDelegation {
       @Test
       public void testAllFilesPresentInPropertyDelegation() {
@@ -23606,6 +24179,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/result")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Result {
       @Test
       public void testAllFilesPresentInResult() {
@@ -23664,6 +24238,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ReturnResult {
       @Test
       public void testAllFilesPresentInReturnResult() {
@@ -23710,15 +24285,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class UnboxGenericParameter {
       @Test
       public void testAllFilesPresentInUnboxGenericParameter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
       }
 
+      @Test
+      @TestMetadata("genericArrayInlineClassCast.kt")
+      public void testGenericArrayInlineClassCast() {
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
@@ -23831,6 +24414,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Lambda {
         @Test
         public void testAllFilesPresentInLambda() {
@@ -23943,6 +24527,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ObjectLiteral {
         @Test
         public void testAllFilesPresentInObjectLiteral() {
@@ -24057,6 +24642,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/innerClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InnerClass {
     @Test
     public void testAllFilesPresentInInnerClass() {
@@ -24139,6 +24725,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/innerNested")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InnerNested {
     @Test
     public void testAllFilesPresentInInnerNested() {
@@ -24215,6 +24802,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("innerWithDefaultArgument.kt")
     public void testInnerWithDefaultArgument() {
       runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("innerWithDefaultArgumentGenericExtensionProperty.kt")
+    public void testInnerWithDefaultArgumentGenericExtensionProperty() {
+      runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgumentGenericExtensionProperty.kt");
     }
 
     @Test
@@ -24328,6 +24921,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SuperConstructorCall {
       @Test
       public void testAllFilesPresentInSuperConstructorCall() {
@@ -24465,6 +25059,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/instructions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Instructions {
     @Test
     public void testAllFilesPresentInInstructions() {
@@ -24474,6 +25069,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/instructions/swap")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Swap {
       @Test
       public void testAllFilesPresentInSwap() {
@@ -24497,6 +25093,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/interfaceCallsNCasts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InterfaceCallsNCasts {
     @Test
     public void testAllFilesPresentInInterfaceCallsNCasts() {
@@ -24531,6 +25128,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
@@ -24667,15 +25265,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/invokedynamic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Invokedynamic {
     @Test
     public void testAllFilesPresentInInvokedynamic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
+    @Test
+    @TestMetadata("extensionFunInvoke.kt")
+    public void testExtensionFunInvoke() {
+      runTest("compiler/testData/codegen/box/invokedynamic/extensionFunInvoke.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Lambdas {
       @Test
       public void testAllFilesPresentInLambdas() {
@@ -24691,6 +25297,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
@@ -24702,6 +25309,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
@@ -24711,6 +25319,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FunctionExprToJavaInterface {
         @Test
         public void testAllFilesPresentInFunctionExprToJavaInterface() {
@@ -24721,6 +25330,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FunctionRefToJavaInterface {
         @Test
         public void testAllFilesPresentInFunctionRefToJavaInterface() {
@@ -24730,6 +25340,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class SpecialFunctions {
           @Test
           public void testAllFilesPresentInSpecialFunctions() {
@@ -24740,6 +25351,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class WithAccessor {
           @Test
           public void testAllFilesPresentInWithAccessor() {
@@ -24751,6 +25363,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
@@ -24761,6 +25374,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class SpecializedGenerics {
         @Test
         public void testAllFilesPresentInSpecializedGenerics() {
@@ -24772,6 +25386,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Serializable {
       @Test
       public void testAllFilesPresentInSerializable() {
@@ -24783,6 +25398,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class InvolvesIrInterpreter {
     @Test
     public void testAllFilesPresentInInvolvesIrInterpreter() {
@@ -24942,6 +25558,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ConstEvaluationFromJavaWorld {
       @Test
       public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
@@ -24952,6 +25569,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class IntrinsicConst {
       @Test
       public void testAllFilesPresentInIntrinsicConst() {
@@ -25028,6 +25646,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Serialization {
       @Test
       public void testAllFilesPresentInSerialization() {
@@ -25075,6 +25694,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ir")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Ir {
     @Test
     public void testAllFilesPresentInIr() {
@@ -25210,6 +25830,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ClosureConversion {
       @Test
       public void testAllFilesPresentInClosureConversion() {
@@ -25268,6 +25889,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class PrimitiveNumberComparisons {
       @Test
       public void testAllFilesPresentInPrimitiveNumberComparisons() {
@@ -25302,6 +25924,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class PrivateSignatures {
       @Test
       public void testAllFilesPresentInPrivateSignatures() {
@@ -25360,6 +25983,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SerializationRegressions {
       @Test
       public void testAllFilesPresentInSerializationRegressions() {
@@ -25425,6 +26049,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JavaFieldAndKotlinProperty {
     @Test
     public void testAllFilesPresentInJavaFieldAndKotlinProperty() {
@@ -25435,6 +26060,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaInterop")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JavaInterop {
     @Test
     public void testAllFilesPresentInJavaInterop() {
@@ -25444,6 +26070,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForeignAnnotationsTests {
       @Test
       public void testAllFilesPresentInForeignAnnotationsTests() {
@@ -25453,6 +26080,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Tests {
         @Test
         public void testAllFilesPresentInTests() {
@@ -25464,6 +26092,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
@@ -25474,6 +26103,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class NotNullAssertions {
       @Test
       public void testAllFilesPresentInNotNullAssertions() {
@@ -25489,6 +26119,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class EnhancedNullability {
         @Test
         public void testAllFilesPresentInEnhancedNullability() {
@@ -25499,6 +26130,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ExpressionAssertionMessages {
         @Test
         public void testAllFilesPresentInExpressionAssertionMessages() {
@@ -25509,6 +26141,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NullCheckOnLambdaReturnValue {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaReturnValue() {
@@ -25520,6 +26153,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ObjectMethods {
       @Test
       public void testAllFilesPresentInObjectMethods() {
@@ -25530,6 +26164,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class PrimitiveVsWrapperTypeInInheritance {
       @Test
       public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() {
@@ -25540,6 +26175,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Statics {
       @Test
       public void testAllFilesPresentInStatics() {
@@ -25551,6 +26187,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/javaVisibility")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JavaVisibility {
     @Test
     public void testAllFilesPresentInJavaVisibility() {
@@ -25560,6 +26197,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/package")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Package {
       @Test
       public void testAllFilesPresentInPackage() {
@@ -25570,6 +26208,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProtectedAndPackage {
       @Test
       public void testAllFilesPresentInProtectedAndPackage() {
@@ -25580,6 +26219,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedStatic")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProtectedStatic {
       @Test
       public void testAllFilesPresentInProtectedStatic() {
@@ -25591,6 +26231,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jdk")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Jdk {
     @Test
     public void testAllFilesPresentInJdk() {
@@ -25631,6 +26272,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/js")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Js {
     @Test
     public void testAllFilesPresentInJs() {
@@ -25650,15 +26292,93 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
+    public void testLambdaWithoutNonLocalControlflow() {
+      runTest("compiler/testData/codegen/box/js/lambdaWithoutNonLocalControlflow.kt");
+    }
+
+    @Test
+    @TestMetadata("MultiDollarInterpolation.kt")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/box/js/MultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("trailingLambdaOnDynamic.kt")
     public void testTrailingLambdaOnDynamic() {
       runTest("compiler/testData/codegen/box/js/trailingLambdaOnDynamic.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class InlinedReturnBreakContinue {
+      @Test
+      public void testAllFilesPresentInInlinedReturnBreakContinue() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+      public void testInlineFunctionWithMultipleParameters() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaPassedToInlineFunction.kt")
+      public void testLambdaPassedToInlineFunction() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/lambdaPassedToInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("loopWithinInlineFunction.kt")
+      public void testLoopWithinInlineFunction() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("nonLocalReturn.kt")
+      public void testNonLocalReturn() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/nonLocalReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDoWhile.kt")
+      public void testSimpleDoWhile() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simpleDoWhile.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValue.kt")
+      public void testWithReturnValue() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueDoWhileContinue.kt")
+      public void testWithReturnValueDoWhileContinue() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValueDoWhileContinue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueNested.kt")
+      public void testWithReturnValueNested() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValueNested.kt");
+      }
     }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvm8")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Jvm8 {
     @Test
     public void testAllFilesPresentInJvm8() {
@@ -25668,6 +26388,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Defaults {
       @Test
       public void testAllFilesPresentInDefaults() {
@@ -25677,6 +26398,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class AllCompatibility {
         @Test
         public void testAllFilesPresentInAllCompatibility() {
@@ -25686,6 +26408,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
@@ -25697,6 +26420,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class DelegationBy {
         @Test
         public void testAllFilesPresentInDelegationBy() {
@@ -25707,6 +26431,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NoDefaultImpls {
         @Test
         public void testAllFilesPresentInNoDefaultImpls() {
@@ -25716,6 +26441,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
@@ -25726,6 +26452,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Specialization {
           @Test
           public void testAllFilesPresentInSpecialization() {
@@ -25736,6 +26463,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class WithCompatibility {
           @Test
           public void testAllFilesPresentInWithCompatibility() {
@@ -25747,6 +26475,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NonDefaultInheritance {
         @Test
         public void testAllFilesPresentInNonDefaultInheritance() {
@@ -25757,6 +26486,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() {
@@ -25768,6 +26498,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/interfaceFlag")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class InterfaceFlag {
       @Test
       public void testAllFilesPresentInInterfaceFlag() {
@@ -25778,6 +26509,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8/javaDefaults")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaDefaults {
       @Test
       public void testAllFilesPresentInJavaDefaults() {
@@ -25789,6 +26521,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmField")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JvmField {
     @Test
     public void testAllFilesPresentInJvmField() {
@@ -25799,6 +26532,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmName")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JvmName {
     @Test
     public void testAllFilesPresentInJvmName() {
@@ -25808,6 +26542,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class FileFacades {
       @Test
       public void testAllFilesPresentInFileFacades() {
@@ -25819,6 +26554,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JvmOverloads {
     @Test
     public void testAllFilesPresentInJvmOverloads() {
@@ -25829,6 +26565,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JvmPackageName {
     @Test
     public void testAllFilesPresentInJvmPackageName() {
@@ -25839,6 +26576,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmStatic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class JvmStatic {
     @Test
     public void testAllFilesPresentInJvmStatic() {
@@ -25848,6 +26586,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProtectedInSuperClass {
       @Test
       public void testAllFilesPresentInProtectedInSuperClass() {
@@ -25859,6 +26598,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/kclass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Kclass {
     @Test
     public void testAllFilesPresentInKclass() {
@@ -25881,6 +26621,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/klib")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Klib {
     @Test
     public void testAllFilesPresentInKlib() {
@@ -25897,6 +26638,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ktype")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Ktype {
     @Test
     public void testAllFilesPresentInKtype() {
@@ -25949,6 +26691,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/labels")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Labels {
     @Test
     public void testAllFilesPresentInLabels() {
@@ -26007,6 +26750,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lambda")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Lambda {
     @Test
     public void testAllFilesPresentInLambda() {
@@ -26125,6 +26869,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lateinit")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Lateinit {
     @Test
     public void testAllFilesPresentInLateinit() {
@@ -26195,6 +26940,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class LazyCodegen {
     @Test
     public void testAllFilesPresentInLazyCodegen() {
@@ -26258,6 +27004,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
@@ -26323,6 +27070,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/literals")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Literals {
     @Test
     public void testAllFilesPresentInLiterals() {
@@ -26345,6 +27093,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class LocalClass {
     @Test
     public void testAllFilesPresentInLocalClass() {
@@ -26400,6 +27149,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+    public void testSignatureConflictHiddenByTypeParameter() {
+      runTest("compiler/testData/codegen/box/localClass/signatureConflictHiddenByTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/codegen/box/localClass/tryCatch.kt");
@@ -26415,6 +27170,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class LocalClasses {
     @Test
     public void testAllFilesPresentInLocalClasses() {
@@ -26665,6 +27421,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/localEscapeAnalysis")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class LocalEscapeAnalysis {
     @Test
     public void testAllFilesPresentInLocalEscapeAnalysis() {
@@ -26681,6 +27438,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/lower")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Lower {
     @Test
     public void testAllFilesPresentInLower() {
@@ -26692,11 +27450,89 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testLocalDelegatedProperty() {
       runTest("compiler/testData/codegen/box/lower/localDelegatedProperty.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/lower/forLoopsLowering")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class ForLoopsLowering {
+      @Test
+      public void testAllFilesPresentInForLoopsLowering() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("arrays.kt")
+      public void testArrays() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/arrays.kt");
+      }
+
+      @Test
+      @TestMetadata("lists.kt")
+      public void testLists() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/lists.kt");
+      }
+
+      @Test
+      @TestMetadata("listsCME.kt")
+      public void testListsCME() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/listsCME.kt");
+      }
+
+      @Test
+      @TestMetadata("nested.kt")
+      public void testNested() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/nested.kt");
+      }
+
+      @Test
+      @TestMetadata("progressions.kt")
+      public void testProgressions() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/progressions.kt");
+      }
+
+      @Test
+      @TestMetadata("reversed.kt")
+      public void testReversed() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/reversed.kt");
+      }
+
+      @Test
+      @TestMetadata("reversedCharProgression.kt")
+      public void testReversedCharProgression() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/reversedCharProgression.kt");
+      }
+
+      @Test
+      @TestMetadata("sequences.kt")
+      public void testSequences() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/sequences.kt");
+      }
+
+      @Test
+      @TestMetadata("vars.kt")
+      public void testVars() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/vars.kt");
+      }
+
+      @Test
+      @TestMetadata("withIndex.kt")
+      public void testWithIndex() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/withIndex.kt");
+      }
+
+      @Test
+      @TestMetadata("withIndexUInt.kt")
+      public void testWithIndexUInt() {
+        runTest("compiler/testData/codegen/box/lower/forLoopsLowering/withIndexUInt.kt");
+      }
+    }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/mangling")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Mangling {
     @Test
     public void testAllFilesPresentInMangling() {
@@ -26749,6 +27585,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/mixedNamedPosition")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class MixedNamedPosition {
     @Test
     public void testAllFilesPresentInMixedNamedPosition() {
@@ -26783,6 +27620,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiDecl")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class MultiDecl {
     @Test
     public void testAllFilesPresentInMultiDecl() {
@@ -26876,6 +27714,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForIterator {
       @Test
       public void testAllFilesPresentInForIterator() {
@@ -26915,6 +27754,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class LongIterator {
         @Test
         public void testAllFilesPresentInLongIterator() {
@@ -26950,6 +27790,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForRange {
       @Test
       public void testAllFilesPresentInForRange() {
@@ -27001,6 +27842,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ExplicitRangeTo {
         @Test
         public void testAllFilesPresentInExplicitRangeTo() {
@@ -27040,6 +27882,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
@@ -27074,6 +27917,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
@@ -27109,6 +27953,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ExplicitRangeToWithDot {
         @Test
         public void testAllFilesPresentInExplicitRangeToWithDot() {
@@ -27148,6 +27993,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
@@ -27182,6 +28028,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
@@ -27217,6 +28064,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
@@ -27251,6 +28099,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
@@ -27287,6 +28136,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multifileClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
@@ -27296,6 +28146,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Optimized {
       @Test
       public void testAllFilesPresentInOptimized() {
@@ -27307,6 +28158,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
@@ -27346,6 +28198,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/complexMatchings")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ComplexMatchings {
       @Test
       public void testAllFilesPresentInComplexMatchings() {
@@ -27368,6 +28221,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
@@ -27477,6 +28331,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("kt67488.kt")
+      public void testKt67488() {
+        runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt67488.kt");
+      }
+
+      @Test
       @TestMetadata("nestedEnumEntryValue.kt")
       public void testNestedEnumEntryValue() {
         runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/nestedEnumEntryValue.kt");
@@ -27522,6 +28382,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Exhaustiveness {
       @Test
       public void testAllFilesPresentInExhaustiveness() {
@@ -27532,6 +28393,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/hmpp")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Hmpp {
       @Test
       public void testAllFilesPresentInHmpp() {
@@ -27542,6 +28404,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class K2 {
       @Test
       @TestMetadata("actualInnerClassesFirMemberMapping.kt")
@@ -27585,6 +28448,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("directJavaActualization.kt")
+      public void testDirectJavaActualization() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
+      }
+
+      @Test
+      @TestMetadata("expectNonExpectOverloads.kt")
+      public void testExpectNonExpectOverloads() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/expectNonExpectOverloads.kt");
+      }
+
+      @Test
       @TestMetadata("expectValInInlineClass.kt")
       public void testExpectValInInlineClass() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
@@ -27615,6 +28490,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("kt68801.kt")
+      public void testKt68801() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/kt68801.kt");
+      }
+
+      @Test
       @TestMetadata("kt-65249.kt")
       public void testKt_65249() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
@@ -27626,9 +28507,22 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
       }
 
+      @Test
+      @TestMetadata("privateConstructorWithDefaults.kt")
+      public void testPrivateConstructorWithDefaults() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/privateConstructorWithDefaults.kt");
+      }
+
+      @Test
+      @TestMetadata("regularAndDeprecatedOverloads.kt")
+      public void testRegularAndDeprecatedOverloads() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/regularAndDeprecatedOverloads.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() {
@@ -27657,6 +28551,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/basic")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Basic {
         @Test
         @TestMetadata("accessToLocalClassFromBackend.kt")
@@ -27901,6 +28796,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/complexMatchings")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ComplexMatchings {
         @Test
         public void testAllFilesPresentInComplexMatchings() {
@@ -27923,6 +28819,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
@@ -28044,6 +28941,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("kt67488.kt")
+        public void testKt67488() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/kt67488.kt");
+        }
+
+        @Test
         @TestMetadata("nestedEnumEntryValue.kt")
         public void testNestedEnumEntryValue() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/nestedEnumEntryValue.kt");
@@ -28081,8 +28984,56 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/delegation")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
+      public class Delegation {
+        @Test
+        public void testAllFilesPresentInDelegation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @Test
+        @TestMetadata("delegationToExpectInterfaceByExpectFun.kt")
+        public void testDelegationToExpectInterfaceByExpectFun() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceByExpectFun.kt");
+        }
+
+        @Test
+        @TestMetadata("delegationToExpectInterface_noNewMembers.kt")
+        public void testDelegationToExpectInterface_noNewMembers() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_noNewMembers.kt");
+        }
+
+        @Test
+        @TestMetadata("delegationToExpectInterface_withNewMembers.kt")
+        public void testDelegationToExpectInterface_withNewMembers() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withNewMembers.kt");
+        }
+
+        @Test
+        @TestMetadata("delegationToExpectInterface_withNewMembersSameName.kt")
+        public void testDelegationToExpectInterface_withNewMembersSameName() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withNewMembersSameName.kt");
+        }
+
+        @Test
+        @TestMetadata("delegationToExpectInterface_withOverrideInDelegated.kt")
+        public void testDelegationToExpectInterface_withOverrideInDelegated() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withOverrideInDelegated.kt");
+        }
+
+        @Test
+        @TestMetadata("delegationWithIntersection.kt")
+        public void testDelegationWithIntersection() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationWithIntersection.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class MigratedOldTests {
         @Test
         public void testAllFilesPresentInMigratedOldTests() {
@@ -28124,6 +29075,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/migratedOldTests")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MigratedOldTests {
       @Test
       public void testAllFilesPresentInMigratedOldTests() {
@@ -28158,6 +29110,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
@@ -28169,6 +29122,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class NonLocalReturns {
     @Test
     public void testAllFilesPresentInNonLocalReturns() {
@@ -28197,6 +29151,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/notNullAssertions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class NotNullAssertions {
     @Test
     public void testAllFilesPresentInNotNullAssertions() {
@@ -28207,6 +29162,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nothingValue")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class NothingValue {
     @Test
     public void testAllFilesPresentInNothingValue() {
@@ -28229,6 +29185,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class NullCheckOptimization {
     @Test
     public void testAllFilesPresentInNullCheckOptimization() {
@@ -28275,6 +29232,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/object")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Object {
     @Test
     public void testAllFilesPresentInObject() {
@@ -28339,6 +29297,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objectExpression")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ObjectExpression {
     @Test
     public void testAllFilesPresentInObjectExpression() {
@@ -28362,11 +29321,18 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testExpr3() {
       runTest("compiler/testData/codegen/box/objectExpression/expr3.kt");
     }
+
+    @Test
+    @TestMetadata("multipleAnonymousObjectsInsideInlineFunction.kt")
+    public void testMultipleAnonymousObjectsInsideInlineFunction() {
+      runTest("compiler/testData/codegen/box/objectExpression/multipleAnonymousObjectsInsideInlineFunction.kt");
+    }
   }
 
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ObjectIntrinsics {
     @Test
     public void testAllFilesPresentInObjectIntrinsics() {
@@ -28383,6 +29349,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/objects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Objects {
     @Test
     public void testAllFilesPresentInObjects() {
@@ -28842,6 +29809,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CompanionObjectAccess {
       @Test
       public void testAllFilesPresentInCompanionObjectAccess() {
@@ -28947,6 +29915,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class MultipleCompanionsWithAccessors {
         @Test
         @TestMetadata("accessFromInlineLambda.kt")
@@ -29029,6 +29998,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class PrimitiveCompanion {
         @Test
         public void testAllFilesPresentInPrimitiveCompanion() {
@@ -29083,6 +30053,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/operatorConventions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class OperatorConventions {
     @Test
     public void testAllFilesPresentInOperatorConventions() {
@@ -29117,6 +30088,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("augmentedAssignmentWithArrayLHS.kt")
     public void testAugmentedAssignmentWithArrayLHS() {
       runTest("compiler/testData/codegen/box/operatorConventions/augmentedAssignmentWithArrayLHS.kt");
+    }
+
+    @Test
+    @TestMetadata("BoundedGenericValueInRangeCheck.kt")
+    public void testBoundedGenericValueInRangeCheck() {
+      runTest("compiler/testData/codegen/box/operatorConventions/BoundedGenericValueInRangeCheck.kt");
     }
 
     @Test
@@ -29162,21 +30139,9 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
-    @TestMetadata("kt39880.kt")
-    public void testKt39880() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt39880.kt");
-    }
-
-    @Test
     @TestMetadata("kt4152.kt")
     public void testKt4152() {
       runTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
-    }
-
-    @Test
-    @TestMetadata("kt42722.kt")
-    public void testKt42722() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt42722.kt");
     }
 
     @Test
@@ -29260,6 +30225,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
@@ -29337,6 +30303,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/optimizations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Optimizations {
     @Test
     public void testAllFilesPresentInOptimizations() {
@@ -29353,6 +30320,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/package")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Package {
     @Test
     public void testAllFilesPresentInPackage() {
@@ -29447,6 +30415,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/parametersMetadata")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ParametersMetadata {
     @Test
     public void testAllFilesPresentInParametersMetadata() {
@@ -29457,6 +30426,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/platformTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PlatformTypes {
     @Test
     public void testAllFilesPresentInPlatformTypes() {
@@ -29466,6 +30436,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Primitives {
       @Test
       public void testAllFilesPresentInPrimitives() {
@@ -29591,6 +30562,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PolymorphicSignature {
     @Test
     public void testAllFilesPresentInPolymorphicSignature() {
@@ -29601,6 +30573,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PrimitiveTypes {
     @Test
     public void testAllFilesPresentInPrimitiveTypes() {
@@ -29976,6 +30949,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class EqualityWithObject {
       @Test
       public void testAllFilesPresentInEqualityWithObject() {
@@ -30039,6 +31013,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
@@ -30158,6 +31133,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class NumberToChar {
       @Test
       @TestMetadata("abstractMethodInSuperinterface.kt")
@@ -30205,6 +31181,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/private")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Private {
     @Test
     public void testAllFilesPresentInPrivate() {
@@ -30227,6 +31204,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/privateConstructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PrivateConstructors {
     @Test
     public void testAllFilesPresentInPrivateConstructors() {
@@ -30309,6 +31287,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/properties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Properties {
     @Test
     @TestMetadata("accessToPrivateProperty.kt")
@@ -30822,6 +31801,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/backingField")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
@@ -30904,6 +31884,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/const")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Const {
       @Test
       public void testAllFilesPresentInConst() {
@@ -30938,6 +31919,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Lateinit {
       @Test
       @TestMetadata("accessor.kt")
@@ -31037,6 +32019,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class IsInitializedAndDeinitialize {
         @Test
         public void testAllFilesPresentInIsInitializedAndDeinitialize() {
@@ -31095,6 +32078,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
@@ -31147,6 +32131,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit/topLevel")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class TopLevel {
         @Test
         @TestMetadata("accessorException.kt")
@@ -31189,6 +32174,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/propertyCallableReference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PropertyCallableReference {
     @Test
     public void testAllFilesPresentInPropertyCallableReference() {
@@ -31247,6 +32233,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/publishedApi")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class PublishedApi {
     @Test
     public void testAllFilesPresentInPublishedApi() {
@@ -31275,6 +32262,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/ranges")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Ranges {
     @Test
     public void testAllFilesPresentInRanges() {
@@ -31428,6 +32416,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/contains")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Contains {
       @Test
       public void testAllFilesPresentInContains() {
@@ -31705,6 +32694,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("smartCastOnBothEndsGeneric.kt")
+      public void testSmartCastOnBothEndsGeneric() {
+        runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEndsGeneric.kt");
+      }
+
+      @Test
       @TestMetadata("uintInUByteRangeWithPossibleOverflow.kt")
       public void testUintInUByteRangeWithPossibleOverflow() {
         runTest("compiler/testData/codegen/box/ranges/contains/uintInUByteRangeWithPossibleOverflow.kt");
@@ -31737,6 +32732,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
@@ -31910,6 +32906,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class EvaluationOrder {
       @Test
       public void testAllFilesPresentInEvaluationOrder() {
@@ -31973,6 +32970,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Stepped {
         @Test
         public void testAllFilesPresentInStepped() {
@@ -31982,6 +32980,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class ForInDownTo {
           @Test
           public void testAllFilesPresentInForInDownTo() {
@@ -32040,6 +33039,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class ForInRangeLiteral {
           @Test
           public void testAllFilesPresentInForInRangeLiteral() {
@@ -32098,6 +33098,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class ForInUntil {
           @Test
           public void testAllFilesPresentInForInUntil() {
@@ -32158,6 +33159,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/expression")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Expression {
       @Test
       public void testAllFilesPresentInExpression() {
@@ -32354,6 +33356,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInDownTo {
       @Test
       public void testAllFilesPresentInForInDownTo() {
@@ -32406,6 +33409,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInIndices {
       @Test
       public void testAllFilesPresentInForInIndices() {
@@ -32560,6 +33564,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInProgressionWithIndex")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInProgressionWithIndex {
       @Test
       public void testAllFilesPresentInForInProgressionWithIndex() {
@@ -32660,6 +33665,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
@@ -32778,6 +33784,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForInUntil {
       @Test
       public void testAllFilesPresentInForInUntil() {
@@ -32878,6 +33885,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ForWithPossibleOverflow {
       @Test
       public void testAllFilesPresentInForWithPossibleOverflow() {
@@ -32966,6 +33974,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -32975,6 +33984,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class WithIndex {
         @Test
         public void testAllFilesPresentInWithIndex() {
@@ -32986,6 +33996,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/literal")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Literal {
       @Test
       public void testAllFilesPresentInLiteral() {
@@ -33182,6 +34193,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class NullableLoopParameter {
       @Test
       public void testAllFilesPresentInNullableLoopParameter() {
@@ -33210,6 +34222,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/stepped")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Stepped {
       @Test
       public void testAllFilesPresentInStepped() {
@@ -33219,6 +34232,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
@@ -33228,6 +34242,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
@@ -33333,6 +34348,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -33391,6 +34407,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -33438,6 +34455,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
@@ -33543,6 +34561,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -33601,6 +34620,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -33648,6 +34668,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
@@ -33717,6 +34738,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -33775,6 +34797,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -33822,6 +34845,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
@@ -33933,6 +34957,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -33991,6 +35016,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -34039,6 +35065,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
@@ -34048,6 +35075,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
@@ -34153,6 +35181,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -34211,6 +35240,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -34258,6 +35288,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
@@ -34363,6 +35394,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -34421,6 +35453,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -34468,6 +35501,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
@@ -34537,6 +35571,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -34595,6 +35630,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -34642,6 +35678,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
@@ -34753,6 +35790,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
@@ -34811,6 +35849,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
@@ -34859,6 +35898,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Unsigned {
         @Test
         public void testAllFilesPresentInUnsigned() {
@@ -34868,6 +35908,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Expression {
           @Test
           public void testAllFilesPresentInExpression() {
@@ -34877,6 +35918,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
@@ -34982,6 +36024,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -35040,6 +36083,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -35087,6 +36131,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
@@ -35192,6 +36237,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -35250,6 +36296,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -35297,6 +36344,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
@@ -35366,6 +36414,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -35424,6 +36473,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -35471,6 +36521,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
@@ -35582,6 +36633,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -35640,6 +36692,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -35688,6 +36741,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Literal {
           @Test
           public void testAllFilesPresentInLiteral() {
@@ -35697,6 +36751,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
@@ -35802,6 +36857,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -35860,6 +36916,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -35907,6 +36964,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
@@ -36012,6 +37070,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -36070,6 +37129,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -36117,6 +37177,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
@@ -36186,6 +37247,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -36244,6 +37306,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -36291,6 +37354,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
           @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
@@ -36402,6 +37466,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -36460,6 +37525,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
+            @Tag("es6")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -36510,6 +37576,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Unsigned {
       @Test
       public void testAllFilesPresentInUnsigned() {
@@ -36547,6 +37614,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("kt67383.kt")
+      public void testKt67383() {
+        runTest("compiler/testData/codegen/box/ranges/unsigned/kt67383.kt");
+      }
+
+      @Test
       @TestMetadata("outOfBoundsInMixedContains.kt")
       public void testOutOfBoundsInMixedContains() {
         runTest("compiler/testData/codegen/box/ranges/unsigned/outOfBoundsInMixedContains.kt");
@@ -36555,6 +37628,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
@@ -36751,6 +37825,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
@@ -36947,6 +38022,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NullableLoopParameter {
         @Test
         public void testAllFilesPresentInNullableLoopParameter() {
@@ -36977,6 +38053,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/recursiveRawTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class RecursiveRawTypes {
     @Test
     public void testAllFilesPresentInRecursiveRawTypes() {
@@ -36987,15 +38064,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
+    @Test
+    @TestMetadata("associatedObjectNested.kt")
+    public void testAssociatedObjectNested() {
+      runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
@@ -37005,6 +38090,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class OnTypes {
         @Test
         public void testAllFilesPresentInOnTypes() {
@@ -37015,6 +38101,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
@@ -37026,6 +38113,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
@@ -37036,6 +38124,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/call")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Call {
       @Test
       public void testAllFilesPresentInCall() {
@@ -37045,6 +38134,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
@@ -37055,6 +38145,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
@@ -37064,6 +38155,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class NonNullObject {
           @Test
           public void testAllFilesPresentInNonNullObject() {
@@ -37074,6 +38166,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class NullableObject {
           @Test
           public void testAllFilesPresentInNullableObject() {
@@ -37084,6 +38177,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Primitive {
           @Test
           public void testAllFilesPresentInPrimitive() {
@@ -37095,6 +38189,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
@@ -37106,16 +38201,95 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CallBy {
       @Test
       public void testAllFilesPresentInCallBy() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
+      public class InlineClasses {
+        @Test
+        public void testAllFilesPresentInInlineClasses() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
+        public class NonNullObject {
+          @Test
+          public void testAllFilesPresentInNonNullObject() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
+          public class DefaultArguments {
+            @Test
+            public void testAllFilesPresentInDefaultArguments() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
+        public class NullableObject {
+          @Test
+          public void testAllFilesPresentInNullableObject() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
+          public class DefaultArguments {
+            @Test
+            public void testAllFilesPresentInDefaultArguments() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
+        public class Primitive {
+          @Test
+          public void testAllFilesPresentInPrimitive() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("es6")
+          public class DefaultArguments {
+            @Test
+            public void testAllFilesPresentInDefaultArguments() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+          }
+        }
       }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ClassLiterals {
       @Test
       public void testAllFilesPresentInClassLiterals() {
@@ -37150,6 +38324,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/classes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Classes {
       @Test
       public void testAllFilesPresentInClasses() {
@@ -37161,11 +38336,36 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       public void testLocalClassSimpleName() {
         runTest("compiler/testData/codegen/box/reflection/classes/localClassSimpleName.kt");
       }
+
+      @Test
+      @TestMetadata("qualifiedName.kt")
+      public void testQualifiedName() {
+        runTest("compiler/testData/codegen/box/reflection/classes/qualifiedName.kt");
+      }
+
+      @Test
+      @TestMetadata("qualifiedNameOfStandardClasses.kt")
+      public void testQualifiedNameOfStandardClasses() {
+        runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameOfStandardClasses.kt");
+      }
+
+      @Test
+      @TestMetadata("qualifiedNameOfStandardClassesOther.kt")
+      public void testQualifiedNameOfStandardClassesOther() {
+        runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameOfStandardClassesOther.kt");
+      }
+
+      @Test
+      @TestMetadata("qualifiedNameWithDollars.kt")
+      public void testQualifiedNameWithDollars() {
+        runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameWithDollars.kt");
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
@@ -37182,6 +38382,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class CreateAnnotation {
       @Test
       public void testAllFilesPresentInCreateAnnotation() {
@@ -37192,6 +38393,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/enclosing")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Enclosing {
       @Test
       public void testAllFilesPresentInEnclosing() {
@@ -37202,6 +38404,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
@@ -37224,6 +38427,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/genericSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class GenericSignature {
       @Test
       public void testAllFilesPresentInGenericSignature() {
@@ -37234,6 +38438,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class IsInstance {
       @Test
       public void testAllFilesPresentInIsInstance() {
@@ -37244,6 +38449,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class KClassInAnnotation {
       @Test
       public void testAllFilesPresentInKClassInAnnotation() {
@@ -37254,6 +38460,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class LambdaClasses {
       @Test
       public void testAllFilesPresentInLambdaClasses() {
@@ -37264,6 +38471,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
@@ -37274,6 +38482,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Mapping {
       @Test
       public void testAllFilesPresentInMapping() {
@@ -37283,6 +38492,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class FakeOverrides {
         @Test
         public void testAllFilesPresentInFakeOverrides() {
@@ -37293,6 +38503,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
@@ -37303,6 +38514,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class JvmStatic {
         @Test
         public void testAllFilesPresentInJvmStatic() {
@@ -37313,6 +38525,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
@@ -37323,6 +38536,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
@@ -37334,6 +38548,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MethodsFromAny {
       @Test
       public void testAllFilesPresentInMethodsFromAny() {
@@ -37356,6 +38571,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Modifiers {
       @Test
       public void testAllFilesPresentInModifiers() {
@@ -37366,6 +38582,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
@@ -37376,6 +38593,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class NoReflectAtRuntime {
       @Test
       public void testAllFilesPresentInNoReflectAtRuntime() {
@@ -37403,6 +38621,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class MethodsFromAny {
         @Test
         public void testAllFilesPresentInMethodsFromAny() {
@@ -37420,6 +38639,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
@@ -37430,6 +38650,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/properties")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
@@ -37445,6 +38666,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Accessors {
         @Test
         public void testAllFilesPresentInAccessors() {
@@ -37455,6 +38677,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class GetDelegate {
         @Test
         public void testAllFilesPresentInGetDelegate() {
@@ -37464,6 +38687,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/method")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class Method {
           @Test
           public void testAllFilesPresentInMethod() {
@@ -37475,6 +38699,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class JvmField {
         @Test
         public void testAllFilesPresentInJvmField() {
@@ -37485,6 +38710,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class LocalDelegated {
         @Test
         public void testAllFilesPresentInLocalDelegated() {
@@ -37496,6 +38722,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Supertypes {
       @Test
       public void testAllFilesPresentInSupertypes() {
@@ -37506,6 +38733,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SyntheticClasses {
       @Test
       public void testAllFilesPresentInSyntheticClasses() {
@@ -37516,6 +38744,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TypeOf {
       @Test
       public void testAllFilesPresentInTypeOf() {
@@ -37573,6 +38802,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Js {
         @Test
         public void testAllFilesPresentInJs() {
@@ -37631,6 +38861,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NoReflect {
         @Test
         public void testAllFilesPresentInNoReflect() {
@@ -37646,6 +38877,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("es6")
         public class NonReifiedTypeParameters {
           @Test
           public void testAllFilesPresentInNonReifiedTypeParameters() {
@@ -37657,6 +38889,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class NonReifiedTypeParameters {
         @Test
         public void testAllFilesPresentInNonReifiedTypeParameters() {
@@ -37746,6 +38979,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
@@ -37756,6 +38990,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/types")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
@@ -37783,6 +39018,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class CreateType {
         @Test
         public void testAllFilesPresentInCreateType() {
@@ -37793,6 +39029,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Subtyping {
         @Test
         public void testAllFilesPresentInSubtyping() {
@@ -37805,6 +39042,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/regressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Regressions {
     @Test
     public void testAllFilesPresentInRegressions() {
@@ -38124,6 +39362,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt68727.kt")
+    public void testKt68727() {
+      runTest("compiler/testData/codegen/box/regressions/kt68727.kt");
+    }
+
+    @Test
     @TestMetadata("kt7401.kt")
     public void testKt7401() {
       runTest("compiler/testData/codegen/box/regressions/kt7401.kt");
@@ -38223,6 +39467,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/reified")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
@@ -38290,6 +39535,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("nullableNothingArrayAsStringArray.kt")
+    public void testNullableNothingArrayAsStringArray() {
+      runTest("compiler/testData/codegen/box/reified/nullableNothingArrayAsStringArray.kt");
+    }
+
+    @Test
     @TestMetadata("recursiveNewArray.kt")
     public void testRecursiveNewArray() {
       runTest("compiler/testData/codegen/box/reified/recursiveNewArray.kt");
@@ -38317,6 +39568,30 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("reifiedIntersectionTypeArgumentCrossModule.kt")
     public void testReifiedIntersectionTypeArgumentCrossModule() {
       runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgumentCrossModule.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNullableNothing1.kt")
+    public void testReifiedNullableNothing1() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing1.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNullableNothing2.kt")
+    public void testReifiedNullableNothing2() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing2.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNullableNothing3.kt")
+    public void testReifiedNullableNothing3() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing3.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNullableNothing4.kt")
+    public void testReifiedNullableNothing4() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing4.kt");
     }
 
     @Test
@@ -38358,6 +39633,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ArraysReification {
       @Test
       public void testAllFilesPresentInArraysReification() {
@@ -38381,6 +39657,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SafeCall {
     @Test
     public void testAllFilesPresentInSafeCall() {
@@ -38442,6 +39719,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+    public void testParenthesizedSafeCallsAndOperators() {
+      runTest("compiler/testData/codegen/box/safeCall/parenthesizedSafeCallsAndOperators.kt");
+    }
+
+    @Test
     @TestMetadata("primitive.kt")
     public void testPrimitive() {
       runTest("compiler/testData/codegen/box/safeCall/primitive.kt");
@@ -38493,6 +39776,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sam")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Sam {
     @Test
     public void testAllFilesPresentInSam() {
@@ -38544,6 +39828,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/adapters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Adapters {
       @Test
       public void testAllFilesPresentInAdapters() {
@@ -38553,6 +39838,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/adapters/operators")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("es6")
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
@@ -38564,6 +39850,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/approximation")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Approximation {
       @Test
       public void testAllFilesPresentInApproximation() {
@@ -38598,6 +39885,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/constructors")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
@@ -38632,6 +39920,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/equality")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
@@ -38642,6 +39931,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaSamWithEqualsHashCode {
       @Test
       public void testAllFilesPresentInJavaSamWithEqualsHashCode() {
@@ -38653,6 +39943,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SameFileInSourceAndDependencies {
     @Test
     public void testAllFilesPresentInSameFileInSourceAndDependencies() {
@@ -38717,6 +40008,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/script")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Script {
     @Test
     public void testAllFilesPresentInScript() {
@@ -38727,6 +40019,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/sealed")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Sealed {
     @Test
     public void testAllFilesPresentInSealed() {
@@ -38785,6 +40078,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SecondaryConstructors {
     @Test
     @TestMetadata("accessToCompanion.kt")
@@ -38975,6 +40269,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/serialization")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Serialization {
     @Test
     public void testAllFilesPresentInSerialization() {
@@ -39027,6 +40322,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/size")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Size {
     @Test
     public void testAllFilesPresentInSize() {
@@ -39043,6 +40339,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/smap")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Smap {
     @Test
     public void testAllFilesPresentInSmap() {
@@ -39053,6 +40350,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/smartCasts")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SmartCasts {
     @Test
     public void testAllFilesPresentInSmartCasts() {
@@ -39099,6 +40397,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("genericSet.kt")
     public void testGenericSet() {
       runTest("compiler/testData/codegen/box/smartCasts/genericSet.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitCastOnAssignment.kt")
+    public void testImplicitCastOnAssignment() {
+      runTest("compiler/testData/codegen/box/smartCasts/implicitCastOnAssignment.kt");
     }
 
     @Test
@@ -39153,12 +40457,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("kt19100.kt")
     public void testKt19100() {
       runTest("compiler/testData/codegen/box/smartCasts/kt19100.kt");
-    }
-
-    @Test
-    @TestMetadata("kt42517.kt")
-    public void testKt42517() {
-      runTest("compiler/testData/codegen/box/smartCasts/kt42517.kt");
     }
 
     @Test
@@ -39246,6 +40544,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
+    public void testSmartCastedGenericWhenSubjectInRangeCheck() {
+      runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
+    }
+
+    @Test
     @TestMetadata("smartcastFromGenericToString.kt")
     public void testSmartcastFromGenericToString() {
       runTest("compiler/testData/codegen/box/smartCasts/smartcastFromGenericToString.kt");
@@ -39273,6 +40577,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SpecialBuiltins {
     @Test
     public void testAllFilesPresentInSpecialBuiltins() {
@@ -39427,6 +40732,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/statics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Statics {
     @Test
     public void testAllFilesPresentInStatics() {
@@ -39485,6 +40791,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class StoreStackBeforeInline {
     @Test
     public void testAllFilesPresentInStoreStackBeforeInline() {
@@ -39525,6 +40832,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/stringTrim")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class StringTrim {
     @Test
     public void testAllFilesPresentInStringTrim() {
@@ -39541,6 +40849,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/strings")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Strings {
     @Test
     public void testAllFilesPresentInStrings() {
@@ -39680,6 +40989,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("MultiDollarInterpolation.kt")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/box/strings/MultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("multilineStringsWithTemplates.kt")
     public void testMultilineStringsWithTemplates() {
       runTest("compiler/testData/codegen/box/strings/multilineStringsWithTemplates.kt");
@@ -39767,6 +41082,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/super")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Super {
     @Test
     public void testAllFilesPresentInSuper() {
@@ -39956,6 +41272,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/super/superConstructor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class SuperConstructor {
       @Test
       public void testAllFilesPresentInSuperConstructor() {
@@ -40009,6 +41326,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/suppressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Suppressions {
     @Test
     public void testAllFilesPresentInSuppressions() {
@@ -40025,6 +41343,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/suspendConversion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SuspendConversion {
     @Test
     public void testAllFilesPresentInSuspendConversion() {
@@ -40113,6 +41432,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/synchronized")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Synchronized {
     @Test
     public void testAllFilesPresentInSynchronized() {
@@ -40123,6 +41443,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SyntheticAccessors {
     @Test
     @TestMetadata("accessorForAbstractProtected.kt")
@@ -40246,6 +41567,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProtectedJavaFieldAccessor {
       @Test
       public void testAllFilesPresentInProtectedJavaFieldAccessor() {
@@ -40256,6 +41578,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class ProtectedMemberReferenceAccessor {
       @Test
       public void testAllFilesPresentInProtectedMemberReferenceAccessor() {
@@ -40291,6 +41614,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class SyntheticExtensions {
     @Test
     public void testAllFilesPresentInSyntheticExtensions() {
@@ -40301,6 +41625,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/throws")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Throws {
     @Test
     public void testAllFilesPresentInThrows() {
@@ -40311,6 +41636,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/toArray")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ToArray {
     @Test
     public void testAllFilesPresentInToArray() {
@@ -40333,6 +41659,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class TopLevelInitializtion {
     @Test
     public void testAllFilesPresentInTopLevelInitializtion() {
@@ -40355,6 +41682,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
@@ -40377,6 +41705,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/trailingComma")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class TrailingComma {
     @Test
     public void testAllFilesPresentInTrailingComma() {
@@ -40393,6 +41722,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/traits")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Traits {
     @Test
     @TestMetadata("abstractClassWithFakeOverride.kt")
@@ -40601,6 +41931,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/try")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Try {
     @Test
     public void testAllFilesPresentInTry() {
@@ -40737,6 +42068,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typeInfo")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class TypeInfo {
     @Test
     public void testAllFilesPresentInTypeInfo() {
@@ -40783,6 +42115,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typeMapping")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class TypeMapping {
     @Test
     public void testAllFilesPresentInTypeMapping() {
@@ -40835,7 +42168,14 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/typealias")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Typealias {
+    @Test
+    @TestMetadata("abbreviationWithCapturedType.kt")
+    public void testAbbreviationWithCapturedType() {
+      runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+    }
+
     @Test
     public void testAllFilesPresentInTypealias() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
@@ -41001,6 +42341,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unaryOp")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class UnaryOp {
     @Test
     public void testAllFilesPresentInUnaryOp() {
@@ -41047,6 +42388,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/underscoredTypeArguments")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class UnderscoredTypeArguments {
     @Test
     public void testAllFilesPresentInUnderscoredTypeArguments() {
@@ -41081,6 +42423,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unit")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Unit {
     @Test
     public void testAllFilesPresentInUnit() {
@@ -41175,6 +42518,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/unsignedTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class UnsignedTypes {
     @Test
     public void testAllFilesPresentInUnsignedTypes() {
@@ -41251,6 +42595,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("forInUnsignedUntil.kt")
     public void testForInUnsignedUntil() {
       runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+    }
+
+    @Test
+    @TestMetadata("generic.kt")
+    public void testGeneric() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/generic.kt");
     }
 
     @Test
@@ -41347,6 +42697,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("unsignedArraySize.kt")
     public void testUnsignedArraySize() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArraySize.kt");
+    }
+
+    @Test
+    @TestMetadata("unsignedInStringInterpolation.kt")
+    public void testUnsignedInStringInterpolation() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedInStringInterpolation.kt");
     }
 
     @Test
@@ -41454,6 +42810,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class Jvm8Intrinsics {
       @Test
       public void testAllFilesPresentInJvm8Intrinsics() {
@@ -41465,6 +42822,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/valueClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class ValueClasses {
     @Test
     public void testAllFilesPresentInValueClasses() {
@@ -41474,6 +42832,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -41485,6 +42844,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/vararg")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Vararg {
     @Test
     public void testAllFilesPresentInVararg() {
@@ -41564,12 +42924,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
-    @TestMetadata("singleAssignmentToVarargsInFunction.kt")
-    public void testSingleAssignmentToVarargsInFunction() {
-      runTest("compiler/testData/codegen/box/vararg/singleAssignmentToVarargsInFunction.kt");
-    }
-
-    @Test
     @TestMetadata("spreadCopiesArray.kt")
     public void testSpreadCopiesArray() {
       runTest("compiler/testData/codegen/box/vararg/spreadCopiesArray.kt");
@@ -41603,6 +42957,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/volatile")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Volatile {
     @Test
     public void testAllFilesPresentInVolatile() {
@@ -41667,6 +43022,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Wasm_new_exception_handling {
     @Test
     public void testAllFilesPresentInWasm_new_exception_handling() {
@@ -41677,6 +43033,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   @Nested
   @TestMetadata("compiler/testData/codegen/box/when")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class When {
     @Test
     public void testAllFilesPresentInWhen() {
@@ -41876,6 +43233,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("oneUnitBranch.kt")
+    public void testOneUnitBranch() {
+      runTest("compiler/testData/codegen/box/when/oneUnitBranch.kt");
+    }
+
+    @Test
     @TestMetadata("range.kt")
     public void testRange() {
       runTest("compiler/testData/codegen/box/when/range.kt");
@@ -41974,6 +43337,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class EnumOptimization {
       @Test
       public void testAllFilesPresentInEnumOptimization() {
@@ -41984,18 +43348,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @TestMetadata("bigEnum.kt")
       public void testBigEnum() {
         runTest("compiler/testData/codegen/box/when/enumOptimization/bigEnum.kt");
-      }
-
-      @Test
-      @TestMetadata("differentEnumClasses.kt")
-      public void testDifferentEnumClasses() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses.kt");
-      }
-
-      @Test
-      @TestMetadata("differentEnumClasses2.kt")
-      public void testDifferentEnumClasses2() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses2.kt");
       }
 
       @Test
@@ -42108,8 +43460,26 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/guard")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class Guard {
+      @Test
+      public void testAllFilesPresentInGuard() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("whenWithGuard.kt")
+      public void testWhenWithGuard() {
+        runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class StringOptimization {
       @Test
       public void testAllFilesPresentInStringOptimization() {
@@ -42174,6 +43544,7 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
     public class WhenSubjectVariable {
       @Test
       public void testAllFilesPresentInWhenSubjectVariable() {

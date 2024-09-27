@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -24,11 +24,11 @@ FILE: [ResolvedTo(RAW_FIR)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -48,11 +48,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -72,11 +72,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -96,11 +96,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -120,11 +120,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,11 +144,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -168,11 +168,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -192,11 +192,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -221,11 +221,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -250,11 +250,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -279,11 +279,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -308,11 +308,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -339,11 +339,11 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localDelegatedPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localDelegatedPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
                 super<R|kotlin/Any|>()
             }

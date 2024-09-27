@@ -163,12 +163,6 @@ class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProj
 
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61153")
-    @GradleTest
-    override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
-        super.testRemoveLibFromClasspath(gradleVersion)
-    }
 }
 
 class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
@@ -898,13 +892,13 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 }
                 """.trimIndent()
             )
-            build(":app:compileKotlin")
+            build(":app:$compileKotlinTaskName")
 
             subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").modify {
                 it.replace("fun someMethod() {}", "fun someMethod(addedParam: Int = 0) {}")
             }
 
-            build(":app:compileKotlin") {
+            build(":app:$compileKotlinTaskName") {
                 assertIncrementalCompilation(
                     expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
                         libSources = listOf("bar/InterfaceInLib.kt"),
@@ -924,7 +918,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         defaultProject(gradleVersion) {
             // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
             build(
-                ":lib:compileKotlin",
+                ":lib:$compileKotlinTaskName",
                 buildOptions = defaultBuildOptions.copy(
                     compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
                 ),
@@ -937,7 +931,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             // Perform the next build using Kotlin daemon without making a change and check that tasks are up-to-date. This is to ensure
             // that the `kotlin.compiler.execution.strategy` property used above is not an input to the KotlinCompile task; otherwise the
             // test in the next build would not be effective.
-            build(":lib:compileKotlin") {
+            build(":lib:$compileKotlinTaskName") {
                 assertTasksUpToDate(":lib:$compileKotlinTaskName")
             }
 
@@ -945,7 +939,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodSignatureInLib()
 
             // In the next build, compilation should be non-incremental as incremental state is missing
-            build(":lib:compileKotlin") {
+            build(":lib:$compileKotlinTaskName") {
                 assertNonIncrementalCompilation()
             }
         }
@@ -956,7 +950,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     fun testFailureHandling_UserError(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             // Perform the first non-incremental build
-            build(":lib:compileKotlin")
+            build(":lib:$compileKotlinTaskName")
 
             // Make a compile error in the source code
             var classAKtContents: String? = null
@@ -966,7 +960,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             // In the next build, compilation should be incremental and fail (and not fall back to non-incremental compilation)
-            buildAndFail(":lib:compileKotlin") {
+            buildAndFail(":lib:$compileKotlinTaskName") {
                 assertIncrementalCompilation()
                 assertTasksFailed(":lib:$compileKotlinTaskName")
                 assertOutputContains("Compilation error. See log for more details")
@@ -977,7 +971,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodSignatureInLib()
 
             // In the next build, compilation should be incremental and succeed
-            build(":lib:compileKotlin") {
+            build(":lib:$compileKotlinTaskName") {
                 assertIncrementalCompilation(
                     expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
                         libSources = listOf("bar/A.kt", "bar/B.kt", "bar/barUseA.kt")
@@ -997,7 +991,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             breakCachesAfterKotlinCompile(subProject("lib"), lookupFile)
 
             // Perform the first non-incremental build
-            build(":lib:compileKotlin") {
+            build(":lib:$compileKotlinTaskName") {
                 // Caches should be in a corrupted state, which will ensure the next build will fail
                 assertFileContains(lookupFile, "Invalid contents")
             }
@@ -1006,7 +1000,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodSignatureInLib()
 
             // In the next build, compilation should be incremental and fail, then fall back to non-incremental compilation and succeed
-            build(":lib:compileKotlin") {
+            build(":lib:$compileKotlinTaskName") {
                 assertIncrementalCompilationFellBackToNonIncremental(BuildAttribute.IC_FAILED_TO_COMPILE_INCREMENTALLY)
                 // Also check that the output is not deleted (regression test for KT-49780)
                 assertFileExists(lookupFile)
@@ -1017,6 +1011,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     private fun breakCachesAfterKotlinCompile(gradleProject: GradleProject, lookupFile: Path) {
         gradleProject.buildGradle.appendText(
             """
+                
             $compileKotlinTaskName {
                 doLast {
                     new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")

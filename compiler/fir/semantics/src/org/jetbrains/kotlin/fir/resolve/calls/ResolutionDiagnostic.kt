@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -80,7 +82,12 @@ class NameForAmbiguousParameter(
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
-object UnsuccessfulCallableReferenceAtom : ResolutionDiagnostic(INAPPLICABLE)
+class WrongNumberOfTypeArguments(
+    val desiredCount: Int,
+    val symbol: FirBasedSymbol<*>,
+) : ResolutionDiagnostic(INAPPLICABLE)
+
+object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE)
 
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
@@ -88,7 +95,15 @@ object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
 
-object SetterVisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
+/**
+ * This visibility "error" is an analogue of [VisibilityError], created for [org.jetbrains.kotlin.fir.declarations.FirCodeFragment]
+ * to be able to resolve into private entities.
+ *
+ * [RESOLVED_LOW_PRIORITY] was chosen here to be able, from the one side,
+ * to resolve to non-private member in case of ambiguity,
+ * but from another side, to have the code without error-level diagnostics.
+ */
+object FragmentVisibilityError : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
@@ -105,7 +120,7 @@ class DynamicReceiverExpectedButWasNonDynamic(
 
 object NoCompanionObject : ResolutionDiagnostic(K2_NO_COMPANION_OBJECT)
 
-class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
+class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
@@ -121,6 +136,12 @@ class ArgumentTypeMismatch(
     val actualType: ConeKotlinType,
     val argument: FirExpression,
     val isMismatchDueToNullability: Boolean,
+) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
+
+class UnitReturnTypeLambdaContradictsExpectedType(
+    val lambda: FirAnonymousFunction,
+    val wholeLambdaExpectedType: ConeKotlinType,
+    val sourceForFunctionExpression: KtSourceElement?
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class NullForNotNullType(

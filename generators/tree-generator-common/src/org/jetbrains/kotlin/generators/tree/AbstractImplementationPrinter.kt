@@ -6,36 +6,38 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.printer.braces
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.generators.tree.printer.typeParameters
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractImplementationPrinter<Implementation, Element, ImplementationField>(
-    private val printer: SmartPrinter,
+abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
+    private val printer: ImportCollectingPrinter,
 )
-        where Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
-              Element : AbstractElement<Element, *, Implementation>,
-              ImplementationField : AbstractField<*> {
+        where Implementation : AbstractImplementation<Implementation, Element, Field>,
+              Element : AbstractElement<Element, Field, Implementation>,
+              Field : AbstractField<Field> {
+
 
     protected abstract val implementationOptInAnnotation: ClassRef<*>
 
-    protected abstract val pureAbstractElementType: ClassRef<*>
+    protected abstract fun getPureAbstractElementType(implementation: Implementation): ClassRef<*>
 
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
-    protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<ImplementationField>
+    protected open fun ImportCollecting.parentConstructorArguments(implementation: Implementation): List<String> =
+        emptyList()
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {}
+    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field>
 
-    context(ImportCollector)
+    protected open fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
+    }
+
+    protected open fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> = emptyList()
+
     fun printImplementation(implementation: Implementation) {
-        addAllImports(implementation.additionalImports)
         printer.run {
             printKDoc(implementation.kDoc)
             buildSet {
@@ -58,19 +60,37 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
             val kind = implementation.kind ?: error("Expected non-null element kind")
             print("${kind.title} ${implementation.typeName}")
-            print(implementation.element.params.typeParameters(end = " "))
+            print(implementation.element.params.typeParameters())
 
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
 
             val fieldPrinter = makeFieldPrinter(this)
 
-            if (!isInterface && !isAbstract && implementation.fieldsInConstructor.isNotEmpty()) {
-                if (implementation.isPublic && implementation.putImplementationOptInInConstructor) {
-                    print(" @", implementationOptInAnnotation.render(), " constructor")
+            val additionalConstructorParameters = additionalConstructorParameters(implementation)
+            if (!isInterface &&
+                !isAbstract &&
+                (implementation.fieldsInConstructor.isNotEmpty() || additionalConstructorParameters.isNotEmpty())
+            ) {
+                var printConstructor = false
+                if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
+                    print(" @", implementationOptInAnnotation.render())
+                    printConstructor = true
                 }
+                if (implementation.isPublic && !implementation.isConstructorPublic) {
+                    print(" internal")
+                    printConstructor = true
+                }
+
+                if (printConstructor) {
+                    print(" constructor")
+                }
+
                 println("(")
                 withIndent {
+                    for (parameter in additionalConstructorParameters) {
+                        println(parameter.render(this), ",")
+                    }
                     implementation.fieldsInConstructor
                         .reorderFieldsIfNecessary(implementation.constructorParameterOrderOverride)
                         .forEachIndexed { _, field ->
@@ -85,28 +105,39 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                 print(")")
             }
 
-            print(" : ")
-            if (implementation.needPureAbstractElement) {
-                print(pureAbstractElementType.render(), "(), ")
-            }
-            print(implementation.allParents.joinToString { "${it.render()}${it.kind.braces()}" })
-            printBlock {
-                val fields = if (isInterface || isAbstract) implementation.allFields
-                else implementation.fieldsInBody
-                fields.forEachIndexed { index, field ->
-                    if (index > 0 && separateFieldsWithBlankLine) {
-                        println()
+            val parentRefs = listOfNotNull(getPureAbstractElementType(implementation).takeIf { implementation.needPureAbstractElement }) +
+                    implementation.allParents.map { it.withSelfArgs() }
+            printInheritanceClause(parentRefs, parentConstructorArguments(implementation))
+            val printer = SmartPrinter(StringBuilder())
+            withNewPrinter(printer) {
+                val bodyFieldPrinter = makeFieldPrinter(this)
+                withIndent {
+                    val fields = if (isInterface || isAbstract) implementation.allFields
+                    else implementation.fieldsInBody
+                    fields.forEachIndexed { index, field ->
+                        if (index > 0 && separateFieldsWithBlankLine) {
+                            println()
+                        }
+                        bodyFieldPrinter.printField(
+                            field,
+                            inImplementation = true,
+                            override = true,
+                            modality = Modality.ABSTRACT.takeIf { isAbstract },
+                        )
                     }
-                    fieldPrinter.printField(
-                        field,
-                        inImplementation = true,
-                        override = true,
-                        modality = Modality.ABSTRACT.takeIf { isAbstract }
-                    )
-                }
 
-                printAdditionalMethods(implementation)
+                    printAdditionalMethods(implementation)
+                }
             }
+            val body = printer.toString()
+            if (body.isNotEmpty()) {
+                println(" {")
+                print(body)
+                println("}")
+            } else {
+                println()
+            }
+            addAllImports(implementation.additionalImports)
         }
     }
 }

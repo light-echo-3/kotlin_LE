@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -77,8 +78,6 @@ class JvmSymbols(
      * (they are expected to be provided at run-time by the corresponding bootstrap method).
      */
     val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
-
-    private val generateOptimizedCallableReferenceSuperClasses = context.config.generateOptimizedCallableReferenceSuperClasses
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
         createEmptyExternalPackageFragment(context.state.module, fqName)
@@ -385,17 +384,10 @@ class JvmSymbols(
             generateCallableReferenceMethods(klass)
         }
 
-    val functionReferenceGetSignature: IrSimpleFunctionSymbol = functionReference.functionByName("getSignature")
-    val functionReferenceGetName: IrSimpleFunctionSymbol = functionReference.functionByName("getName")
-    val functionReferenceGetOwner: IrSimpleFunctionSymbol = functionReference.functionByName("getOwner")
-
     val functionReferenceImpl: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.FunctionReferenceImpl"), classModality = Modality.OPEN) { klass ->
             klass.superTypes = listOf(functionReference.defaultType)
-
-            if (generateOptimizedCallableReferenceSuperClasses) {
-                klass.generateCallableReferenceSuperclassConstructors(withArity = true)
-            }
+            klass.generateCallableReferenceSuperclassConstructors(withArity = true)
         }
 
     val adaptedFunctionReference: IrClassSymbol =
@@ -501,15 +493,7 @@ class JvmSymbols(
                 classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
             ) { klass ->
                 if (impl) {
-                    klass.addConstructor().apply {
-                        addValueParameter("owner", kDeclarationContainer.defaultType)
-                        addValueParameter("name", irBuiltIns.stringType)
-                        addValueParameter("string", irBuiltIns.stringType)
-                    }
-
-                    if (generateOptimizedCallableReferenceSuperClasses) {
-                        klass.generateCallableReferenceSuperclassConstructors(withArity = false)
-                    }
+                    klass.generateCallableReferenceSuperclassConstructors(withArity = false)
 
                     klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {
@@ -825,6 +809,27 @@ class JvmSymbols(
             addValueParameter("isInterface", irBuiltIns.booleanType)
             addValueParameter("args", irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType))
             returnType = irBuiltIns.anyNType
+        }.symbol
+
+    val getClassByDescriptor: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<get-class>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addValueParameter("descriptor", irBuiltIns.stringType)
+            returnType = javaLangClass.defaultType
+        }.symbol
+
+    val handleResultOfReflectiveAccess: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<coerce-result-of-reflective-access>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val coerceTo = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", irBuiltIns.anyNType)
+            returnType = coerceTo.defaultType
         }.symbol
 
     private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->

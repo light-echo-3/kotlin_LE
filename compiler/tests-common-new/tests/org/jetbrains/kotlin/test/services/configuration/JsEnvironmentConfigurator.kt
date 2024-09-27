@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -23,6 +18,8 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
@@ -30,7 +27,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -66,7 +62,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         }
 
         private val METADATA_CACHE by lazy {
-            (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
+            listOf(StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath, StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath).flatMap { path ->
                 KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
                     val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
                     JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
@@ -113,7 +109,14 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             project: Project, configuration: CompilerConfiguration, compilerEnvironment: TargetEnvironment = CompilerEnvironment
         ): JsConfig {
             return JsConfig(
-                project, configuration, compilerEnvironment, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet()
+                project,
+                configuration,
+                compilerEnvironment,
+                METADATA_CACHE,
+                setOf(
+                    StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath,
+                    StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath
+                )
             )
         }
 
@@ -206,9 +209,12 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.moduleName) + ".meta.js" }
 
         val libraries = when (module.targetBackend) {
-            null -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST
+            null -> listOf(
+                testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
+                testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
+            )
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
-            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies + friends
+            TargetBackend.JS -> listOf(testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath, testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath) + dependencies + friends
             else -> error("Unsupported target backend: ${module.targetBackend}")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
@@ -228,14 +234,24 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val sourceMapSourceEmbedding = registeredDirectives[SOURCE_MAP_EMBED_SOURCES].singleOrNull() ?: SourceMapSourceEmbedding.NEVER
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)
 
-        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, TYPED_ARRAYS in registeredDirectives)
-
         configuration.put(JSConfigurationKeys.GENERATE_POLYFILLS, true)
         configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
 
         configuration.put(
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
+        )
+
+        if (DUMP_KLIB_SYNTHETIC_ACCESSORS in registeredDirectives) {
+            configuration.put(
+                KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR,
+                testServices.getOrCreateTempDirectory("synthetic-accessors").absolutePath
+            )
+        }
+
+        configuration.put(
+            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
+            KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY in registeredDirectives
         )
     }
 }

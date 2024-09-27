@@ -77,7 +77,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         visitElement(variableAssignment, data)
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: MutableMap<KtElement, FirElement>) {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: MutableMap<KtElement, FirElement>) {
         cacheElement(literalExpression, data)
         literalExpression.annotations.forEach {
             it.accept(this, data)
@@ -128,11 +128,16 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         it.isSourceForSmartCasts(element) ||
                         it.kind == KtFakeSourceElementKind.DanglingModifierList ||
                         it.isSourceForArrayAugmentedAssign(element) ||
-                        it.isSourceForCompoundAccess(element)
+                        it.isSourceForCompoundAccess(element) ||
+                        it.isSourceForInvertedInOperator(element)
             }.psi as? KtElement
             ?: return
         cache(psi, element, cache)
     }
+
+    private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
+        kind == KtFakeSourceElementKind.DesugaredInvertedContains
+                && fir is FirResolvedNamedReference && fir.name == OperatorNameConventions.CONTAINS
 
     /**
      * FIR represents compound assignment and inc/dec operations as multiple smaller instructions. Here we choose the write operation as the
@@ -202,21 +207,21 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         return FirOperationNameConventions.ASSIGNMENTS[firOperation]
     }
 
-    private val FirLiteralExpression<*>.isConverted: Boolean
+    private val FirLiteralExpression.isConverted: Boolean
         get() {
             val firSourcePsi = this.source?.psi ?: return false
             return firSourcePsi is KtPrefixExpression && firSourcePsi.operationToken == KtTokens.MINUS
         }
 
-    private val FirLiteralExpression<*>.ktConstantExpression: KtConstantExpression?
+    private val FirLiteralExpression.ktConstantExpression: KtConstantExpression?
         get() {
             val firSourcePsi = this.source?.psi
             return firSourcePsi?.findDescendantOfType()
         }
 
-    private fun <T> ConstantValueKind<T>.reverseConverted(original: FirLiteralExpression<T>): FirLiteralExpression<T>? {
+    private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression): FirLiteralExpression? {
         val value = original.value as? Number ?: return null
-        val convertedValue = when (this) {
+        val convertedValue: Any = when (this) {
             ConstantValueKind.Byte -> value.toByte().unaryMinus()
             ConstantValueKind.Double -> value.toDouble().unaryMinus()
             ConstantValueKind.Float -> value.toFloat().unaryMinus()
@@ -225,11 +230,10 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             ConstantValueKind.Short -> value.toShort().unaryMinus()
             else -> null
         } ?: return null
-        @Suppress("UNCHECKED_CAST")
         return buildLiteralExpression(
             original.ktConstantExpression?.toKtPsiSourceElement(),
             this,
-            convertedValue as T,
+            convertedValue,
             setType = false
         ).also {
             it.replaceConeTypeOrNull(original.resolvedType)

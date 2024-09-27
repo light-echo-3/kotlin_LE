@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -26,25 +28,29 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.File
+import java.io.OutputStream
 import java.nio.file.Files
-import java.util.EnumSet
+import java.util.*
 
-fun interface JsIrCompilerICInterface {
+abstract class IrICModule {
+    abstract val moduleName: String
+    abstract val fragments: List<IrICProgramFragment>
+}
+
+abstract class IrICProgramFragment
+
+abstract class IrICProgramFragments {
+    abstract val mainFragment: IrICProgramFragment
+    abstract val exportFragment: IrICProgramFragment?
+    abstract fun serialize(stream: OutputStream)
+}
+
+fun interface IrCompilerICInterface {
     /**
      * It is expected that the method implementation runs a lowering pipeline
      * and produces a list of generators capable of generating JS AST fragments.
      */
-    fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> JsIrProgramFragments>
-}
-
-fun interface JsIrCompilerICInterfaceFactory {
-    /**
-     * It is expected that the method implementation creates a backend context and initializes all builtins and intrinsics.
-     */
-    fun createCompilerForIC(
-        mainModule: IrModuleFragment,
-        configuration: CompilerConfiguration
-    ): JsIrCompilerICInterface
+    fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments>
 }
 
 enum class DirtyFileState(val str: String) {
@@ -58,11 +64,30 @@ enum class DirtyFileState(val str: String) {
     REMOVED_FILE("removed file")
 }
 
+interface PlatformDependentICContext {
+    fun createIrFactory(): IrFactory
+
+    /**
+     * It is expected that the method implementation creates a backend context and initializes all builtins and intrinsics.
+     */
+    fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface
+
+    fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File? = null): SrcFileArtifact
+
+    fun createModuleArtifact(
+        moduleName: String,
+        fileArtifacts: List<SrcFileArtifact>,
+        artifactsDir: File? = null,
+        forceRebuildJs: Boolean = false,
+        externalModuleName: String? = null
+    ): ModuleArtifact
+}
+
 /**
  * This class is the entry point for the incremental compilation routine.
  * The most interesting params:
  * @param cacheDir - the directory where the incremental cache updater will store its caches. [CacheUpdater] maintains the directory fully.
- * @param compilerInterfaceFactory - is a factory that creates an instance of the compiler used for building dirty files.
+ * @param icContext - used to create an instance of the compiler used for building dirty files.
  *
  * The main public methods are:
  *  [actualizeCaches] - performs the entire incremental compilation routine;
@@ -78,8 +103,9 @@ class CacheUpdater(
     private val mainModuleFriends: Collection<String>,
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
-    private val irFactory: () -> IrFactory,
-    private val compilerInterfaceFactory: JsIrCompilerICInterfaceFactory
+    private val icContext: PlatformDependentICContext,
+    checkForClassStructuralChanges: Boolean = false,
+    private val completeLoadForKotlinTest: Boolean = false
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -87,9 +113,9 @@ class CacheUpdater(
 
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
 
-    private val icHasher = ICHasher()
+    private val icHasher = ICHasher(checkForClassStructuralChanges)
 
-    private val internationService = IrInterningService()
+    private val irInterner = IrInterningService()
 
     private val cacheRootDir = run {
         val configHash = icHasher.calculateConfigHash(compilerConfiguration)
@@ -115,8 +141,12 @@ class CacheUpdater(
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
-                compilerConfiguration.irMessageLogger.toLogger(),
-                zipAccessor
+                compilerConfiguration.messageCollector.toLogger(),
+                zipAccessor,
+                duplicatedUniqueNameStrategy = compilerConfiguration.get(
+                    KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+                    DuplicatedUniqueNameStrategy.DENY
+                ),
             )
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
@@ -151,7 +181,7 @@ class CacheUpdater(
             val file = File(libFile.path)
             val pathHash = file.absolutePath.cityHash64String()
             val libraryCacheDir = File(cacheRootDir, "${file.name}.$pathHash")
-            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib, internationService), libraryCacheDir)
+            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib, irInterner), libraryCacheDir)
         }
 
         private val removedIncrementalCaches = buildList {
@@ -639,21 +669,22 @@ class CacheUpdater(
     private fun commitCacheAndBuildModuleArtifacts(
         incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         moduleNames: Map<KotlinLibraryFile, String>,
-        rebuiltFileFragments: KotlinSourceFileMap<JsIrProgramFragments>
+        rebuiltFileFragments: KotlinSourceFileMap<IrICProgramFragments>
     ): List<ModuleArtifact> = stopwatch.measure("Incremental cache - committing artifacts") {
         incrementalCacheArtifacts.map { (libFile, incrementalCacheArtifact) ->
             incrementalCacheArtifact.buildModuleArtifactAndCommitCache(
                 moduleName = moduleNames[libFile] ?: notFoundIcError("module name", libFile),
-                rebuiltFileFragments = rebuiltFileFragments[libFile] ?: emptyMap()
+                rebuiltFileFragments = rebuiltFileFragments[libFile] ?: emptyMap(),
+                icContext = icContext
             )
         }
     }
 
     private fun compileDirtyFiles(
-        compilerForIC: JsIrCompilerICInterface,
+        compilerForIC: IrCompilerICInterface,
         loadedIr: LoadedJsIr,
         dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
-    ): MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> JsIrProgramFragments>> =
+    ): MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>> =
         stopwatch.measure("Processing IR - lowering") {
             val dirtyFilesForCompiling = mutableListOf<IrFile>()
             val dirtyFilesForRestoring = mutableListOf<Pair<KotlinLibraryFile, KotlinSourceFile>>()
@@ -680,7 +711,7 @@ class CacheUpdater(
         val incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         val loadedIr: LoadedJsIr,
         val dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>,
-        val irCompiler: JsIrCompilerICInterface
+        val irCompiler: IrCompilerICInterface
     )
 
     private fun loadIrForDirtyFilesAndInitCompiler(): IrForDirtyFilesAndCompiler {
@@ -698,10 +729,10 @@ class CacheUpdater(
             compilerConfiguration = compilerConfiguration,
             dependencyGraph = updater.libraryDependencies,
             mainModuleFriends = updater.mainModuleFriendLibraries,
-            irFactory = irFactory(),
+            irFactory = icContext.createIrFactory(),
             stubbedSignatures = stubbedSignatures
         )
-        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
+        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports, loadKotlinTest = completeLoadForKotlinTest)
 
         var iterations = 0
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports
@@ -739,7 +770,7 @@ class CacheUpdater(
 
         stopwatch.startNext("Processing IR - initializing backend context")
         val mainModuleFragment = loadedIr.loadedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        val compilerForIC = compilerInterfaceFactory.createCompilerForIC(mainModuleFragment, compilerConfiguration)
+        val compilerForIC = icContext.createCompiler(mainModuleFragment, compilerConfiguration)
 
         // Load declarations referenced during `context` initialization
         loadedIr.loadUnboundSymbols()
@@ -761,7 +792,7 @@ class CacheUpdater(
     private data class FragmentGenerators(
         val incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         val moduleNames: Map<KotlinLibraryFile, String>,
-        val generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> JsIrProgramFragments>>
+        val generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>>
     )
 
     private fun loadIrAndMakeIrFragmentGenerators(): FragmentGenerators {
@@ -775,9 +806,9 @@ class CacheUpdater(
     }
 
     private fun generateIrFragments(
-        generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> JsIrProgramFragments>>
-    ): KotlinSourceFileMap<JsIrProgramFragments> = stopwatch.measure("Processing IR - generating program fragments") {
-        val rebuiltFragments = KotlinSourceFileMutableMap<JsIrProgramFragments>()
+        generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>>
+    ): KotlinSourceFileMap<IrICProgramFragments> = stopwatch.measure("Processing IR - generating program fragments") {
+        val rebuiltFragments = KotlinSourceFileMutableMap<IrICProgramFragments>()
         while (generators.isNotEmpty()) {
             val (libFile, srcFile, fragmentGenerator) = generators.removeFirst()
             rebuiltFragments[libFile, srcFile] = fragmentGenerator()
@@ -789,12 +820,12 @@ class CacheUpdater(
      * This method performs the following routine:
      *  - Estimates dirty files that must be relowered;
      *  - Creates a compiler instance by calling [compilerInterfaceFactory];
-     *  - Runs the compiler (lowering pipeline) for the dirty files (see [JsIrCompilerICInterface]);
-     *  - Transforms lowered IR to JS AST fragments [JsIrProgramFragments];
+     *  - Runs the compiler (lowering pipeline) for the dirty files (see [IrCompilerICInterface]);
+     *  - Transforms lowered IR to JS AST fragments [IrICProgramFragments];
      *  - Saves the cache data on the disk.
      *
-     *  @return A module artifact list, where [ModuleArtifact] represents a compiled klib.
-     *   It contains either paths to files with serialized JS AST or the deserialized [JsIrProgramFragments] objects themselves
+     *  @return A module artifact list, where [JsModuleArtifact] represents a compiled klib.
+     *   It contains either paths to files with serialized JS AST or the deserialized [IrICProgramFragments] objects themselves
      *   for every file in the generating JS module. The list should be used for building the final JS module in [JsExecutableProducer]
      */
     fun actualizeCaches(): List<ModuleArtifact> {
@@ -818,8 +849,8 @@ fun rebuildCacheForDirtyFiles(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
-): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragments>>> {
-    val internationService = IrInterningService()
+): Pair<IrModuleFragment, List<Pair<IrFile, IrICProgramFragments>>> {
+    val irInterner = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
     }
@@ -827,7 +858,7 @@ fun rebuildCacheForDirtyFiles(
     val libFile = KotlinLibraryFile(library)
     val dirtySrcFiles = dirtyFiles?.let {
         KotlinSourceFile.fromSources(it.toList())
-    } ?: KotlinLoadedLibraryHeader(library, internationService).sourceFileFingerprints.keys
+    } ?: KotlinLoadedLibraryHeader(library, irInterner).sourceFileFingerprints.keys
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
@@ -845,13 +876,13 @@ fun rebuildCacheForDirtyFiles(
         mainArguments,
         configuration,
         JsGenerationGranularity.PER_MODULE,
-        PhaseConfig(jsPhases),
+        PhaseConfig(getJsPhases(configuration)),
         exportedDeclarations,
     )
 
     // Load declarations referenced during `context` initialization
     loadedIr.loadUnboundSymbols()
-    internationService.clear()
+    irInterner.reset()
 
     val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles).memoryOptimizedMap { it() }
 

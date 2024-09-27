@@ -100,4 +100,3 @@ class C : I1, I2 {
   override fun f(): String
 
 }
-

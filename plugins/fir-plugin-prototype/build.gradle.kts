@@ -17,7 +17,7 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -38,7 +38,7 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(intellijJDom())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 

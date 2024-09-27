@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
@@ -15,9 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -25,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -38,7 +36,9 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySeria
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.inheritableSerialInfoClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.keepGeneratedSerializerAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.metaSerializableAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.polymorphicClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialNameAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
@@ -174,6 +174,34 @@ internal fun FirClassSymbol<*>.isInternalSerializable(session: FirSession): Bool
     return hasSerializableOrMetaAnnotationWithoutArgs(session)
 }
 
+/**
+ * Internal serializer is a plugin generated serializer for final/open/abstract/sealed classes or factory serializer for enums.
+ * A plugin generated serializer can be generated as main type serializer or kept serializer.
+ */
+internal fun FirClassSymbol<*>.shouldHaveInternalSerializer(session: FirSession): Boolean {
+    return isInternalSerializable(session) || keepGeneratedSerializer(session)
+}
+internal fun FirClassSymbol<*>.shouldHaveGeneratedMethods(session: FirSession): Boolean {
+    return isInternalSerializable(session)
+            // in the version with the `keepGeneratedSerializer` annotation the enum factory is already present therefore
+            // there is no need to generate additional methods
+            || (keepGeneratedSerializer(session) && !classKind.isEnumClass && !classKind.isObject)
+}
+
+internal fun FirClassSymbol<*>.keepGeneratedSerializer(session: FirSession): Boolean {
+    return annotations.getAnnotationByClassId(
+        keepGeneratedSerializerAnnotationClassId,
+        session
+    ) != null
+}
+
+internal fun FirClassSymbol<*>.hasPolymorphicAnnotation(session: FirSession): Boolean {
+    return annotations.getAnnotationByClassId(
+        polymorphicClassId,
+        session
+    ) != null
+}
+
 fun FirClassSymbol<*>.hasSerializableOrMetaAnnotationWithoutArgs(session: FirSession): Boolean {
     return hasSerializableAnnotationWithoutArgs(session) ||
             (!hasSerializableAnnotation(session) && hasMetaSerializableAnnotation(session))
@@ -201,7 +229,10 @@ fun FirClassSymbol<*>.isEnumWithLegacyGeneratedSerializer(session: FirSession): 
             hasSerializableOrMetaAnnotationWithoutArgs(session)
 
 fun FirClassSymbol<*>.shouldHaveGeneratedSerializer(session: FirSession): Boolean =
-    (isInternalSerializable(session) && isFinalOrOpen()) || isEnumWithLegacyGeneratedSerializer(session)
+    (isInternalSerializable(session) && isFinalOrOpen())
+            || isEnumWithLegacyGeneratedSerializer(session)
+            // enum factory must be used for enums
+            || (keepGeneratedSerializer(session) && !classKind.isEnumClass && !classKind.isObject)
 
 // ---------------------- type utils ----------------------
 
@@ -246,6 +277,14 @@ fun ConeKotlinType.isAbstractOrSealedOrInterface(session: FirSession): Boolean =
     toRegularClassSymbol(session)?.let { it.classKind.isInterface || it.rawStatus.modality == Modality.ABSTRACT || it.rawStatus.modality == Modality.SEALED }
         ?: false
 
+fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<*>? {
+    return when (this) {
+        is ConeSimpleKotlinType -> toClassSymbol(session)
+        is ConeFlexibleType -> upperBound.toClassSymbol(session)
+        is ConeDefinitelyNotNullType -> original.toClassSymbol(session)
+    }
+}
+
 fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs()) {
         return
@@ -257,7 +296,7 @@ fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     val jsExportIgnoreAnnotationCall = buildAnnotationCall {
         argumentList = FirEmptyArgumentList
         annotationTypeRef = buildResolvedTypeRef {
-            type = jsExportIgnoreAnnotation.defaultType()
+            coneType = jsExportIgnoreAnnotation.defaultType()
         }
         calleeReference = buildResolvedNamedReference {
             name = jsExportIgnoreAnnotation.name

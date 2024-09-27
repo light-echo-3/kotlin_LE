@@ -95,6 +95,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("genericsOnOuterClass.kt")
+  public void testGenericsOnOuterClass() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/genericsOnOuterClass.kt");
+  }
+
+  @Test
   @TestMetadata("incompleteDelegation.kt")
   public void testIncompleteDelegation() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
@@ -176,6 +182,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   @TestMetadata("resolutionErrors.kt")
   public void testResolutionErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/resolutionErrors.kt");
+  }
+
+  @Test
+  @TestMetadata("sameCallableIdFromDependencies.kt")
+  public void testSameCallableIdFromDependencies() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/sameCallableIdFromDependencies.kt");
   }
 
   @Test
@@ -281,6 +293,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
     @TestMetadata("deprecationAtTopLevel.kt")
     public void testDeprecationAtTopLevel() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/deprecationAtTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("globalWarningSuppression.kt")
+    public void testGlobalWarningSuppression() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/globalWarningSuppression.kt");
     }
   }
 

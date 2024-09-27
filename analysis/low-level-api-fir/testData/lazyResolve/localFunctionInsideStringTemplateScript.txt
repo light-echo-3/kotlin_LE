@@ -1,17 +1,17 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -24,18 +24,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -48,18 +48,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -72,18 +72,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -96,18 +96,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -120,18 +120,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -144,18 +144,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -168,18 +168,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -192,18 +192,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -216,18 +216,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -240,18 +240,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -264,18 +264,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -288,18 +288,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -312,18 +312,18 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localFunctionInsideStringTemplateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -332,3 +332,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStringTemplateScript.kts
             }
 
         }
+

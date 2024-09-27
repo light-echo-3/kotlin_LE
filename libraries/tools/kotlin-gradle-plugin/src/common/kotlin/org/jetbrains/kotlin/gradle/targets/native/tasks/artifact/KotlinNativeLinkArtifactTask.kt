@@ -17,29 +17,33 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
-import org.jetbrains.kotlin.gradle.utils.XcodeUtils
-import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner.ToolArguments
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -52,13 +56,14 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
     @get:Input val outputKind: CompilerOutputKind,
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
-    UsesXcodeVersion,
-    KotlinToolTask<KotlinCommonCompilerToolOptions> {
+    UsesClassLoadersCachingBuildService,
+    UsesKonanPropertiesBuildService,
+    KotlinToolTask<KotlinCommonCompilerToolOptions>,
+    UsesBuildFusService {
 
     @get:Input
     abstract val baseName: Property<String>
@@ -84,6 +89,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @get:Input
     @get:Optional
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
     abstract val embedBitcode: Property<BitcodeEmbeddingMode>
 
     @get:Classpath
@@ -175,9 +181,14 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         .property(GradleBuildMetricsReporter())
 
     @get:Nested
-    internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
-    }
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            // For KT-66452 we need to get rid of invocation of 'Task.project'.
+            // That is why we moved setting this property to task registration
+            // and added convention for backwards compatibility.
+            project.provider {
+                KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
+            })
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
@@ -189,13 +200,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
-
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(
-        kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
-        kotlinNativeProvider.get().konanDataDir.orNull,
-        project
-    )
+    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     init {
         baseName.convention(project.name)
@@ -211,6 +216,29 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         })
     }
 
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+
+    private val shouldUseEmbeddableCompilerJar = project.nativeProperties.shouldUseEmbeddableCompilerJar
+    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+    private val runnerJvmArgs = project.nativeProperties.jvmArgs
+    private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
+    private val useXcodeMessageStyle = project.useXcodeMessageStyle
+
+    @get:Internal
+    internal val nativeCompilerRunner
+        get() = objectFactory.KotlinNativeCompilerRunner(
+            metrics,
+            classLoadersCachingService,
+            forceDisableRunningInProcess,
+            useXcodeMessageStyle,
+            shouldUseEmbeddableCompilerJar,
+            actualNativeHomeDirectory,
+            runnerJvmArgs,
+            konanPropertiesService,
+            buildFusService
+        )
+
     @TaskAction
     fun link() {
         val metricReporter = metrics.get()
@@ -220,7 +248,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             val outFile = outputFile.get()
             outFile.ensureParentDirsCreated()
 
-            fun FileCollection.klibs() = files.filter { it.extension == "klib" }
+            fun FileCollection.klibs() = files.filter { it.extension == "klib" || it.isDirectory }
 
             val buildArgs = buildKotlinNativeBinaryLinkerArgs(
                 outFile = outFile,
@@ -234,24 +262,25 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
                 compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
                 processTests = processTests.get(),
                 entryPoint = entryPoint.getOrNull(),
-                embedBitcode = bitcodeEmbeddingMode(),
                 linkerOpts = linkerOptions.get(),
                 binaryOptions = allBinaryOptions.get(),
                 isStaticFramework = staticFramework.get(),
                 exportLibraries = exportLibraries.klibs(),
                 includeLibraries = includeLibraries.klibs(),
-                additionalOptions = emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
+                //todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and
+                // org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
+                additionalOptions = listOfNotNull(
+                    kotlinNativeProvider.get().konanDataDir.orNull?.let { "-Xkonan-data-dir=$it" },
+                )
             )
 
-            KotlinNativeCompilerRunner(
-                settings = runnerSettings,
-                executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-                metricReporter,
-            ).run(buildArgs)
+            nativeCompilerRunner.runTool(
+                ToolArguments(
+                    shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
+                    compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+                    arguments = buildArgs,
+                ),
+            )
         }
-    }
-
-    private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
-        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcode.orNull, xcodeVersion, konanTarget, debuggable.get())
     }
 }

@@ -41,12 +41,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   }
 
   @Test
-  @TestMetadata("initRuntimeInGlobal.kt")
-  public void testInitRuntimeInGlobal() {
-    runTest("native/native.tests/testData/standalone/initRuntimeInGlobal.kt");
-  }
-
-  @Test
   @TestMetadata("kt56048.kt")
   public void testKt56048() {
     runTest("native/native.tests/testData/standalone/kt56048.kt");
@@ -454,6 +448,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     @TestMetadata("unhandledExceptionInWorkerExecuteQuiet.kt")
     public void testUnhandledExceptionInWorkerExecuteQuiet() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteQuiet.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledObjCAllocationException.kt")
+    public void testUnhandledObjCAllocationException() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledObjCAllocationException.kt");
     }
   }
 }

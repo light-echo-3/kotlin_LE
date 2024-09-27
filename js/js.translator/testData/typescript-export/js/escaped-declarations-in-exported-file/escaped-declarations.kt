@@ -2,10 +2,8 @@
 
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
-// SKIP_MINIFICATION
 // SKIP_NODE_JS
-// IGNORE_BACKEND: JS
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // FILE: escaped-interfaces.kt

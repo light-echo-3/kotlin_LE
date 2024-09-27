@@ -12,20 +12,22 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirDefaultSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority,
+    private val priority: DefaultImportPriority,
     private val excludedImportNames: Set<FqName>,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer) =
         importResolveTransformer.transformImport(this, null) as? FirResolvedImport
 
-    override val simpleImports = run {
+    override val simpleImports: Map<Name, List<FirResolvedImport>> = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
         val defaultImportProvider = session.defaultImportProvider
         val allDefaultImports = priority.getAllDefaultImports(defaultImportProvider, LanguageVersionSettingsImpl.DEFAULT)
@@ -39,5 +41,10 @@ class FirDefaultSimpleImportingScope(
             }
             ?.groupBy { it.importedName!! }
             ?: emptyMap()
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDefaultSimpleImportingScope {
+        return FirDefaultSimpleImportingScope(newSession, newScopeSession, priority, excludedImportNames)
     }
 }

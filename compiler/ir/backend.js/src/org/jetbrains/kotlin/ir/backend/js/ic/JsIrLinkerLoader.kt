@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -30,9 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.irMessageLogger
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -134,19 +132,17 @@ internal class JsIrLinkerLoader(
         val symbolTable = SymbolTable(signaturer, irFactory)
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
-        val errorPolicy = compilerConfiguration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val messageLogger = compilerConfiguration.irMessageLogger
+        val messageCollector = compilerConfiguration.messageCollector
         val linker = JsIrLinker(
             currentModule = null,
-            messageLogger = messageLogger,
+            messageCollector = messageCollector,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
-                allowErrorTypes = errorPolicy.allowErrors,
                 builtIns = irBuiltIns,
-                messageLogger = messageLogger
+                messageCollector = messageCollector
             ),
             translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
@@ -188,7 +184,11 @@ internal class JsIrLinkerLoader(
             .toMap()
     }
 
-    fun loadIr(modifiedFiles: KotlinSourceFileMap<KotlinSourceFileExports>, loadAllIr: Boolean = false): LoadedJsIr {
+    fun loadIr(
+        modifiedFiles: KotlinSourceFileMap<KotlinSourceFileExports>,
+        loadAllIr: Boolean = false,
+        loadKotlinTest: Boolean = false,
+    ): LoadedJsIr {
         val loadedModules = loadModules()
         val linkerContext = createLinker(loadedModules)
 
@@ -197,6 +197,7 @@ internal class JsIrLinkerLoader(
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
                 module == mainLibrary -> DeserializationStrategy.ALL
+                loadKotlinTest && descriptor.name.asString() == "<kotlin-test>" -> DeserializationStrategy.ALL //KT-71037
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()

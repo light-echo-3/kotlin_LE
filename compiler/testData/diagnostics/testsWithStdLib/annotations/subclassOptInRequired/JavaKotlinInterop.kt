@@ -1,14 +1,14 @@
-// FILE: one.java
+// FIR_IDENTICAL
+// FILE: pcg/Foo.java
 package pcg;
 
 import kotlin.ExperimentalMultiplatform;
 import kotlin.SubclassOptInRequired;
-@SubclassOptInRequired(markerClass = ExperimentalMultiplatform.class) public class Foo{}
+
+@SubclassOptInRequired(markerClass = ExperimentalMultiplatform.class)
+public class Foo {}
 
 // FILE: two.kt
-
 import pcg.Foo
 
-class Bar() : Foo()
-
-
+class Bar() : <!OPT_IN_TO_INHERITANCE_ERROR!>Foo<!>()

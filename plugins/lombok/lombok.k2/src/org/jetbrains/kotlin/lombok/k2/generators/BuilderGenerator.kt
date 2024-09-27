@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,17 +28,21 @@ import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
-import org.jetbrains.kotlin.lombok.k2.*
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
@@ -82,7 +86,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
     override fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
-        context: NestedClassGenerationContext
+        context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (!owner.isSuitableJavaClass()) return null
         return builderClassCache.getValue(owner)?.symbol
@@ -95,7 +99,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         val builderClassName = builder.builderClassName.replace("*", classId.shortClassName.asString())
         val builderClassId = classId.createNestedClassId(Name.identifier(builderClassName))
 
-        val builderType = builderClassId.constructClassLikeType(emptyArray(), isNullable = false)
+        val builderType = builderClassId.constructClassLikeType(emptyArray(), isMarkedNullable = false)
         val visibility = builder.visibility.toVisibility()
         functions += classSymbol.createJavaMethod(
             Name.identifier(builder.builderMethodName),
@@ -133,23 +137,29 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
             Modality.FINAL,
             isStatic = true,
             superTypeRefs = listOf(session.builtinTypes.anyType)
-        )?.apply {
-            declarations += symbol.createDefaultJavaConstructor(visibility)
-            declarations += symbol.createJavaMethod(
-                Name.identifier(builder.buildMethodName),
-                valueParameters = emptyList(),
-                returnTypeRef = classSymbol.defaultType().toFirResolvedTypeRef(),
-                visibility = visibility,
-                modality = Modality.FINAL
-            )
-            val fields = javaClass.declarations.filterIsInstance<FirJavaField>()
-            for (field in fields) {
-                when (val singular = lombokService.getSingular(field.symbol)) {
-                    null -> createSetterMethod(builder, field, symbol, declarations)
-                    else -> createMethodsForSingularFields(builder, singular, field, symbol, declarations)
+        ) { symbol ->
+            object : FirJavaDeclarationList {
+                override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                    buildList {
+                        this += symbol.createDefaultJavaConstructor(visibility)
+                        this += symbol.createJavaMethod(
+                            Name.identifier(builder.buildMethodName),
+                            valueParameters = emptyList(),
+                            returnTypeRef = classSymbol.defaultType().toFirResolvedTypeRef(),
+                            visibility = visibility,
+                            modality = Modality.FINAL
+                        )
+
+                        val fields = javaClass.declarations.filterIsInstance<FirJavaField>()
+                        for (field in fields) {
+                            when (val singular = lombokService.getSingular(field.symbol)) {
+                                null -> createSetterMethod(builder, field, symbol, this)
+                                else -> createMethodsForSingularFields(builder, singular, field, symbol, this)
+                            }
+                        }
+                    }
                 }
             }
-
         } ?: return null
 
 
@@ -160,7 +170,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         builder: Builder,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
-        destination: MutableList<FirDeclaration>
+        destination: MutableList<FirDeclaration>,
     ) {
         val fieldName = field.name
         val setterName = fieldName.toMethodName(builder)
@@ -178,7 +188,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         singular: Singular,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
-        destination: MutableList<FirDeclaration>
+        destination: MutableList<FirDeclaration>,
     ) {
         val fieldJavaTypeRef = field.returnTypeRef as? FirJavaTypeRef ?: return
         val javaClassifierType = fieldJavaTypeRef.type as? JavaClassifierType ?: return
@@ -301,9 +311,10 @@ fun FirClassSymbol<*>.createJavaMethod(
     visibility: Visibility,
     modality: Modality,
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
-    isStatic: Boolean = false
+    isStatic: Boolean = false,
 ): FirJavaMethod {
     return buildJavaMethod {
+        containingClassSymbol = this@createJavaMethod
         moduleData = this@createJavaMethod.moduleData
         this.returnTypeRef = returnTypeRef
         this.dispatchReceiverType = dispatchReceiverType
@@ -313,14 +324,12 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.isStatic = isStatic
         }
         isFromSource = true
-        annotationBuilder = { emptyList() }
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData
                 this.returnTypeRef = valueParameter.typeRef
                 containingFunctionSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
-                annotationBuilder = { emptyList() }
                 isVararg = false
                 isFromSource = true
             }
@@ -337,6 +346,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
 ): FirJavaConstructor {
     val outerClassSymbol = this
     return buildJavaConstructor {
+        containingClassSymbol = outerClassSymbol
         moduleData = outerClassSymbol.moduleData
         isFromSource = true
         symbol = FirConstructorSymbol(classId)
@@ -353,11 +363,10 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         }
         isPrimary = false
         returnTypeRef = buildResolvedTypeRef {
-            type = outerClassSymbol.defaultType()
+            coneType = outerClassSymbol.defaultType()
         }
         dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null
         typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }
-        annotationBuilder = { emptyList() }
     }
 }
 
@@ -371,10 +380,12 @@ fun FirClassSymbol<*>.createJavaClass(
     modality: Modality,
     isStatic: Boolean,
     superTypeRefs: List<FirTypeRef>,
+    declarationListProvider: (FirRegularClassSymbol) -> FirJavaDeclarationList,
 ): FirJavaClass? {
     val containingClass = this.fir as? FirJavaClass ?: return null
     val classId = containingClass.classId.createNestedClassId(name)
     return buildJavaClass {
+        containingClassSymbol = containingClass.symbol
         moduleData = containingClass.moduleData
         symbol = FirRegularClassSymbol(classId)
         this.name = name
@@ -383,10 +394,10 @@ fun FirClassSymbol<*>.createJavaClass(
         this.modality = modality
         this.isStatic = isStatic
         classKind = ClassKind.CLASS
-        javaTypeParameterStack = containingClass.javaTypeParameterStack
+        javaTypeParameterStack = containingClass.classJavaTypeParameterStack
         scopeProvider = JavaScopeProvider
         if (!isStatic) {
-            typeParameters += containingClass.typeParameters.map {
+            typeParameters += containingClass.nonEnhancedTypeParameters.map {
                 buildOuterClassTypeParameterRef { symbol = it.symbol }
             }
         }
@@ -407,5 +418,7 @@ fun FirClassSymbol<*>.createJavaClass(
             isInline = false
             isFun = classKind == ClassKind.INTERFACE
         }
+
+        declarationList = declarationListProvider(symbol)
     }
 }

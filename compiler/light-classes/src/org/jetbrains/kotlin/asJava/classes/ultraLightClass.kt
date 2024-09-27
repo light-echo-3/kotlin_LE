@@ -262,7 +262,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         result.updateWithCompilerPlugins()
     }
 
-    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.cast<KtObjectDeclaration>().isCompanion()
+    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
@@ -510,8 +510,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun getScope(): PsiElement? = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
-        baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
+        InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
 
     override fun isDeprecated(): Boolean = _deprecated
 

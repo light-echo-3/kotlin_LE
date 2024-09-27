@@ -5,50 +5,44 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 
-internal fun KotlinNativeCInteropRunner.Companion.createExecutionContext(
-    task: CInteropProcess,
+internal interface CInteropProcessExecutionContext {
+    val task: CInteropProcess
+    val cinteropRunner: KotlinNativeToolRunner
+    fun runWithContext(action: KotlinNativeToolRunner.() -> Unit)
+}
+
+internal fun CInteropProcess.createExecutionContext(
     isInIdeaSync: Boolean,
-    runnerSettings: KotlinNativeToolRunner.Settings,
-    gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
-): KotlinNativeCInteropRunner.ExecutionContext {
-    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task, metricsReporter)
-    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task, metricsReporter)
+    cinteropRunner: KotlinNativeToolRunner,
+): CInteropProcessExecutionContext = if (isInIdeaSync) {
+    IdeaSyncKotlinNativeCInteropRunnerExecutionContext(this, cinteropRunner)
+} else {
+    DefaultKotlinNativeCInteropRunnerExecutionContext(this, cinteropRunner)
 }
 
 private class DefaultKotlinNativeCInteropRunnerExecutionContext(
-    override val runnerSettings: KotlinNativeToolRunner.Settings,
-    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
-    private val task: CInteropProcess,
-    override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
-) : KotlinNativeCInteropRunner.ExecutionContext {
-    override fun runWithContext(action: () -> Unit) {
+    override val task: CInteropProcess,
+    override val cinteropRunner: KotlinNativeToolRunner,
+) : CInteropProcessExecutionContext {
+    override fun runWithContext(action: KotlinNativeToolRunner.() -> Unit) {
         task.errorFileProvider.get().delete()
-        action()
+        cinteropRunner.action()
     }
 }
 
 private class IdeaSyncKotlinNativeCInteropRunnerExecutionContext(
-    override val runnerSettings: KotlinNativeToolRunner.Settings,
-    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
-    private val task: CInteropProcess,
-    override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
-) : KotlinNativeCInteropRunner.ExecutionContext {
+    override val task: CInteropProcess,
+    override val cinteropRunner: KotlinNativeToolRunner,
+) : CInteropProcessExecutionContext {
 
-    override fun runWithContext(action: () -> Unit) {
+    override fun runWithContext(action: KotlinNativeToolRunner.() -> Unit) {
         val errorFile = task.errorFileProvider.get()
         errorFile.delete()
         try {
-            action()
+            cinteropRunner.action()
         } catch (t: Throwable) {
             val errorText = "Warning: Failed to generate cinterop for ${task.path}: ${t.message ?: ""}"
             task.logger.warn(errorText, t)

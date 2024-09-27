@@ -57,7 +57,7 @@ dependencies {
     testApi(commonDependency("com.android.tools:r8"))
     testApi(project(":analysis:analysis-internal-utils"))
     testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testCompileOnly(toolsJar())
+    testCompileOnly(toolsJarApi())
     testCompileOnly(intellijCore())
 
     /*
@@ -70,16 +70,16 @@ dependencies {
     testApi(commonDependency("one.util:streamex"))
     testApi(commonDependency("org.codehaus.woodstox:stax2-api"))
     testApi(commonDependency("com.fasterxml:aalto-xml"))
-    testApi("org.opentest4j:opentest4j:1.2.0")
+    testApi(libs.opentest4j)
 
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
     testApi(intellijJavaRt()) // for FileComparisonFailure
 
     testImplementation(libs.guava)
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testImplementation(intellijJDom())
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

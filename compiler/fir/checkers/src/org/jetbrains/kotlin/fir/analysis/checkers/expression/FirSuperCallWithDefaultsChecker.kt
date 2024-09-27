@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNu
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 
 object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.explicitReceiverIsNotSuperReference()) return
 
         val functionSymbol = expression.calleeReference.toResolvedNamedFunctionSymbol() ?: return
-        val relevantFunctionSymbol = functionSymbol.getSingleMatchedExpectForActualOrNull() ?: functionSymbol
+        val relevantFunctionSymbol = functionSymbol.unwrapFakeOverridesOrDelegated()
+            .let { it.getSingleMatchedExpectForActualOrNull() ?: it }
         if (!relevantFunctionSymbol.valueParameterSymbols.any { it.hasDefaultValue }) return
         val arguments = expression.argumentList as? FirResolvedArgumentList ?: return
         if (arguments.arguments.size < functionSymbol.valueParameterSymbols.size) {

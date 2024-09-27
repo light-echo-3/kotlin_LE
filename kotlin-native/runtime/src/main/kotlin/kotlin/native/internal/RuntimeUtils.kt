@@ -13,31 +13,7 @@ import kotlin.reflect.KClass
 import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_derefSpecialRef")
-public external fun dereferenceSpecialRef(ref: COpaquePointer?): Any?
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_createSpecialRef")
-@Escapes(0b01)
-public external fun createSpecialRef(ref: Any?): COpaquePointer?
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_disposeSpecialRef")
-public external fun disposeSpecialRef(ref: COpaquePointer?)
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_retainSpecialRef")
-public external fun retainSpecialRef(ref: COpaquePointer?)
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_tryRetainSpecialRef")
-public external fun tryRetainSpecialRef(ref: COpaquePointer?): Boolean
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_releaseSpecialRef")
-public external fun releaseSpecialRef(ref: COpaquePointer?)
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
 @PublishedApi
@@ -137,13 +113,6 @@ internal fun ThrowCharacterCodingException(): Nothing {
     throw CharacterCodingException()
 }
 
-@ExportForCppRuntime
-@FreezingIsDeprecated
-internal fun ThrowIncorrectDereferenceException() {
-    throw IncorrectDereferenceException(
-            "Trying to access top level value not marked as @ThreadLocal or @SharedImmutable from non-main thread")
-}
-
 internal class FileFailedToInitializeException(message: String?, cause: Throwable?) : Error(message, cause)
 
 @ExportForCppRuntime
@@ -181,7 +150,7 @@ internal fun ReportUnhandledException(throwable: Throwable) {
 // Using object to make sure that `hook` is initialized when it's needed instead of
 // in a normal global initialization flow. This is important if some global happens
 // to throw an exception during it's initialization before this hook would've been initialized.
-@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
+@OptIn(ExperimentalNativeApi::class)
 internal object UnhandledExceptionHookHolder {
     internal val hook: AtomicReference<ReportUnhandledExceptionHook?> = AtomicReference<ReportUnhandledExceptionHook?>(null)
 }
@@ -189,7 +158,7 @@ internal object UnhandledExceptionHookHolder {
 // TODO: Can be removed only when native-mt coroutines stop using it.
 @PublishedApi
 @ExportForCppRuntime
-@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
+@OptIn(ExperimentalNativeApi::class)
 internal fun OnUnhandledException(throwable: Throwable) {
     val handler = UnhandledExceptionHookHolder.hook.value
     if (handler == null) {
@@ -204,7 +173,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
 }
 
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
-@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
+@OptIn(ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
     val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
     handler(throwable)
@@ -238,13 +207,17 @@ internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     return result as Array<T>
 }
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
-internal external fun <T> createUninitializedInstance(): T
+@InternalForKotlinNative
+public external fun <T> createUninitializedInstance(): T
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
-internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
+@InternalForKotlinNative
+public external fun initInstance(thiz: Any, constructorCall: Any): Unit
+
+@TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_ARRAY)
+@InternalForKotlinNative
+public external fun <T> createUninitializedArray(size: Int): T
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
@@ -293,4 +266,5 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+@Escapes.Nothing
 internal external fun immutableBlobOfImpl(data: String): ImmutableBlob

@@ -1,6 +1,5 @@
-// !LANGUAGE: +ObjCSignatureOverrideAnnotation
-// !API_VERSION: 2.0
-// FIR_IDENTICAL
+// LANGUAGE: +ObjCSignatureOverrideAnnotation
+// API_VERSION: 2.0
 // WITH_PLATFORM_LIBS
 
 import kotlinx.cinterop.*

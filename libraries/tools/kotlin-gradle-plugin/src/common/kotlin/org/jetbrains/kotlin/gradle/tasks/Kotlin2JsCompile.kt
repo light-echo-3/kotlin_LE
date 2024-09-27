@@ -5,23 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -30,16 +34,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Contri
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsTaskMetrics
-import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
+import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import java.io.File
 import javax.inject.Inject
@@ -51,9 +55,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     UsesLibraryFilterCachingService,
-    UsesBuildFusService,
     KotlinJsCompile,
-    K2MultiplatformCompilationTask {
+    K2MultiplatformCompilationTask,
+    ProducesKlib {
 
     init {
         incremental = true
@@ -88,6 +92,11 @@ abstract class Kotlin2JsCompile @Inject constructor(
     val outputFileProperty: Property<File>
         get() = _outputFileProperty
 
+    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.property(Boolean::class.java).value(true).chainedDisallowChanges()
+
+    override val klibOutput: Provider<File>
+        get() = destinationDirectory.asFile
+
     // Workaround to add additional compiler args based on the exising one
     // Currently there is a logic to add additional compiler arguments based on already existing one.
     // And it is not possible to update compilerOptions.freeCompilerArgs using some kind of .map
@@ -113,6 +122,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Input
     abstract override val moduleName: Property<String>
 
+    @get:Internal
+    internal abstract val mainCompilationModuleName: Property<String>
+
+    @get:Internal
+    internal abstract val projectVersion: Property<String>
+
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
@@ -121,6 +136,21 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         @Suppress("DEPRECATION_ERROR")
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+    }
+
+    /**
+     * In some cases, test compilations may have both main compilation outputs as directory and klib.
+     * This produces compiler warning about having two similar Klibs as inputs.
+     * We want to avoid such warnings by excluding packed .klib artifact from the main compilation.
+     */
+    private fun FileCollection.filterMainCompilationKlibArtifact(): FileCollection = run {
+        val klibPrefix = mainCompilationModuleName.orNull
+        val version = projectVersion.get()
+        if (klibPrefix != null) {
+            // "unspecified" is default version value when user hasn't explicitly configured the project version
+            val mainCompilationKlibName = if (version != "unspecified") "$klibPrefix-js-$version.klib" else "$klibPrefix-js.klib"
+            filter { it.name != mainCompilationKlibName }
+        } else this
     }
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSCompilerArguments> {
@@ -165,6 +195,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             args.libraries = runSafe {
                 libraries
                     .filter { it.exists() && libraryFilter(it) }
+                    .filterMainCompilationKlibArtifact()
                     .map { it.normalize().absolutePath }
                     .toSet()
                     .takeIf { it.isNotEmpty() }
@@ -213,20 +244,53 @@ abstract class Kotlin2JsCompile @Inject constructor(
         )
 
     @get:Internal
+    abstract override val libraries: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Incremental
+    internal val directoryLibraries by lazy {
+        libraries.filter { it.isDirectory }
+    }
+
+    @get:Classpath
+    @get:Incremental
+    internal val packedLibraries by lazy {
+        libraries.filter { !it.isDirectory }
+    }
+
+    @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
             libraryFilterCacheService.get().getOrCompute(file.asLibraryFilterCacheKey, ::isKotlinLibrary)
         }
 
     override val incrementalProps: List<FileCollection>
-        get() = super.incrementalProps + listOf(friendDependencies)
+        /*
+         * We are not interested in the entire list of changes in `directoryLibraries`.
+         * It has a special treatment in the usage place and ModulesApiHistory.
+         */
+        get() = super.incrementalProps - listOf(libraries) + listOf(packedLibraries, friendDependencies)
 
     protected open fun processArgsBeforeCompile(args: K2JSCompilerArguments) = Unit
 
     protected open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         context.primitive { args ->
-            args.irOnly = true
             args.irProduceKlibDir = true
+        }
+    }
+
+    private operator fun SourcesChanges.plus(other: SourcesChanges): SourcesChanges {
+        return when {
+            this is SourcesChanges.Unknown || this is SourcesChanges.ToBeCalculated -> this
+            other is SourcesChanges.Unknown || other is SourcesChanges.ToBeCalculated -> other
+            this is SourcesChanges.Known && other is SourcesChanges.Known -> SourcesChanges.Known(
+                modifiedFiles + other.modifiedFiles,
+                removedFiles + other.removedFiles
+            )
+            else -> error("Impossible combination of sources changes during merging them")
         }
     }
 
@@ -239,6 +303,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val dependencies = libraries
             .filter { it.exists() && libraryFilter(it) }
+            .filterMainCompilationKlibArtifact()
             .map { it.normalize().absolutePath }
 
         args.libraries = dependencies.distinct().let {
@@ -259,8 +324,11 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            val changedFiles = getChangedFiles(inputChanges, incrementalProps) + getChangedFiles(inputChanges, listOf(directoryLibraries)) {
+                it.endsWith("default/${KLIB_MANIFEST_FILE_NAME}")
+            }
             IncrementalCompilationEnvironment(
-                getChangedFiles(inputChanges, incrementalProps),
+                changedFiles,
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = rootProjectDir,
@@ -269,10 +337,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 icFeatures = makeIncrementalCompilationFeatures(),
             )
         } else null
-
-        buildFusService.orNull?.reportFusMetrics {
-            CompileKotlinJsTaskMetrics.collectMetrics(icEnv != null, it)
-        }
 
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,

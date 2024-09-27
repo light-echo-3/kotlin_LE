@@ -36,8 +36,6 @@ class IrLazyConstructor(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), IrLazyFunctionBase {
-    override var parent: IrDeclarationParent by createLazyParent()
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var body: IrBody? = null
@@ -46,15 +44,9 @@ class IrLazyConstructor(
 
     override val initialSignatureFunction: IrFunction? by createInitialSignatureFunction()
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        createReceiverParameter(descriptor.dispatchReceiverParameter)
-    }
+    override var dispatchReceiverParameter: IrValueParameter? = null
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        createReceiverParameter(descriptor.extensionReceiverParameter)
-    }
-
-    override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) { createValueParameters() }
+    override var extensionReceiverParameter: IrValueParameter? = null
 
     override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
 

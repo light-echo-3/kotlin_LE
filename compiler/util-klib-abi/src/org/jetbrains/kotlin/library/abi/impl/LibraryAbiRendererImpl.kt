@@ -55,7 +55,6 @@ internal class AbiRendererImpl(
                         ?.let { "WASM targets" to it.joinToString(separator = ", ", transform = LibraryTarget.WASM::name) },
                     compilerVersion?.let { "Compiler version" to it },
                     abiVersion?.let { "ABI version" to it },
-                    libraryVersion?.let { "Library version" to it },
                     irProviderName?.let { "IR provider" to it }
                 ).forEach { (name, value) ->
                     output.append("// ").append(name).append(": ").appendLine(value)
@@ -424,7 +423,7 @@ internal class AbiRendererImpl(
                 if (valueParameter.isCrossinline) append("crossinline ")
                 appendType(valueParameter.type)
                 if (valueParameter.isVararg) append("...")
-                if (valueParameter.hasDefaultArg) append(" =...")
+                if (valueParameter.hasDefaultArg) append(" = ...")
                 return ""
             }
 

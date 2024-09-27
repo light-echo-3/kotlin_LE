@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -44,9 +45,9 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 return
             }
             for (upperBound in typeParameter.symbol.resolvedBounds) {
-                if (!upperBound.type.isExportable(context.session)) {
+                if (!upperBound.coneType.isExportable(context.session)) {
                     val source = upperBound.source ?: typeParameter.source ?: declaration.source
-                    reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "upper bound", upperBound.type, context)
+                    reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "upper bound", upperBound.coneType, context)
                 }
             }
         }
@@ -73,13 +74,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         when (declaration) {
             is FirFunction -> {
-                if (declaration.isExternal) {
-                    val wrongDeclaration = when (declaration) {
-                        is FirConstructor -> "external constructor"
-                        is FirPropertyAccessor -> if (declaration.isGetter) "external property getter" else "external property setter"
-                        else -> "external function"
-                    }
-                    reportWrongExportedDeclaration(wrongDeclaration)
+                if (declaration.isExternal && context.isTopLevel) {
+                    reportWrongExportedDeclaration("external function")
                     return
                 }
                 for (typeParameter in declaration.typeParameters) {
@@ -121,7 +117,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                if (declaration.isExternal) {
+                if (declaration.isExternal && context.isTopLevel) {
                     reportWrongExportedDeclaration("external property")
                     return
                 }
@@ -131,7 +127,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                val containingClass = declaration.getContainingClassSymbol(context.session) as? FirClassSymbol<*>
+                val containingClass = declaration.getContainingClassSymbol() as? FirClassSymbol<*>
                 val enumEntriesProperty = containingClass?.let(declaration::isEnumEntries) ?: false
                 val returnType = declaration.returnTypeRef.coneType
                 if (!enumEntriesProperty && !returnType.isExportable(context.session)) {
@@ -140,7 +136,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             }
 
             is FirClass -> {
-                if (declaration.isExternal) {
+                if (declaration.isExternal && context.isTopLevel) {
                     val wrongDeclaration = when (declaration.classKind) {
                         ClassKind.CLASS -> "external class"
                         ClassKind.INTERFACE -> null // Exporting external interfaces is allowed. They are used to generate TypeScript definitions.
@@ -234,22 +230,25 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             return true
         }
 
-        val isFunctionType = isBasicFunctionType(session)
-        val isExportableArgs = isExportableTypeArguments(session, currentlyProcessed, isFunctionType)
+        val expandedType = fullyExpandedType(session)
+
+        val isFunctionType = expandedType.isBasicFunctionType(session)
+        val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed, isFunctionType)
         currentlyProcessed.remove(this)
         if (isFunctionType || !isExportableArgs) {
             return isExportableArgs
         }
 
-        val nonNullable = withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val nonNullable = expandedType.withNullability(nullable = false, session.typeContext)
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
                 || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
-        val symbol = fullyExpandedType(session).toSymbol(session)
+
+        val symbol = expandedType.toSymbol(session)
 
         return when {
             isPrimitiveExportableType -> true
             symbol?.isMemberDeclaration != true -> false
-            isEnum -> true
+            expandedType.isEnum -> true
             else -> symbol.isEffectivelyExternal(session) || symbol.isExportedObject(session)
         }
     }
@@ -281,7 +280,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val jsNameArgument = declaration.symbol.getAnnotationFirstArgument(JsStandardClassIds.Annotations.JsName, context.session)
         val reportTarget = jsNameArgument?.source ?: declaration.source
-        val name = (jsNameArgument as? FirLiteralExpression<*>)?.value as? String ?: declaration.nameOrSpecialName.asString()
+        val name = (jsNameArgument as? FirLiteralExpression)?.value as? String ?: declaration.nameOrSpecialName.asString()
 
         if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && sanitizeName(name) == name)) {
             return

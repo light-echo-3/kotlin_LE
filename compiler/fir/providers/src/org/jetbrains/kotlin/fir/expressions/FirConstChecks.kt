@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -184,7 +185,7 @@ private class FirConstCheckVisitor(
         return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?): ConstantArgumentKind {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
         return ConstantArgumentKind.VALID_CONST
     }
 
@@ -194,7 +195,7 @@ private class FirConstCheckVisitor(
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): ConstantArgumentKind {
         for (exp in stringConcatenationCall.arguments) {
-            if (exp is FirLiteralExpression<*> && exp.value == null) {
+            if (exp is FirLiteralExpression && exp.value == null) {
                 // `null` is allowed
                 continue
             }
@@ -213,7 +214,7 @@ private class FirConstCheckVisitor(
         }
 
         for (exp in equalityOperatorCall.arguments) {
-            if (exp is FirLiteralExpression<*> && exp.value == null) {
+            if (exp is FirLiteralExpression && exp.value == null) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -227,13 +228,13 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): ConstantArgumentKind {
-        if (!binaryLogicExpression.leftOperand.resolvedType.isBoolean || !binaryLogicExpression.rightOperand.resolvedType.isBoolean) {
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): ConstantArgumentKind {
+        if (!booleanOperatorExpression.leftOperand.resolvedType.isBoolean || !booleanOperatorExpression.rightOperand.resolvedType.isBoolean) {
             return ConstantArgumentKind.NOT_CONST
         }
 
-        binaryLogicExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
-        binaryLogicExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
         return ConstantArgumentKind.VALID_CONST
     }
 
@@ -322,7 +323,7 @@ private class FirConstCheckVisitor(
                     // if it called at checkers stage it's safe to call resolvedInitializer
                     // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
                     calledOnCheckerStage -> when (propertySymbol.resolvedInitializer) {
-                        is FirLiteralExpression<*> -> when {
+                        is FirLiteralExpression -> when {
                             propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                             else -> ConstantArgumentKind.NOT_CONST
                         }
@@ -383,7 +384,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
-        val classKindOfParent = (symbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
+        val classKindOfParent = (symbol.getReferencedClassSymbol() as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)?.classKind
         return when {
             classKindOfParent == ClassKind.ANNOTATION_CLASS -> ConstantArgumentKind.VALID_CONST
             constructorCall.getExpandedType().isUnsignedType -> {
@@ -451,7 +452,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
-        val expClassId = getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
+        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session).classId
         // TODO, KT-59823: add annotation for allowed constant types
         return expClassId in StandardClassIds.constantAllowedTypes
     }
@@ -497,8 +498,5 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
-        this?.resolvedReturnTypeRef
-            ?.coneTypeSafe<ConeLookupTagBasedType>()
-            ?.lookupTag
-            ?.toSymbol(session)
+        this?.resolvedReturnTypeRef?.coneType?.toSymbol(session)
 }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
@@ -143,9 +143,21 @@ constructor(
         }
 
     private val configureTestSideEffect: Unit by lazy {
-        compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
-            .all { compilation ->
-                compilation.binaries.executableIrInternal(compilation)
+        val mainCompilation = compilations.matching { it.isMain() }
+
+        compilations.matching { it.isTest() }
+            .all { testCompilation ->
+                val testBinaries = testCompilation.binaries.executableIrInternal(testCompilation)
+
+                if (wasmTargetType != KotlinWasmTargetType.WASI) {
+                    testBinaries.forEach { binary ->
+                        binary.linkSyncTask.configure { task ->
+                            mainCompilation.all {
+                                task.from.from(project.tasks.named(it.processResourcesTaskName))
+                            }
+                        }
+                    }
+                }
             }
     }
 
@@ -218,6 +230,7 @@ constructor(
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
         } else {
+            NodeJsPlugin.apply(project)
             NodeJsRootPlugin.apply(project.rootProject)
         }
 
@@ -369,7 +382,6 @@ constructor(
             }
     }
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
         .newInstance<KotlinJsCompilerOptionsDefault>()
         .apply {

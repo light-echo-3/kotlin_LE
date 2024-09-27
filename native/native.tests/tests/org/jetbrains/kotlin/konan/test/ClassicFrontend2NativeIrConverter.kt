@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -74,7 +77,7 @@ class ClassicFrontend2NativeIrConverter(
                 ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
                 configuration.partialLinkageConfig.isEnabled
             ),
-            configuration.irMessageLogger::checkNoUnboundSymbols
+            configuration.messageCollector::checkNoUnboundSymbols
         )
         val manglerDesc = KonanManglerDesc
         val konanIdSignaturerClass = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer")
@@ -124,16 +127,16 @@ class ClassicFrontend2NativeIrConverter(
             generatorContext.typeTranslator,
             generatorContext.irBuiltIns,
             linker = irDeserializer,
-            diagnosticReporter = configuration.irMessageLogger
+            diagnosticReporter = configuration.messageCollector
         )
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
             pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = KonanManglerIr,
-            firMangler = null,
             metadataSerializer = null
         )
     }

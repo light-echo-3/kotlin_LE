@@ -1,10 +1,7 @@
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
-
-// JVM_ABI_K1_K2_DIFF: KT-63828, KT-63871
-
 // MODULE: lib
 // FILE: 1.kt
 interface Test {

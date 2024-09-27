@@ -20,11 +20,7 @@ class C2 : C1 {
   //   Public signature debug description: f(){}
   /* fake */ override fun f(): String
 
-  // CHECK JVM_IR:
-  //   Mangled name: C2{}p
-  //   Public signature: /C2.p|6715504260787941082[0]
-  //   Public signature debug description: {}p
-  // CHECK JS_IR NATIVE:
+  // CHECK:
   //   Mangled name: C2{}p
   //   Public signature: /C2.p|6715504260787941082[0]
   //   Public signature debug description: {}p
@@ -79,4 +75,3 @@ open class C1 {
   fun f(): String
 
 }
-

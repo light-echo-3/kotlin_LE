@@ -65,9 +65,8 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
             returnType = klass.defaultType
         }.also { ctor ->
             ctor.parent = klass
-            ctor.valueParameters = properties.mapIndexed { index, property ->
+            ctor.valueParameters = properties.map { property ->
                 buildValueParameter(ctor) {
-                    this.index = index
                     type = property.getter!!.returnType
                     name = property.name
                 }
@@ -77,7 +76,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                 listOf(
                     IrDelegatingConstructorCallImpl(
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
-                        superConstructor.symbol, 0, superConstructor.valueParameters.size
+                        superConstructor.symbol, 0,
                     ).apply {
                         ctor.valueParameters.take(overriddenProperties.size).forEachIndexed { index, parameter ->
                             putValueArgument(

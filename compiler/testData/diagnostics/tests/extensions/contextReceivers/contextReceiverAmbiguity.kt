@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 context(String)
